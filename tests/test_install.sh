@@ -10,7 +10,7 @@ flake8 saccades tests
 ./install.sh
 
 # Run the tests and coverage report.
-pytest -v --cov=spoonerize --cov-report=term-missing
+pytest -v --cov=saccades --cov-report=term-missing
 
 # Build the documentation.
 make -C docs html
