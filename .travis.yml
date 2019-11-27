@@ -1,0 +1,30 @@
+dist: bionic
+
+language: python
+
+# Don't bother with Python 2.
+python:
+  - '3.6'
+  - '3.7'
+  - '3.8'
+
+install:
+  - ./install.sh
+
+# Don't waste time cloning previous commits.
+# No git stuff is tested anyway.
+git:
+  depth: 1
+
+branches:
+  only:
+  - master
+
+# Run the tests and build the docs.
+script:
+  - pytest --cov=saccades --cov-report=xml --cov-report=term-missing
+  - make -C docs html
+
+# Upload test coverage report.
+after_success:
+  - codecov
