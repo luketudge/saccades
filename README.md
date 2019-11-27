@@ -7,15 +7,15 @@ A Python package for working with saccades. A work in progress.
 
 ## Aims
 
-Implement various algorithms:
+Implement algorithms for:
 
-* extract saccades from eye gaze coordinates
-* calculate various parameters for a saccade, e.g.:
+* extracting saccades from eye gaze coordinates
+* calculating basic parameters for a saccade, e.g.:
   * latency
-  * amplitude
   * duration
+  * amplitude
   * peak velocity
-* calculate the various measures of saccade trajectory deviation described in [this article](https://doi.org/10.3758/s13428-016-0846-6)
+* calculating the various measures of saccade trajectory deviation described in [this article](https://doi.org/10.3758/s13428-016-0846-6)
 
 ## Install
 
