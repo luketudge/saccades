@@ -47,4 +47,4 @@ Run the installation script [install.sh](install.sh) to install the package (you
 ./install.sh
 ```
 
-If you make changes to the source code (in the main package directory [saccades](spoonerize)), you can run this script again to build and test your modified version.
+If you make changes to the source code (in the main package directory [saccades](saccades)), you can run this script again to build and test your modified version.
