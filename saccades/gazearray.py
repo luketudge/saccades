@@ -8,7 +8,7 @@ import numpy
 DEFAULT_SPACE_UNIT = 'px'
 """Assume screen pixels as a default space unit. \
 This is a good guess for most eyetracking data outputs. \
-It's unusual for the data to already be degrees of visual angle.
+It's unusual for the measurements to already be in degrees of visual angle.
 """
 
 
