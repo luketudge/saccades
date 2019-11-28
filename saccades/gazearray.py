@@ -1,24 +1,31 @@
 # -*- coding: utf-8 -*-
-"""
-A class for working with gaze coordinates.
-"""
 
 import numpy
 
 
-DEFAULT_TIME_UNIT = 's'
-DEFAULT_SPACE_UNIT = 'px'
+#%% Constants
 
+DEFAULT_TIME_UNIT = 's'
+"""Assume seconds as a default time unit. \
+But this is really only a placeholder, \
+as most eyetracking devices variously use either \
+milliseconds or microseconds.
+"""
+
+DEFAULT_SPACE_UNIT = 'px'
+"""Assume screen pixels as a default space unit. \
+This is a good guess for most eyetracking data outputs.
+"""
+
+
+#%% Main class
 
 class GazeArray(numpy.ndarray):
     """Array of gaze data.
 
-    Inherits from ``numpy.ndarray``.
-
-    Gaze data has shape `(n, 3)`, \
-    where ``n`` is the number of gaze samples, \
-    and the three columns are \
-    *time*, *x*, *y*.
+    Gaze data has shape *(n, 3)*, \
+    where *n* is the number of gaze samples, \
+    and the three columns are *time*, *x*, *y*.
     """
 
     def __new__(cls, input_array, center=None, target=None,
@@ -26,11 +33,17 @@ class GazeArray(numpy.ndarray):
                 space_units=DEFAULT_SPACE_UNIT):
         """Initialize a new GazeArray.
 
-        :param input_array: ``numpy.ndarray`` \
-        (or sequence convertible to ``numpy.ndarray``).
-        :raises ValueError: ``input_array`` \
-        does not have exactly 2 dimensions \
-        and exactly 3 columns.
+        :param input_array: :class:`numpy.ndarray` \
+        (or sequence convertible to :class:`numpy.ndarray`).
+        :param center: (x, y) coordinates of screen center.
+        :param target: (x, y) coordinates of the main point of interest, \
+        for example an image on the screen that may be a target for a saccade.
+        :param time_units: Units of *time* column, \
+        defaults to :data:`DEFAULT_TIME_UNIT`.
+        :param space_units: Units of *x* and *y* columns, \
+        defaults to :data:`DEFAULT_SPACE_UNIT`.
+        :raises ValueError: If `input_array` does not have \
+        exactly 2 dimensions and exactly 3 columns.
         """
 
         obj = numpy.asarray(input_array).view(cls)
