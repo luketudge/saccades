@@ -21,16 +21,3 @@ class GazeArray(numpy.ndarray):
     def __array_finalize__(self, obj):
         
         return
-
-
-if __name__ == '__main__':
-    
-    from os import path
-    
-    data_filename = 'example.csv'
-    root_path = path.dirname(path.dirname(path.abspath(__file__)))
-    data_path = path.join(root_path, 'tests', 'data', data_filename)
-    
-    coords = numpy.genfromtxt(data_path, delimiter=',')
-    
-    gazedata = GazeArray(coords)
