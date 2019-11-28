@@ -15,27 +15,29 @@ DATA_PATH = path.join(path.dirname(path.abspath(__file__)), 'data', DATA_FILENAM
 
 COORDS = numpy.genfromtxt(DATA_PATH, delimiter=',')
 SCREEN_CENTER = (320, 240)
-TIME_UNITS = 'ms'
+TIME_UNITS = 0.001
 
 
 #%% __new__()
 
-def test_new_from_numpy_array():
+def test_init_from_numpy_array():
 
     gazedata = gazearray.GazeArray(COORDS)
 
     assert isinstance(gazedata, gazearray.GazeArray)
+    assert isinstance(gazedata, numpy.ndarray)
 
 
-def test_new_from_sequence():
+def test_init_from_sequence():
 
+    gazedata = gazearray.GazeArray(COORDS)
     coords_list = list(COORDS)
-    gazedata = gazearray.GazeArray(coords_list)
+    gazedata_list = gazearray.GazeArray(coords_list)
 
-    assert isinstance(gazedata, gazearray.GazeArray)
+    assert numpy.array_equal(gazedata_list, gazedata)
 
 
-def test_new_from_invalid_shape():
+def test_init_from_invalid_shape():
 
     with pytest.raises(ValueError):
         gazearray.GazeArray([0, 1, 2])
@@ -44,13 +46,17 @@ def test_new_from_invalid_shape():
         gazearray.GazeArray(COORDS[:, 1:3])
 
 
-def test_new_attributes():
+def test_init_attributes():
 
-    gazedata = gazearray.GazeArray(COORDS,
-                                   center=SCREEN_CENTER,
-                                   time_units=TIME_UNITS)
+    gazedata = gazearray.GazeArray(COORDS, time_units=TIME_UNITS)
 
-    assert gazedata.center == SCREEN_CENTER
-    assert gazedata.target is None
     assert gazedata.time_units == TIME_UNITS
-    assert gazedata.space_units == gazearray.DEFAULT_SPACE_UNIT
+    assert gazedata.space_units == gazearray.DEFAULT_SPACE_UNITS
+
+
+#%% center()
+
+def test_center():
+
+    gazedata = gazearray.GazeArray(COORDS)
+    gazedata.center(SCREEN_CENTER)
