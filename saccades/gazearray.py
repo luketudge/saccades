@@ -11,7 +11,7 @@ class GazeArray(numpy.ndarray):
 
     Inherits from ``numpy.ndarray``.
 
-    Gaze datahas shape `(n, 3)`, \
+    Gaze data has shape `(n, 3)`, \
     where ``n`` is the number of gaze samples, \
     and the three columns are \
     *time*, *x*, *y*.
