@@ -19,6 +19,7 @@ git:
 branches:
   only:
   - master
+  - lt
 
 # Run the tests and build the docs.
 script:
