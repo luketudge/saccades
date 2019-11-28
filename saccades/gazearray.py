@@ -5,13 +5,6 @@ import numpy
 
 #%% Constants
 
-DEFAULT_TIME_UNIT = 's'
-"""Assume seconds as a default time unit. \
-But this is really only a placeholder, \
-as most eyetracking devices variously use either \
-milliseconds or microseconds.
-"""
-
 DEFAULT_SPACE_UNIT = 'px'
 """Assume screen pixels as a default space unit. \
 This is a good guess for most eyetracking data outputs.
@@ -25,11 +18,11 @@ class GazeArray(numpy.ndarray):
 
     Gaze data has shape *(n, 3)*, \
     where *n* is the number of gaze samples, \
-    and the three columns are *time*, *x*, *y*.
+    and the three columns are *time*, \
+    *x gaze position*, *y gaze position*.
     """
 
-    def __new__(cls, input_array, center=None, target=None,
-                time_units=DEFAULT_TIME_UNIT,
+    def __new__(cls, input_array, center=None, target=None, time_units=None,
                 space_units=DEFAULT_SPACE_UNIT):
         """Initialize a new GazeArray.
 
@@ -39,7 +32,7 @@ class GazeArray(numpy.ndarray):
         :param target: (x, y) coordinates of the main point of interest, \
         for example an image on the screen that may be a target for a saccade.
         :param time_units: Units of *time* column, \
-        defaults to :data:`DEFAULT_TIME_UNIT`.
+        for example 's' or 'ms'.
         :param space_units: Units of *x* and *y* columns, \
         defaults to :data:`DEFAULT_SPACE_UNIT`.
         :raises ValueError: If `input_array` does not have \
@@ -69,7 +62,7 @@ class GazeArray(numpy.ndarray):
 
         self.center = getattr(obj, 'center', None)
         self.target = getattr(obj, 'target', None)
-        self.time_units = getattr(obj, 'time_units', DEFAULT_TIME_UNIT)
+        self.time_units = getattr(obj, 'time_units', None)
         self.space_units = getattr(obj, 'space_units', DEFAULT_SPACE_UNIT)
 
         return
