@@ -36,7 +36,7 @@ Clone this repository to download the latest source code, then switch into the n
 
 ```shell
 git clone https://github.com/luketudge/saccades.git
-cd spoonerize
+cd saccades
 ```
 
 ### Install
