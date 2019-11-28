@@ -1,7 +1,7 @@
 alabaster==0.7.12
 attrs==19.3.0
 Babel==2.7.0
-certifi==2019.9.11
+certifi==2019.11.28
 chardet==3.0.4
 coverage==4.5.4
 docutils==0.15.2
@@ -14,8 +14,8 @@ Jinja2==2.10.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
 more-itertools==7.2.0
+numpy==1.17.4
 packaging==19.2
-pkg-resources==0.0.0
 pluggy==0.13.1
 py==1.8.0
 pycodestyle==2.5.0

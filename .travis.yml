@@ -9,7 +9,7 @@ python:
   - '3.8'
 
 install:
-  - ./install.sh
+  - ./scripts/install.sh
 
 # Don't waste time cloning previous commits.
 # No git stuff is tested anyway.
@@ -24,7 +24,7 @@ branches:
 # Run the tests and build the docs.
 script:
   - pytest --cov=saccades --cov-report=xml --cov-report=term-missing
-  - make -C docs html
+  - ./scripts/build_docs.sh
 
 # Upload test coverage report.
 after_success:
