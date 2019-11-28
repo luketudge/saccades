@@ -41,7 +41,7 @@ cd saccades
 
 ### Install
 
-Run the installation and testing script [install.sh](scripts/install_test.sh) to install the package and run the tests (you may need to change the permissions for this file to allow executing it as a program):
+Run the installation and testing script [install_test.sh](scripts/install_test.sh) to install the package and run the tests (you may need to change the permissions for this file to allow executing it as a program):
 
 ```python
 ./scripts/install_test.sh
