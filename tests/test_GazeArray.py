@@ -41,7 +41,7 @@ def test_new_from_invalid_shape():
         gazearray.GazeArray([0, 1, 2])
 
     with pytest.raises(ValueError):
-        gazearray.GazeArray(COORDS[:, 1:])
+        gazearray.GazeArray(COORDS[:, 1:3])
 
 
 def test_new_attributes():
