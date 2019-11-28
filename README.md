@@ -41,10 +41,10 @@ cd spoonerize
 
 ### Install
 
-Run the installation script [install.sh](install.sh) to install the package (you may need to change the permissions for this file to allow executing it as a program):
+Run the installation and testing script [install.sh](scripts/install_test.sh) to install the package and run the tests (you may need to change the permissions for this file to allow executing it as a program):
 
 ```python
-./install.sh
+./scripts/install_test.sh
 ```
 
 If you make changes to the source code (in the main package directory [saccades](saccades)), you can run this script again to build and test your modified version.
