@@ -19,15 +19,15 @@ EXPECTED_SHAPE = (148, 3)
 #%% Tests
 
 def test_GazeArray_from_numpy_array():
-    
+
     gazedata = GazeArray(COORDS)
+
     assert isinstance(gazedata, GazeArray)
 
 
 def test_GazeArray_from_sequence():
-    
+
     coords_list = list(COORDS)
-    assert isinstance(coords_list, list)
-    
     gazedata = GazeArray(coords_list)
+
     assert isinstance(gazedata, GazeArray)

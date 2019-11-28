@@ -4,3 +4,6 @@
 
 ./scripts/install.sh
 pytest -v --cov=saccades --cov-report=term-missing
+
+./scripts/install.sh
+./scripts/build_docs.sh
