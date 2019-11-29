@@ -8,6 +8,11 @@ import pytest
 from saccades import gazearray
 
 
+# GazeArray methods that just wrap functions from other modules
+# are tested in the test files for those modules.
+# This test file tests all the other features of the GazeArray class.
+
+
 #%% Setup
 
 DATA_FILENAME = 'example.csv'
@@ -52,11 +57,3 @@ def test_init_attributes():
 
     assert gazedata.time_units == TIME_UNITS
     assert gazedata.space_units == gazearray.DEFAULT_SPACE_UNITS
-
-
-#%% center()
-
-def test_center():
-
-    gazedata = gazearray.GazeArray(COORDS)
-    gazedata.center(SCREEN_CENTER)
