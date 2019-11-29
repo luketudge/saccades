@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .gazearray import GazeArray
+from .gazearray import GazeArray  # noqa: F401
+from . import geometry  # noqa: F401
 
 
-__all__ = ['gazearray']
 __version__ = '0.1'

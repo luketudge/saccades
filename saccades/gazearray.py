@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
+"""Module providing classes for representing gaze coordinates.
+"""
 
 import numpy
+
+from .geometry import center
 
 
 #%% Constants
@@ -15,17 +19,21 @@ DEFAULT_SPACE_UNITS = 'px'
 class GazeArray(numpy.ndarray):
     """Array of gaze data.
 
-    Gaze data has shape *(n, 3)*, \
-    where *n* is the number of gaze samples, \
-    and the three columns are *time*, \
-    *x gaze position*, *y gaze position*.
+    Mainly just a :class:`numpy.ndarray` \
+    with some extra methods for processing gaze data, \
+    most of which wrap functions from :py:mod:`.geometry`.
     """
 
     def __new__(cls, input_array, time_units=None, space_units=DEFAULT_SPACE_UNITS):
         """Initialize a new GazeArray.
 
-        :param input_array: :class:`numpy.ndarray` \
-        (or sequence convertible to :class:`numpy.ndarray`).
+        :param input_array: Array of *(t, x, y)* \
+        coordinates with shape *(n, 3)*, \
+        where *n* is the number of gaze samples, \
+        and the three columns are *time*, \
+        *x gaze position*, *y gaze position*.
+        :type input_array: :class:`numpy.ndarray` \
+        or sequence convertible to :class:`numpy.ndarray`.
         :param time_units: Units of *time* column, \
         as proportion of a second \
         (for example 0.001 for milliseconds).
@@ -39,13 +47,9 @@ class GazeArray(numpy.ndarray):
 
         obj = numpy.asarray(input_array).view(cls)
 
-        if obj.ndim != 2:
-            msg = 'Input has {} dimensions but 2 required.'
-            raise ValueError(msg.format(obj.ndim))
-
-        if obj.shape[1] != 3:
-            msg = 'Input has {} columns but 3 required (time, x, y).'
-            raise ValueError(msg.format(obj.shape[1]))
+        if (obj.ndim != 2) or (obj.shape[1] != 3):
+            msg = 'Input has shape {} but (n, 3) required.'
+            raise ValueError(msg.format(obj.shape))
 
         obj.time_units = time_units
         obj.space_units = space_units
@@ -54,10 +58,19 @@ class GazeArray(numpy.ndarray):
 
     def __array_finalize__(self, obj):
 
+        # Not completely sure this check is necessary for our purposes.
+        # But just in case.
+        # REF: https://docs.scipy.org/doc/numpy/user/basics.subclassing.html
         if obj is None:
             return
 
         self.time_units = getattr(obj, 'time_units', None)
         self.space_units = getattr(obj, 'space_units', DEFAULT_SPACE_UNITS)
 
-        return
+    def center(self, origin):
+        """Center *(x, y)* gaze coordinates on a new origin.
+
+        See :func:`.geometry.center`.
+        """
+
+        self[:, 1:3] = center(self[:, 1:3], origin)
