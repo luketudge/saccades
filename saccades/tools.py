@@ -20,15 +20,16 @@ class Anything:
 def check_shape(array, shape):
     """Check that an array is of an expected shape.
 
-    :param array: The array to check.
-    :type array: :class:`numpy.ndarray`
+    :param array: Array to check.
+    :type array: :class:`numpy.ndarray` \
+    or sequence convertible to :class:`numpy.ndarray`
     :param shape: Expected shape. \
     Occurrences of `None` indicate that a dimension may be of any size. \
     So for example `(None, 3)` allows for an *(n, 3)* array \
     for any value of *n*.
     :type shape: `tuple`
     :return: `array`, converted to :class:`numpy.ndarray`.
-    :rtype: :class:`numpy.ndarray`.
+    :rtype: :class:`numpy.ndarray`
     :raises ValueError: If `array` is not of the expected shape.
     """
 

@@ -5,6 +5,7 @@
 import numpy
 
 from .geometry import center
+from .geometry import rotate
 
 
 #%% Constants
@@ -33,7 +34,7 @@ class GazeArray(numpy.ndarray):
         and the three columns are *time*, \
         *x gaze position*, *y gaze position*.
         :type input_array: :class:`numpy.ndarray` \
-        or sequence convertible to :class:`numpy.ndarray`.
+        or sequence convertible to :class:`numpy.ndarray`
         :param time_units: Units of *time* column, \
         as proportion of a second \
         (for example 0.001 for milliseconds).
@@ -58,7 +59,7 @@ class GazeArray(numpy.ndarray):
 
     def __array_finalize__(self, obj):
 
-        # Not completely sure this check is necessary for our purposes.
+        # Not completely sure this clause is necessary for our purposes.
         # But just in case.
         # REF: https://docs.scipy.org/doc/numpy/user/basics.subclassing.html
         if obj is None:
@@ -68,9 +69,17 @@ class GazeArray(numpy.ndarray):
         self.space_units = getattr(obj, 'space_units', DEFAULT_SPACE_UNITS)
 
     def center(self, origin):
-        """Center *(x, y)* gaze coordinates on a new origin.
+        """Center gaze coordinates on a new origin.
 
         See :func:`.geometry.center`.
         """
 
         self[:, 1:3] = center(self[:, 1:3], origin)
+
+    def rotate(self, theta, origin=(0, 0)):
+        """Rotate gaze coordinates.
+
+        See :func:`.geometry.rotate`.
+        """
+
+        self[:, 1:3] = rotate(self[:, 1:3], theta, origin)
