@@ -13,7 +13,7 @@ def center(coords, origin):
     :type coords: :class:`numpy.ndarray` \
     or sequence convertible to :class:`numpy.ndarray`.
     :param origin: *(x, y)* coordinates of new origin, \
-    with shape *(1, 2)*.
+    with shape *(2,)*.
     :type origin: :class:`numpy.ndarray` \
     or sequence convertible to :class:`numpy.ndarray`.
     :return: Recentered `coords`.
