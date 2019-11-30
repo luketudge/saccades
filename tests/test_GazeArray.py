@@ -47,5 +47,6 @@ def test_init_attributes():
 
     gazedata = gazearray.GazeArray(ARRAY, time_units=TIME_UNITS)
 
+    assert gazedata.columns == gazearray.COLUMN_NAMES[:3]
     assert gazedata.time_units == TIME_UNITS
     assert gazedata.space_units == gazearray.DEFAULT_SPACE_UNITS

@@ -10,6 +10,10 @@ from .geometry import rotate
 
 #%% Constants
 
+COLUMN_NAMES = ['time', 'x', 'y']
+"""Order of columns for GazeArray.
+"""
+
 DEFAULT_SPACE_UNITS = 'px'
 """Assume screen pixels as a default unit for gaze coordinates.
 """
@@ -52,6 +56,7 @@ class GazeArray(numpy.ndarray):
             msg = 'Input has shape {} but (n, 3) required.'
             raise ValueError(msg.format(obj.shape))
 
+        obj.columns = COLUMN_NAMES[:3]
         obj.time_units = time_units
         obj.space_units = space_units
 
@@ -65,6 +70,7 @@ class GazeArray(numpy.ndarray):
         if obj is None:
             return
 
+        self.columns = getattr(obj, 'columns', COLUMN_NAMES[:3])
         self.time_units = getattr(obj, 'time_units', None)
         self.space_units = getattr(obj, 'space_units', DEFAULT_SPACE_UNITS)
 
