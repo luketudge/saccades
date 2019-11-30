@@ -75,6 +75,11 @@ class GazeArray(numpy.ndarray):
         self.time_units = getattr(obj, 'time_units', None)
         self.space_units = getattr(obj, 'space_units', DEFAULT_SPACE_UNITS)
 
+    # Use pandas.DataFrame.__str__() for a pretty printed table.
+    def __str__(self):
+
+        return str(self.to_dataframe())
+
     def center(self, origin):
         """Center gaze coordinates on a new origin.
 
