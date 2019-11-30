@@ -3,6 +3,7 @@
 """
 
 import numpy
+import pandas
 
 from .geometry import center
 from .geometry import rotate
@@ -89,3 +90,12 @@ class GazeArray(numpy.ndarray):
         """
 
         self[:, 1:3] = rotate(self[:, 1:3], theta, origin)
+
+    def to_dataframe(self):
+        """Convert gaze data to pandas DataFrame.
+
+        :return: Data frame.
+        :rtype: :class:`pandas.DataFrame`
+        """
+
+        return pandas.DataFrame(self, columns=self.columns, copy=True)

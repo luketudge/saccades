@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy
+import pandas
 import pytest
 
 from saccades import gazearray
@@ -50,3 +51,25 @@ def test_init_attributes():
     assert gazedata.columns == gazearray.COLUMN_NAMES[:3]
     assert gazedata.time_units == TIME_UNITS
     assert gazedata.space_units == gazearray.DEFAULT_SPACE_UNITS
+
+
+#%% to_dataframe()
+
+def test_to_dataframe():
+
+    gazedata = gazearray.GazeArray(ARRAY)
+    df = gazedata.to_dataframe()
+
+    assert isinstance(df, pandas.DataFrame)
+    assert numpy.array_equal(gazedata, df)
+    assert all(df.columns == gazedata.columns)
+
+
+# Check we get a copy and not a view.
+def test_to_dataframe_is_not_view():
+
+    gazedata = gazearray.GazeArray(ARRAY)
+    df = gazedata.to_dataframe()
+    df[gazearray.COLUMN_NAMES[0]][0] = 9000.
+
+    assert gazedata[0, 0] != 9000.
