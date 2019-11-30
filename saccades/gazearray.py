@@ -3,12 +3,18 @@
 """
 
 import numpy
+import pandas
 
 from .geometry import center
 from .geometry import rotate
+from .tools import check_shape
 
 
 #%% Constants
+
+COLUMN_NAMES = ['time', 'x', 'y']
+"""Order of columns for GazeArray.
+"""
 
 DEFAULT_SPACE_UNITS = 'px'
 """Assume screen pixels as a default unit for gaze coordinates.
@@ -46,12 +52,11 @@ class GazeArray(numpy.ndarray):
         exactly 2 dimensions and exactly 3 columns.
         """
 
+        check_shape(input_array, (None, 3))
+
         obj = numpy.asarray(input_array).view(cls)
 
-        if (obj.ndim != 2) or (obj.shape[1] != 3):
-            msg = 'Input has shape {} but (n, 3) required.'
-            raise ValueError(msg.format(obj.shape))
-
+        obj.columns = COLUMN_NAMES[:3]
         obj.time_units = time_units
         obj.space_units = space_units
 
@@ -60,13 +65,20 @@ class GazeArray(numpy.ndarray):
     def __array_finalize__(self, obj):
 
         # Not completely sure this clause is necessary for our purposes.
+        # Currently it ends up being the only line without test coverage.
         # But just in case.
         # REF: https://docs.scipy.org/doc/numpy/user/basics.subclassing.html
         if obj is None:
             return
 
+        self.columns = getattr(obj, 'columns', COLUMN_NAMES[:3])
         self.time_units = getattr(obj, 'time_units', None)
         self.space_units = getattr(obj, 'space_units', DEFAULT_SPACE_UNITS)
+
+    # Use pandas.DataFrame.__str__() for a pretty printed table.
+    def __str__(self):
+
+        return str(self.to_dataframe())
 
     def center(self, origin):
         """Center gaze coordinates on a new origin.
@@ -83,3 +95,11 @@ class GazeArray(numpy.ndarray):
         """
 
         self[:, 1:3] = rotate(self[:, 1:3], theta, origin)
+
+    def to_dataframe(self):
+        """Convert gaze data to pandas DataFrame.
+
+        :rtype: :class:`pandas.DataFrame`
+        """
+
+        return pandas.DataFrame(self, columns=self.columns, copy=True)

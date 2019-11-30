@@ -50,7 +50,7 @@ def test_check_shape_with_None():
 
     # No assertion, just checking we get no exceptions.
     for shape in [(None, SHAPE[1]), (SHAPE[0], None), (None, None)]:
-        checked_array = tools.check_shape(ARRAY, shape)  # noqa: F841
+        tools.check_shape(ARRAY, shape)
 
 
 def test_check_shape_exceptions_ndim():

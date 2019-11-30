@@ -51,6 +51,17 @@ def test_center_as_GazeArray_method():
     assert numpy.array_equal(gazedata[:, 1:3], CENTERED)
 
 
+# Since casting a length-2 vector to a 2x2 array
+# could in theory be done either by row or by column,
+# and since I always worry that I have read the docs wrong,
+# this test helps me sleep at night.
+def test_center_with_square_array():
+
+    observed = geometry.center(ARRAY[:2], ORIGIN)
+
+    assert numpy.array_equal(observed, CENTERED[:2])
+
+
 #%% rotate()
 
 def test_rotate():
