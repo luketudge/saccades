@@ -7,6 +7,7 @@ import pandas
 
 from .geometry import center
 from .geometry import rotate
+from .tools import check_shape
 
 
 #%% Constants
@@ -51,11 +52,9 @@ class GazeArray(numpy.ndarray):
         exactly 2 dimensions and exactly 3 columns.
         """
 
-        obj = numpy.asarray(input_array).view(cls)
+        check_shape(input_array, (None, 3))
 
-        if (obj.ndim != 2) or (obj.shape[1] != 3):
-            msg = 'Input has shape {} but (n, 3) required.'
-            raise ValueError(msg.format(obj.shape))
+        obj = numpy.asarray(input_array).view(cls)
 
         obj.columns = COLUMN_NAMES[:3]
         obj.time_units = time_units
@@ -66,6 +65,7 @@ class GazeArray(numpy.ndarray):
     def __array_finalize__(self, obj):
 
         # Not completely sure this clause is necessary for our purposes.
+        # Currently it ends up being the only line without test coverage.
         # But just in case.
         # REF: https://docs.scipy.org/doc/numpy/user/basics.subclassing.html
         if obj is None:
@@ -94,7 +94,6 @@ class GazeArray(numpy.ndarray):
     def to_dataframe(self):
         """Convert gaze data to pandas DataFrame.
 
-        :return: Data frame.
         :rtype: :class:`pandas.DataFrame`
         """
 
