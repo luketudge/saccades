@@ -25,8 +25,6 @@ DATAFRAME = pandas.DataFrame(ARRAY,
 
 SHAPE = (3, 3)
 
-TIME_UNITS = 0.001
-
 
 #%% Transformations
 

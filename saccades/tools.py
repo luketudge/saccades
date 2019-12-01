@@ -17,6 +17,13 @@ class Anything:
 
 #%% Functions
 
+def blockmanager_to_array(blockmanager):
+
+    # The .as_array() method is relatively new to pandas,
+    # so this is the function responsible for the dependency on v0.23.
+    return blockmanager.as_array().transpose()
+
+
 def check_shape(array, shape):
     """Check that an array is of an expected shape.
 

@@ -22,15 +22,7 @@ def test_GazeData_init_types():
         assert isinstance(gd, gazedata.GazeData)
         assert isinstance(gd, pandas.DataFrame)
         assert numpy.array_equal(gd, constants.ARRAY)
-
-
-def test_GazeData_attributes():
-
-    gd = gazedata.GazeData(constants.ARRAY, time_units=constants.TIME_UNITS)
-
-    assert list(gd.columns) == ['time', 'x', 'y']
-    assert gd.time_units == constants.TIME_UNITS
-    assert gd.space_units == 'px'
+        assert list(gd.columns) == ['time', 'x', 'y']
 
 
 # Check we get a copy and not a view.
@@ -42,13 +34,36 @@ def test_GazeData_is_not_view():
     assert constants.ARRAY[0, 0] != 9000.
 
 
-#%% pandas.DataFrame
+#%% Subsetting
 
-# Check that the most useful pandas.DataFrame functionality is preserved.
+# Subsetting instances of the GazeData class presents some technical problems.
+# We would like different subsetting operations to return different types.
+# A subset of rows is still a valid table of gaze data.
+# So this should return an instance of the GazeData class.
+# A subset of columns is coordinates or some other incomplete view of the data.
+# So this should not return an instance of the GazeData class.
+# But a subset of composed of the 'time', 'x', and 'y' columns *is* complete.
+# So this column subset should return an instance of the GazeData class.
 
-def test_subset():
+def test_subset_rows():
 
     gd = gazedata.GazeData(constants.ARRAY)
     gd_subset = gd[:2]
+    assert numpy.array_equal(gd_subset, constants.ARRAY[:2, :])
     assert isinstance(gd_subset, gazedata.GazeData)
-    assert isinstance(gd_subset, pandas.DataFrame)
+
+
+def test_subset_incomplete_cols():
+
+    gd = gazedata.GazeData(constants.ARRAY)
+    gd_subset = gd[['x', 'y']]
+    assert numpy.array_equal(gd_subset, constants.ARRAY_XY)
+    assert not isinstance(gd_subset, gazedata.GazeData)
+
+
+def test_subset_complete_cols():
+
+    gd = gazedata.GazeData(constants.ARRAY)
+    gd_subset = gd[['time', 'x', 'y']]
+    assert numpy.array_equal(gd_subset, constants.ARRAY)
+    assert isinstance(gd_subset, gazedata.GazeData)
