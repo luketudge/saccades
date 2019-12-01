@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .dataframe import GazeData  # noqa: F401
+from .gazedata import GazeData  # noqa: F401
 from . import geometry  # noqa: F401
 
 

@@ -1,12 +1,11 @@
 API
 ===
 
-gazearray
----------
+gazedata
+--------
 
-.. automodule:: saccades.dataframe
+.. automodule:: saccades.gazedata
     :members:
-    :show-inheritance:
 
 geometry
 --------

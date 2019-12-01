@@ -4,7 +4,7 @@ import numpy
 
 from . import constants
 
-from saccades import dataframe
+from saccades import gazedata
 from saccades import geometry
 
 
@@ -22,7 +22,7 @@ def test_center():
 
 def test_center_as_GazeData_method():
 
-    gd = dataframe.GazeData(constants.ARRAY)
+    gd = gazedata.GazeData(constants.ARRAY)
     gd.center(constants.ORIGIN)
 
     assert numpy.array_equal(gd[['x', 'y']], constants.CENTERED)
@@ -57,7 +57,7 @@ def test_rotate_about_center():
 
 def test_rotate_as_GazeData_method():
 
-    gd = dataframe.GazeData(constants.ARRAY)
+    gd = gazedata.GazeData(constants.ARRAY)
     gd.rotate(constants.ANGLE)
 
     assert numpy.allclose(gd[['x', 'y']], constants.ROTATED)
