@@ -8,7 +8,7 @@ echo
 ./scripts/install.sh
 
 echo
-echo '#### Test ####'
+echo '#### Tests ####'
 echo
 pytest -v --cov=saccades --cov-report=term-missing
 

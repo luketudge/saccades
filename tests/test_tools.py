@@ -3,16 +3,9 @@
 import numpy
 import pytest
 
+from . import constants
+
 from saccades import tools
-
-
-#%% Setup
-
-ARRAY = [[0, 1],
-         [2, 3],
-         [4, 5]]
-
-SHAPE = (3, 2)
 
 
 #%% Anything
@@ -24,52 +17,45 @@ def test_Anything():
         assert not (tools.Anything() != val)
 
 
-#%% check_shape
+#%% check_shape()
 
-def test_check_shape():
+def test_check_shape_correct_shape():
 
-    # Should produce no exeption.
-    checked_array = tools.check_shape(ARRAY, SHAPE)
-
-    # And check that the array is unharmed.
-    assert numpy.array_equal(checked_array, ARRAY)
-
-
-def test_check_shape_return_type():
-
-    # Sequence in, numpy array out.
-    checked_array = tools.check_shape(ARRAY, SHAPE)
-    assert isinstance(checked_array, numpy.ndarray)
-
-    # numpy array in, numpy array out.
-    checked_array = tools.check_shape(numpy.array(ARRAY), SHAPE)
-    assert isinstance(checked_array, numpy.ndarray)
+    checked = tools.check_shape(constants.ARRAY, constants.SHAPE)
+    assert numpy.array_equal(checked, constants.ARRAY)
 
 
 def test_check_shape_with_None():
 
     # No assertion, just checking we get no exceptions.
-    for shape in [(None, SHAPE[1]), (SHAPE[0], None), (None, None)]:
-        tools.check_shape(ARRAY, shape)
+    for shape in [(None, constants.SHAPE[1]), (constants.SHAPE[0], None), (None, None)]:
+        tools.check_shape(constants.ARRAY, shape)
 
 
 def test_check_shape_exceptions_ndim():
 
     # Too many dimensions.
-    for shape in [(SHAPE[0],), (None,)]:
+    for shape in [(constants.SHAPE[0],), (None,)]:
         with pytest.raises(ValueError):
-            tools.check_shape(ARRAY, shape)
+            tools.check_shape(constants.ARRAY, shape)
 
     # Too few dimensions.
     for extra_dim in [2, None]:
         with pytest.raises(ValueError):
-            tools.check_shape(ARRAY, SHAPE + (extra_dim,))
+            tools.check_shape(constants.ARRAY, constants.SHAPE + (extra_dim,))
 
 
 def test_check_shape_exceptions_size():
 
-    wrong_shape = tuple(x + 1 for x in SHAPE)
+    wrong_shape = tuple(x + 1 for x in constants.SHAPE)
 
     for shape in [wrong_shape, (wrong_shape[0], None), (None, wrong_shape[1])]:
         with pytest.raises(ValueError):
-            tools.check_shape(ARRAY, shape)
+            tools.check_shape(constants.ARRAY, shape)
+
+
+def test_check_shape_return_type():
+
+    for input_type in [constants.SEQUENCE, constants.ARRAY]:
+        checked = tools.check_shape(input_type, constants.SHAPE)
+        assert isinstance(checked, numpy.ndarray)
