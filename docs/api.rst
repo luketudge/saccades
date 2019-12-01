@@ -4,9 +4,8 @@ API
 gazearray
 ---------
 
-.. automodule:: saccades.gazearray
+.. automodule:: saccades.dataframe
     :members:
-    :special-members: __new__
     :show-inheritance:
 
 geometry

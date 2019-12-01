@@ -44,6 +44,6 @@ def check_shape(array, shape):
 
     if any(obs != exp for obs, exp in zip(array.shape, shape)):
         msg = 'Array has shape {} but {} required.'
-        raise ValueError(msg.format(array.shape, len(shape)))
+        raise ValueError(msg.format(array.shape, shape))
 
     return array
