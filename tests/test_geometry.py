@@ -86,7 +86,7 @@ def test_velocity_as_GazeData_method(gd):
 
 def test_acceleration():
 
-    acceleration = geometry.acceleration(constants.ARRAY)
+    acceleration = geometry.acceleration(constants.ARRAY[:, 0], constants.VELOCITY)
 
     assert numpy.allclose(acceleration, constants.ACCELERATION, equal_nan=True)
 

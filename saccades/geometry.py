@@ -79,28 +79,26 @@ def velocity(coords):
     return numpy.append([numpy.nan], velocities)
 
 
-def acceleration(coords):
-    """Calculate acceleration of coordinates.
+def acceleration(t, v):
+    """Calculate acceleration.
 
-    The acceleration of a coordinate pair is based on the \
-    difference in velocity since the previous coordinate pair \
-    (see :func:`velocity`).
+    The acceleration of a point is based on the \
+    difference in velocity since the previous point \
+    and the difference in time since the previous point.
 
-    The velocity of the very first coordinate pair is `numpy.nan`, \
-    so the acceleration of the first *two* pairs is also `numpy.nan`.
-
-    :param coords: *(time, x, y)* coordinates with shape *(n, 3)*, \
-    where *n* is the number of gaze samples.
-    :type coords: :class:`numpy.ndarray` \
+    :param t: Vector of times.
+    :type t: :class:`numpy.ndarray` \
     or sequence convertible to :class:`numpy.ndarray`
-    :return: Vector of accelerations of `coords`.
+    :param v: Vector of velocities.
+    :type v: :class:`numpy.ndarray` \
+    or sequence convertible to :class:`numpy.ndarray`
+    :return: Vector of accelerations.
     :rtype: :class:`numpy.ndarray`
     """
 
-    coords = check_shape(coords, (None, 3))
+    t = check_shape(t, (None, ))
+    v = check_shape(v, (None, ))
 
-    velocity_diffs = numpy.diff(velocity(coords))
-    time_diffs = numpy.diff(coords[:, 0])
-    accelerations = velocity_diffs / time_diffs
+    accelerations = numpy.diff(v) / numpy.diff(t)
 
     return numpy.append([numpy.nan], accelerations)

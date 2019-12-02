@@ -4,6 +4,7 @@
 
 import pandas
 
+from .geometry import acceleration
 from .geometry import center
 from .geometry import rotate
 from .geometry import velocity
@@ -105,3 +106,17 @@ class GazeData(pandas.DataFrame):
         """
 
         self['velocity'] = velocity(self[['time', 'x', 'y']])
+
+    def get_accelerations(self):
+        """Calculate acceleration of gaze coordinates.
+
+        Accelerations are added as a new column. \
+        If necessary, a column of velocities is also added.
+
+        See :func:`.geometry.acceleration`.
+        """
+
+        if 'velocity' not in self:
+            self.get_velocities()
+
+        self['acceleration'] = acceleration(self['time'], self['velocity'])
