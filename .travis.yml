@@ -8,13 +8,11 @@ python:
   - '3.7'
   - '3.8'
 
-# Test for compatibility with old pandas starting with 0.22,
+# Test for compatibility with old pandas v0.22,
 # which is the version currently in the Ubuntu repos.
 env:
   - PANDAS=0.22.*
-  - PANDAS=0.23.*
-  - PANDAS=0.24.*
-  - PANDAS=0.25.*
+  - PANDAS=0.*
 
 install:
   - pip install pandas==$PANDAS
