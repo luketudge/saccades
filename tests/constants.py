@@ -21,6 +21,8 @@ DATAFRAME = pandas.DataFrame(ARRAY,
                              columns=('time', 'x', 'y'),
                              copy=True)
 
+INIT_TYPES = [SEQUENCE, ARRAY, DATAFRAME]
+
 
 #%% Attributes
 

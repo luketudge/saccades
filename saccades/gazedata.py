@@ -30,7 +30,8 @@ class GazeData(pandas.DataFrame):
     # pandas.DataFrame treats attributes as column names.
     # (This is one of the minor irritations of working with pandas;
     # it doesn't stick to *one* correct and intuitive method of indexing.)
-    # So we must declare custom attributes here to avoid them being treated as columns.
+    # So we must declare custom attributes here
+    # to avoid them being treated as columns.
     # (Not yet implemented, but just in case.)
     # https://pandas.pydata.org/pandas-docs/stable/development/extending.html#define-original-properties
     # _internal_names = pandas.DataFrame._internal_names + []
@@ -40,8 +41,8 @@ class GazeData(pandas.DataFrame):
 
         # When a new instance of the custom class is requested,
         # this can be for two different reasons:
-        # (1) A completely new instance is being initialized.
-        # (2) A new instance is being initialized from a subset of an existing instance.
+        # (1) A completely new instance.
+        # (2) A new instance from a subset of an existing instance.
 
         # We can detect (2) with the following clause.
         # But this is unfortunately not part of the pandas public API,
@@ -51,7 +52,7 @@ class GazeData(pandas.DataFrame):
 
             # A subset might still be a full valid table of gaze data,
             # if it contains the 3 essential columns 'time', 'x', and 'y'.
-            # So if this is the case, we initialize an instance of the custom class.
+            # So we initialize an instance of the custom class.
             if list(data.items)[:3] == INIT_COLUMNS:
                 return super().__new__(cls)
 
@@ -60,7 +61,7 @@ class GazeData(pandas.DataFrame):
             return pandas.DataFrame(blockmanager_to_array(data))
 
         # And this handles (1).
-        data = check_shape(data, (None, 3))
+        check_shape(data, (None, 3))
         return super().__new__(cls)
 
     def __init__(self, data):
