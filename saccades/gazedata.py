@@ -96,7 +96,7 @@ class GazeData(pandas.DataFrame):
 
         self[['x', 'y']] = rotate(self[['x', 'y']], theta, origin)
 
-    def velocity(self):
+    def get_velocities(self):
         """Calculate velocity of gaze coordinates.
 
         Velocities are added as a new column.

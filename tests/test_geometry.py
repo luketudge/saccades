@@ -77,7 +77,7 @@ def test_velocity():
 
 def test_velocity_as_GazeData_method(gd):
 
-    gd.velocity()
+    gd.get_velocities()
 
     assert numpy.allclose(gd['velocity'], constants.VELOCITY, equal_nan=True)
 
@@ -93,9 +93,20 @@ def test_acceleration():
 
 def test_acceleration_as_GazeData_method(gd):
 
-    gd.acceleration()
+    gd.get_accelerations()
 
     assert numpy.allclose(gd['acceleration'], constants.ACCELERATION, equal_nan=True)
 
     # Check also that the intermediate velocity column was created.
     assert 'velocity' in gd
+
+
+def test_acceleration_as_GazeData_method_with_existing_velocities(gd):
+
+    fake_velocities = numpy.zeros_like(constants.VELOCITY)
+    fake_accelerations = numpy.append([numpy.nan], fake_velocities[1:])
+
+    gd['velocity'] = fake_velocities
+    gd.get_accelerations()
+
+    assert numpy.allclose(gd['acceleration'], fake_accelerations, equal_nan=True)
