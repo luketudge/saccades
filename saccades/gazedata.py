@@ -61,7 +61,7 @@ class GazeData(pandas.DataFrame):
             return pandas.DataFrame(blockmanager_to_array(data))
 
         # And this handles (1).
-        data = check_shape(data, (None, 3))
+        check_shape(data, (None, 3))
         return super().__new__(cls)
 
     def __init__(self, data):
