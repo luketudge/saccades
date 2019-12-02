@@ -8,8 +8,19 @@ python:
   - '3.7'
   - '3.8'
 
+# Test for compatibility with old pandas starting with 0.22,
+# which is the version currently in the Ubuntu repos.
+env:
+  - PANDAS=0.22
+  - PANDAS=0.23
+  - PANDAS=0.24
+  - PANDAS=0.25
+
 install:
-  - ./scripts/install.sh
+  - pip install pandas=$PANDAS
+  - pip install -r test_requirements.txt
+  - python setup.py bdist_wheel
+  - pip install dist/saccades*.whl
 
 # Don't waste time cloning previous commits.
 # No git stuff is tested anyway.
