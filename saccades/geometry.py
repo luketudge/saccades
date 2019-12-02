@@ -28,7 +28,7 @@ def center(coords, origin):
 
 
 def rotate(coords, theta, origin=(0, 0)):
-    """Rotate coordinates.
+    """Rotate coordinates about a point.
 
     :param coords: *(x, y)* coordinates with shape *(n, 2)*, \
     where *n* is the number of gaze samples.
@@ -53,3 +53,27 @@ def rotate(coords, theta, origin=(0, 0)):
     coords = numpy.matmul(coords, rotation_matrix)
 
     return coords + origin
+
+
+def velocity(coords):
+    """Calculate velocity of coordinates.
+
+    The velocity of a coordinate pair is based on the euclidean distance \
+    travelled since the previous coordinate pair. \
+    The velocity of the very first coordinate pair is `numpy.nan`.
+
+    :param coords: *(time, x, y)* coordinates with shape *(n, 3)*, \
+    where *n* is the number of gaze samples.
+    :type coords: :class:`numpy.ndarray` \
+    or sequence convertible to :class:`numpy.ndarray`
+    :return: Vector of velocities of `coords`.
+    :rtype: :class:`numpy.ndarray`
+    """
+
+    coords = check_shape(coords, (None, 3))
+
+    diffs = numpy.diff(coords, axis=0)
+    distances = numpy.linalg.norm(diffs[:, 1:3], axis=1)
+    velocities = distances / diffs[:, 0]
+
+    return numpy.append([numpy.nan], velocities)

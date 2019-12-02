@@ -44,3 +44,8 @@ ROTATED = numpy.array([[0., 1.],
 CENTER_ROTATED = numpy.array([[3., 2.],
                               [-1., 5.],
                               [-9., 11.]])
+
+
+#%% Derivatives
+
+VELOCITY = numpy.array([numpy.nan, 2.5, 5.])

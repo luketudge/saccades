@@ -11,6 +11,11 @@ from saccades import geometry
 # Use numpy.allclose() in place of numpy.array_equal()
 # to allow for floating-point error where necessary.
 
+# numpy.array_equal() returns False in the presence of any NaN values,
+# whereas numpy.allclose() allows comparing NaN values as equal,
+# So also use numpy.allclose() when results are expected to contain NaN.
+# https://github.com/numpy/numpy/issues/9229
+
 
 #%% center()
 
@@ -66,8 +71,16 @@ def test_rotate_as_GazeData_method():
 
 #%% velocity()
 
-#def test_velocity():
+def test_velocity():
 
-#    velocity = geometry.velocity(constants.ARRAY)
+    velocity = geometry.velocity(constants.ARRAY)
 
-#    assert numpy.array_equal(velocity, constants.VELOCITY)
+    assert numpy.allclose(velocity, constants.VELOCITY, equal_nan=True)
+
+
+def test_velocity_as_GazeData_method():
+
+    gd = gazedata.GazeData(constants.ARRAY)
+    gd.velocity()
+
+    assert numpy.allclose(gd['velocity'], constants.VELOCITY, equal_nan=True)
