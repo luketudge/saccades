@@ -44,7 +44,7 @@ cd saccades
 Run the installation and testing script [install_and_test.sh](scripts/install_and_test.sh) to install the package and run the tests (you may need to change the permissions for this file to allow executing it as a program):
 
 ```python
-./scripts/install_test.sh
+./scripts/install_and_test.sh
 ```
 
 If you make changes to the source code (in the main package directory [saccades](saccades)), you can run this script again to build and test your modified version.
