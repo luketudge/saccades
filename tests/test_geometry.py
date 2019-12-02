@@ -4,25 +4,29 @@ import numpy
 
 from . import constants
 
-from saccades import gazedata
 from saccades import geometry
 
 
-# Use numpy.allclose() to allow for floating-point error if necessary.
+# Use numpy.allclose() in place of numpy.array_equal()
+# to allow for floating-point error where necessary.
+
+# numpy.array_equal() returns False in the presence of any NaN values,
+# whereas numpy.allclose() allows comparing NaN values as equal,
+# So also use numpy.allclose() when results are expected to contain NaN.
+# https://github.com/numpy/numpy/issues/9229
 
 
 #%% center()
 
 def test_center():
 
-    observed = geometry.center(constants.ARRAY_XY, constants.ORIGIN)
+    centered = geometry.center(constants.ARRAY_XY, constants.ORIGIN)
 
-    assert numpy.array_equal(observed, constants.CENTERED)
+    assert numpy.array_equal(centered, constants.CENTERED)
 
 
-def test_center_as_GazeData_method():
+def test_center_as_GazeData_method(gd):
 
-    gd = gazedata.GazeData(constants.ARRAY)
     gd.center(constants.ORIGIN)
 
     assert numpy.array_equal(gd[['x', 'y']], constants.CENTERED)
@@ -34,30 +38,75 @@ def test_center_as_GazeData_method():
 # this test helps me sleep at night.
 def test_center_with_square_array():
 
-    observed = geometry.center(constants.ARRAY_XY[:2, :], constants.ORIGIN)
+    centered = geometry.center(constants.ARRAY_XY[:2, :], constants.ORIGIN)
 
-    assert numpy.array_equal(observed, constants.CENTERED[:2, :])
+    assert numpy.array_equal(centered, constants.CENTERED[:2, :])
 
 
 #%% rotate()
 
 def test_rotate():
 
-    observed = geometry.rotate(constants.ARRAY_XY, constants.ANGLE)
+    rotated = geometry.rotate(constants.ARRAY_XY, constants.ANGLE)
 
-    assert numpy.allclose(observed, constants.ROTATED)
+    assert numpy.allclose(rotated, constants.ROTATED)
 
 
 def test_rotate_about_center():
 
-    observed = geometry.rotate(constants.ARRAY_XY, constants.ANGLE, origin=constants.ORIGIN)
+    rotated = geometry.rotate(constants.ARRAY_XY, constants.ANGLE, origin=constants.ORIGIN)
 
-    assert numpy.allclose(observed, constants.CENTER_ROTATED)
+    assert numpy.allclose(rotated, constants.CENTER_ROTATED)
 
 
-def test_rotate_as_GazeData_method():
+def test_rotate_as_GazeData_method(gd):
 
-    gd = gazedata.GazeData(constants.ARRAY)
     gd.rotate(constants.ANGLE)
 
     assert numpy.allclose(gd[['x', 'y']], constants.ROTATED)
+
+
+#%% velocity()
+
+def test_velocity():
+
+    velocity = geometry.velocity(constants.ARRAY)
+
+    assert numpy.allclose(velocity, constants.VELOCITY, equal_nan=True)
+
+
+def test_velocity_as_GazeData_method(gd):
+
+    gd.get_velocities()
+
+    assert numpy.allclose(gd['velocity'], constants.VELOCITY, equal_nan=True)
+
+
+#%% acceleration()
+
+def test_acceleration():
+
+    acceleration = geometry.acceleration(constants.ARRAY[:, 0], constants.VELOCITY)
+
+    assert numpy.allclose(acceleration, constants.ACCELERATION, equal_nan=True)
+
+
+def test_acceleration_as_GazeData_method(gd):
+
+    gd.get_accelerations()
+
+    assert numpy.allclose(gd['acceleration'], constants.ACCELERATION, equal_nan=True)
+
+    # Check also that the intermediate velocity column was created.
+    assert 'velocity' in gd
+
+
+def test_acceleration_as_GazeData_method_with_existing_velocities(gd):
+
+    fake_velocities = numpy.zeros_like(constants.VELOCITY)
+    fake_accelerations = numpy.append([numpy.nan], fake_velocities[1:])
+
+    gd['velocity'] = fake_velocities
+    gd.get_accelerations()
+
+    assert numpy.allclose(gd['acceleration'], fake_accelerations, equal_nan=True)

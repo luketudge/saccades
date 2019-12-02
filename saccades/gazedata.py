@@ -4,8 +4,10 @@
 
 import pandas
 
+from .geometry import acceleration
 from .geometry import center
 from .geometry import rotate
+from .geometry import velocity
 from .tools import check_shape
 from .tools import blockmanager_to_array
 
@@ -80,7 +82,7 @@ class GazeData(pandas.DataFrame):
         return GazeData
 
     def center(self, origin):
-        """Center gaze coordinates on a new origin.
+        """Center gaze coordinates.
 
         See :func:`.geometry.center`.
         """
@@ -94,3 +96,27 @@ class GazeData(pandas.DataFrame):
         """
 
         self[['x', 'y']] = rotate(self[['x', 'y']], theta, origin)
+
+    def get_velocities(self):
+        """Calculate velocity of gaze coordinates.
+
+        Velocities are added as a new column.
+
+        See :func:`.geometry.velocity`.
+        """
+
+        self['velocity'] = velocity(self[['time', 'x', 'y']])
+
+    def get_accelerations(self):
+        """Calculate acceleration of gaze coordinates.
+
+        Accelerations are added as a new column. \
+        If necessary, a column of velocities is also added.
+
+        See :func:`.geometry.acceleration`.
+        """
+
+        if 'velocity' not in self:
+            self.get_velocities()
+
+        self['acceleration'] = acceleration(self['time'], self['velocity'])
