@@ -19,9 +19,12 @@ class Anything:
 
 def blockmanager_to_array(blockmanager):
 
-    # The .as_array() method is relatively new to pandas,
-    # so this is the function responsible for the dependency on v0.23.
-    return blockmanager.as_array().transpose()
+    # The .as_array() method is new to pandas v0.23.
+    # Try the older .as_matrix() method if it fails.
+    try:
+        return blockmanager.as_array().transpose()
+    except AttributeError:
+        return blockmanager.as_matrix().transpose()
 
 
 def check_shape(array, shape):
