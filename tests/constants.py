@@ -10,11 +10,12 @@ import pandas
 # following a call to numpy.genfromtxt().
 # So most test functions begin by initializing from ARRAY.
 
-SEQUENCE = [[0., 0., 1.],
-            [1., 2., 3.],
-            [2., 4., 5.]]
+SEQUENCE = [[2., 1., 0.],
+            [4., 4., 4.],
+            [6., 10., 12.]]
 
 ARRAY = numpy.array(SEQUENCE)
+ARRAY_XY = numpy.array(ARRAY[:, 1:3])
 
 DATAFRAME = pandas.DataFrame(ARRAY,
                              columns=('time', 'x', 'y'),
@@ -28,20 +29,18 @@ SHAPE = (3, 3)
 
 #%% Transformations
 
-ARRAY_XY = numpy.array(ARRAY[:, 1:3])
-
 ORIGIN = (1., 2.)
 
-CENTERED = numpy.array([[-1., -1.],
-                        [1., 1.],
-                        [3., 3.]])
+CENTERED = numpy.array([[0., -2.],
+                        [3., 2.],
+                        [9., 10.]])
 
 ANGLE = numpy.pi / 2
 
-ROTATED = numpy.array([[-1., 0.],
-                       [-3., 2.],
-                       [-5., 4.]])
+ROTATED = numpy.array([[0., 1.],
+                       [-4., 4.],
+                       [-12., 10.]])
 
-CENTER_ROTATED = numpy.array([[2., 1.],
-                              [0., 3.],
-                              [-2., 5.]])
+CENTER_ROTATED = numpy.array([[3., 2.],
+                              [-1., 5.],
+                              [-9., 11.]])

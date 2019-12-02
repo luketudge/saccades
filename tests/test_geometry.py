@@ -8,16 +8,17 @@ from saccades import gazedata
 from saccades import geometry
 
 
-# Use numpy.allclose() to allow for floating-point error if necessary.
+# Use numpy.allclose() in place of numpy.array_equal()
+# to allow for floating-point error where necessary.
 
 
 #%% center()
 
 def test_center():
 
-    observed = geometry.center(constants.ARRAY_XY, constants.ORIGIN)
+    centered = geometry.center(constants.ARRAY_XY, constants.ORIGIN)
 
-    assert numpy.array_equal(observed, constants.CENTERED)
+    assert numpy.array_equal(centered, constants.CENTERED)
 
 
 def test_center_as_GazeData_method():
@@ -34,25 +35,25 @@ def test_center_as_GazeData_method():
 # this test helps me sleep at night.
 def test_center_with_square_array():
 
-    observed = geometry.center(constants.ARRAY_XY[:2, :], constants.ORIGIN)
+    centered = geometry.center(constants.ARRAY_XY[:2, :], constants.ORIGIN)
 
-    assert numpy.array_equal(observed, constants.CENTERED[:2, :])
+    assert numpy.array_equal(centered, constants.CENTERED[:2, :])
 
 
 #%% rotate()
 
 def test_rotate():
 
-    observed = geometry.rotate(constants.ARRAY_XY, constants.ANGLE)
+    rotated = geometry.rotate(constants.ARRAY_XY, constants.ANGLE)
 
-    assert numpy.allclose(observed, constants.ROTATED)
+    assert numpy.allclose(rotated, constants.ROTATED)
 
 
 def test_rotate_about_center():
 
-    observed = geometry.rotate(constants.ARRAY_XY, constants.ANGLE, origin=constants.ORIGIN)
+    rotated = geometry.rotate(constants.ARRAY_XY, constants.ANGLE, origin=constants.ORIGIN)
 
-    assert numpy.allclose(observed, constants.CENTER_ROTATED)
+    assert numpy.allclose(rotated, constants.CENTER_ROTATED)
 
 
 def test_rotate_as_GazeData_method():
@@ -61,3 +62,12 @@ def test_rotate_as_GazeData_method():
     gd.rotate(constants.ANGLE)
 
     assert numpy.allclose(gd[['x', 'y']], constants.ROTATED)
+
+
+#%% velocity()
+
+#def test_velocity():
+
+#    velocity = geometry.velocity(constants.ARRAY)
+
+#    assert numpy.array_equal(velocity, constants.VELOCITY)
