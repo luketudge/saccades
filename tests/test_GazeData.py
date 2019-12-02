@@ -2,6 +2,7 @@
 
 import numpy
 import pandas
+import pytest
 
 from . import constants
 
@@ -15,14 +16,14 @@ from saccades import gazedata
 
 #%% __init__()
 
-def test_GazeData_init_types():
+@pytest.mark.parametrize('input_type', [constants.SEQUENCE, constants.ARRAY, constants.DATAFRAME])
+def test_GazeData_init_types(input_type):
 
-    for input_type in [constants.SEQUENCE, constants.ARRAY, constants.DATAFRAME]:
-        gd = gazedata.GazeData(input_type)
-        assert isinstance(gd, gazedata.GazeData)
-        assert isinstance(gd, pandas.DataFrame)
-        assert numpy.array_equal(gd, constants.ARRAY)
-        assert list(gd.columns) == ['time', 'x', 'y']
+    gd = gazedata.GazeData(input_type)
+    assert isinstance(gd, gazedata.GazeData)
+    assert isinstance(gd, pandas.DataFrame)
+    assert numpy.array_equal(gd, constants.ARRAY)
+    assert list(gd.columns) == ['time', 'x', 'y']
 
 
 # Check we get a copy and not a view.
