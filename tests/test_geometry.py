@@ -4,7 +4,6 @@ import numpy
 
 from . import constants
 
-from saccades import gazedata
 from saccades import geometry
 
 
@@ -26,9 +25,8 @@ def test_center():
     assert numpy.array_equal(centered, constants.CENTERED)
 
 
-def test_center_as_GazeData_method():
+def test_center_as_GazeData_method(gd):
 
-    gd = gazedata.GazeData(constants.ARRAY)
     gd.center(constants.ORIGIN)
 
     assert numpy.array_equal(gd[['x', 'y']], constants.CENTERED)
@@ -61,9 +59,8 @@ def test_rotate_about_center():
     assert numpy.allclose(rotated, constants.CENTER_ROTATED)
 
 
-def test_rotate_as_GazeData_method():
+def test_rotate_as_GazeData_method(gd):
 
-    gd = gazedata.GazeData(constants.ARRAY)
     gd.rotate(constants.ANGLE)
 
     assert numpy.allclose(gd[['x', 'y']], constants.ROTATED)
@@ -78,9 +75,27 @@ def test_velocity():
     assert numpy.allclose(velocity, constants.VELOCITY, equal_nan=True)
 
 
-def test_velocity_as_GazeData_method():
+def test_velocity_as_GazeData_method(gd):
 
-    gd = gazedata.GazeData(constants.ARRAY)
     gd.velocity()
 
     assert numpy.allclose(gd['velocity'], constants.VELOCITY, equal_nan=True)
+
+
+#%% acceleration()
+
+def test_acceleration():
+
+    acceleration = geometry.acceleration(constants.ARRAY)
+
+    assert numpy.allclose(acceleration, constants.ACCELERATION, equal_nan=True)
+
+
+def test_acceleration_as_GazeData_method(gd):
+
+    gd.acceleration()
+
+    assert numpy.allclose(gd['acceleration'], constants.ACCELERATION, equal_nan=True)
+
+    # Check also that the intermediate velocity column was created.
+    assert 'velocity' in gd

@@ -28,10 +28,11 @@ def test_GazeData_init_types():
 # Check we get a copy and not a view.
 def test_GazeData_is_not_view():
 
-    gd = gazedata.GazeData(constants.ARRAY)
+    a = constants.ARRAY
+    gd = gazedata.GazeData(a)
     gd['time'][0] = 9000.
 
-    assert constants.ARRAY[0, 0] != 9000.
+    assert a[0, 0] != 9000.
 
 
 #%% Subsetting
@@ -45,25 +46,22 @@ def test_GazeData_is_not_view():
 # But a subset of composed of the 'time', 'x', and 'y' columns *is* complete.
 # So this column subset should return an instance of the GazeData class.
 
-def test_subset_rows():
+def test_subset_rows(gd):
 
-    gd = gazedata.GazeData(constants.ARRAY)
     gd_subset = gd[:2]
     assert numpy.array_equal(gd_subset, constants.ARRAY[:2, :])
     assert isinstance(gd_subset, gazedata.GazeData)
 
 
-def test_subset_incomplete_cols():
+def test_subset_incomplete_cols(gd):
 
-    gd = gazedata.GazeData(constants.ARRAY)
     gd_subset = gd[['x', 'y']]
     assert numpy.array_equal(gd_subset, constants.ARRAY_XY)
     assert not isinstance(gd_subset, gazedata.GazeData)
 
 
-def test_subset_complete_cols():
+def test_subset_complete_cols(gd):
 
-    gd = gazedata.GazeData(constants.ARRAY)
     gd_subset = gd[['time', 'x', 'y']]
     assert numpy.array_equal(gd_subset, constants.ARRAY)
     assert isinstance(gd_subset, gazedata.GazeData)
