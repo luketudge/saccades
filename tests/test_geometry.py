@@ -54,7 +54,9 @@ def test_rotate():
 
 def test_rotate_about_center():
 
-    rotated = geometry.rotate(constants.ARRAY_XY, constants.ANGLE, origin=constants.ORIGIN)
+    rotated = geometry.rotate(constants.ARRAY_XY,
+                              constants.ANGLE,
+                              origin=constants.ORIGIN)
 
     assert numpy.allclose(rotated, constants.CENTER_ROTATED)
 
@@ -86,7 +88,8 @@ def test_velocity_as_GazeData_method(gd):
 
 def test_acceleration():
 
-    acceleration = geometry.acceleration(constants.ARRAY[:, 0], constants.VELOCITY)
+    acceleration = geometry.acceleration(constants.ARRAY[:, 0],
+                                         constants.VELOCITY)
 
     assert numpy.allclose(acceleration, constants.ACCELERATION, equal_nan=True)
 
@@ -103,10 +106,10 @@ def test_acceleration_as_GazeData_method(gd):
 
 def test_acceleration_as_GazeData_method_with_existing_velocities(gd):
 
-    fake_velocities = numpy.zeros_like(constants.VELOCITY)
-    fake_accelerations = numpy.append([numpy.nan], fake_velocities[1:])
+    velocities = numpy.zeros_like(constants.VELOCITY)
+    accelerations = numpy.append([numpy.nan], velocities[1:])
 
-    gd['velocity'] = fake_velocities
+    gd['velocity'] = velocities
     gd.get_accelerations()
 
-    assert numpy.allclose(gd['acceleration'], fake_accelerations, equal_nan=True)
+    assert numpy.allclose(gd['acceleration'], accelerations, equal_nan=True)

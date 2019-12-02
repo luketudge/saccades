@@ -16,7 +16,7 @@ from saccades import gazedata
 
 #%% __init__()
 
-@pytest.mark.parametrize('input_type', [constants.SEQUENCE, constants.ARRAY, constants.DATAFRAME])
+@pytest.mark.parametrize('input_type', constants.INIT_TYPES)
 def test_GazeData_init_types(input_type):
 
     gd = gazedata.GazeData(input_type)
