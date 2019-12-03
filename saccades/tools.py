@@ -8,7 +8,7 @@ import numpy
 def blockmanager_to_array(blockmanager):
 
     # The .as_array() method is new to pandas v0.23.
-    # Try the older .as_matrix() method if it fails.
+    # Revert to the older .as_matrix() method if it fails.
     try:
         return blockmanager.as_array().transpose()
     except AttributeError:

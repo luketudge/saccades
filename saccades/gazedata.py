@@ -37,7 +37,7 @@ class GazeData(pandas.DataFrame):
     # _internal_names = pandas.DataFrame._internal_names + []
     # _internal_names_set = set(_internal_names)
 
-    def __new__(cls, data):
+    def __new__(cls, data, **kwargs):
 
         # When a new instance of the custom class is requested,
         # this can be for two different reasons:
@@ -62,7 +62,7 @@ class GazeData(pandas.DataFrame):
 
         return super().__new__(cls)
 
-    def __init__(self, data):
+    def __init__(self, data, **kwargs):
         """:param data: Gaze data with shape *(n, 3)*, \
         where *n* is the number of gaze samples, \
         and columns are *time*, *x gaze position*, *y gaze position*.
@@ -71,23 +71,24 @@ class GazeData(pandas.DataFrame):
         """
 
         # By default set new column names.
-        columns = INIT_COLUMNS
+        # And override any duplicated 'column' keyword arguments.
+        kwargs['columns'] = INIT_COLUMNS
 
         # But if we are dealing with a valid subset (see above),
         # we want to preserve the columns of the subset.
         if isinstance(data, pandas.core.internals.BlockManager):
-            columns = list(data.items)
+            kwargs['columns'] = list(data.items)
 
         # Otherwise if we are initializing from a pandas DataFrame,
         # we want to preserve the columns only if they are valid,
         # and reset the data to a bare array if not.
         elif isinstance(data, pandas.DataFrame):
             if list(data.columns)[:3] == INIT_COLUMNS:
-                columns = data.columns
+                kwargs['columns'] = data.columns
             else:
                 data = check_shape(data, (None, 3))
 
-        super().__init__(data=data, columns=columns, copy=True)
+        super().__init__(data=data, copy=True, **kwargs)
 
     # To allow subsets of the custom class to preserve their type,
     # we need to override the constructor that subsetting calls.
