@@ -32,15 +32,16 @@ def test_pandas_plot(gd):
 
 def test_pandas_stats(gd):
 
-    assert numpy.array_equal(gd.mean(), constants.DATAFRAME.mean())
-    assert numpy.array_equal(gd.median(), constants.DATAFRAME.median())
+    col_means = gd[['time', 'x', 'y']].mean()
+
+    assert numpy.array_equal(col_means, constants.DF.mean())
 
 
 #%% plotnine
 
-def test_plotnine_plot(gd):
+def test_plotnine_plot(gd_not_parametrized):
 
-    fig = (plotnine.ggplot(gd, plotnine.aes(x='x', y='y'))
+    fig = (plotnine.ggplot(gd_not_parametrized, plotnine.aes(x='x', y='y'))
            + plotnine.geom_point())  # noqa: W503
 
     fig.draw()

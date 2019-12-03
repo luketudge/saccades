@@ -53,7 +53,7 @@ class GazeData(pandas.DataFrame):
             # A subset might still be a full valid table of gaze data,
             # if it contains the 3 essential columns 'time', 'x', and 'y'.
             # If so, we initialize an instance of the custom class.
-            if list(data.items)[:3] == INIT_COLUMNS:
+            if all((col in list(data.items)) for col in INIT_COLUMNS):
                 return super().__new__(cls)
 
             # Otherwise we initialize a standard pandas DataFrame.
@@ -83,7 +83,7 @@ class GazeData(pandas.DataFrame):
         # we want to preserve the columns only if they are valid,
         # and reset the data to a bare array if not.
         elif isinstance(data, pandas.DataFrame):
-            if list(data.columns)[:3] == INIT_COLUMNS:
+            if all((col in data) for col in INIT_COLUMNS):
                 kwargs['columns'] = data.columns
             else:
                 data = check_shape(data, (None, 3))

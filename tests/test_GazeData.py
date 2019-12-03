@@ -18,17 +18,22 @@ from saccades import gazedata
 
 #%% __init__()
 
-@pytest.mark.parametrize('input_type', constants.INIT_TYPES)
-def test_GazeData_init_types(input_type):
+def test_GazeData_init_types(gd):
 
-    gd = gazedata.GazeData(input_type)
     assert isinstance(gd, gazedata.GazeData)
     assert isinstance(gd, pandas.DataFrame)
-    assert list(gd.columns[:3]) == ['time', 'x', 'y']
+    assert all((col in gd.columns) for col in ['time', 'x', 'y'])
     assert numpy.array_equal(gd[['time', 'x', 'y']], constants.ARRAY[:, :3])
 
 
-def test_empty_GazeData():
+@pytest.mark.parametrize('input_type', constants.INVALID_INIT_TYPES)
+def test_GazeData_invalid_init_types(input_type):
+
+    with pytest.raises(ValueError):
+        gazedata.GazeData(input_type)
+
+
+def test_GazeData_empty_init():
 
     gd = gazedata.GazeData()
     assert isinstance(gd, gazedata.GazeData)
@@ -61,7 +66,7 @@ def test_GazeData_is_not_view():
 def test_subset_rows(gd):
 
     gd_subset = gd[:2]
-    assert numpy.array_equal(gd_subset, constants.ARRAY[:2, :])
+    assert numpy.array_equal(gd_subset[['time', 'x', 'y']], constants.ARRAY[:2, :])
     assert isinstance(gd_subset, gazedata.GazeData)
 
 
