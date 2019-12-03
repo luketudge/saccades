@@ -15,6 +15,6 @@ setuptools.setup(
     classifiers=['Programming Language :: Python :: 3',
                  'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)'],
     packages=['saccades'],
-    install_requires=['numpy', 'pandas'],
+    install_requires=['matplotlib', 'numpy', 'pandas'],
     python_requires='>=3'
 )
