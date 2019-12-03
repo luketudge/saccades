@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 import numpy
 import plotnine
 
@@ -12,6 +14,11 @@ from . import constants
 # that are possible with a pandas DataFrame
 # are still possible with a GazeData instance.
 # Most important are plotting and statistical summaries.
+
+
+#%% Setup
+
+base_path = os.path.dirname(os.path.abspath(__file__))
 
 
 #%% pandas
@@ -33,6 +40,9 @@ def test_pandas_stats(gd):
 
 def test_plotnine_plot(gd):
 
-    fig = plotnine.ggplot(gd, plotnine.aes(x='x', y='y'))
+    fig = (plotnine.ggplot(gd, plotnine.aes(x='x', y='y'))
+           + plotnine.geom_point())  # noqa: W503
+
     fig.draw()
-    fig.save('temp.png')
+
+    fig.save(os.path.join(base_path, 'temp.png'), verbose=False)

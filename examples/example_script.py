@@ -12,8 +12,10 @@ import plotnine
 import saccades
 
 
-filepath = os.path.join('data', 'example.csv')
-df = pandas.read_csv(filepath, header=None)
+base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+file_path = os.path.join(base_path, 'tests', 'data', 'example.csv')
+
+df = pandas.read_csv(file_path, header=None)
 gd = saccades.GazeData(df)
 
 print(gd)
