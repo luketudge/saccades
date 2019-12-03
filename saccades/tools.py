@@ -5,18 +5,6 @@
 import numpy
 
 
-#%% Helper class
-
-class Anything:
-    """Is equal to anything.
-    """
-
-    def __eq__(self, other):
-        return True
-
-
-#%% Functions
-
 def blockmanager_to_array(blockmanager):
 
     # The .as_array() method is new to pandas v0.23.
@@ -43,8 +31,6 @@ def check_shape(array, shape):
     :raises ValueError: If `array` is not of the expected shape.
     """
 
-    shape = [Anything() if dim is None else dim for dim in shape]
-
     # numpy.array returns a copy not a view, so this should be ok.
     array = numpy.array(array)
 
@@ -52,8 +38,9 @@ def check_shape(array, shape):
         msg = 'Array has {} dimensions but {} required.'
         raise ValueError(msg.format(array.ndim, len(shape)))
 
-    if any(obs != exp for obs, exp in zip(array.shape, shape)):
-        msg = 'Array has shape {} but {} required.'
-        raise ValueError(msg.format(array.shape, shape))
+    for obs, exp in zip(array.shape, shape):
+        if (exp is not None) and (obs != exp):
+            msg = 'Array has shape {} but {} required.'
+            raise ValueError(msg.format(array.shape, shape))
 
     return array

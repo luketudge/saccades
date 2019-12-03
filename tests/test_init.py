@@ -5,5 +5,4 @@ def test_init():
 
     import saccades
 
-    for obj in ['GazeData', 'geometry']:
-        assert obj in dir(saccades)
+    assert 'GazeData' in dir(saccades)

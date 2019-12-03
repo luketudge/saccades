@@ -22,8 +22,8 @@ def test_GazeData_init_types(input_type):
     gd = gazedata.GazeData(input_type)
     assert isinstance(gd, gazedata.GazeData)
     assert isinstance(gd, pandas.DataFrame)
-    assert numpy.array_equal(gd, constants.ARRAY)
-    assert list(gd.columns) == ['time', 'x', 'y']
+    assert list(gd.columns[:3]) == ['time', 'x', 'y']
+    assert numpy.array_equal(gd[['time', 'x', 'y']], constants.ARRAY[:, :3])
 
 
 # Check we get a copy and not a view.

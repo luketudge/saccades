@@ -52,7 +52,7 @@ class GazeData(pandas.DataFrame):
 
             # A subset might still be a full valid table of gaze data,
             # if it contains the 3 essential columns 'time', 'x', and 'y'.
-            # So we initialize an instance of the custom class.
+            # If so, we initialize an instance of the custom class.
             if list(data.items)[:3] == INIT_COLUMNS:
                 return super().__new__(cls)
 
@@ -60,8 +60,6 @@ class GazeData(pandas.DataFrame):
             # This needs the array form of the data.
             return pandas.DataFrame(blockmanager_to_array(data))
 
-        # And this handles (1).
-        check_shape(data, (None, 3))
         return super().__new__(cls)
 
     def __init__(self, data):
@@ -72,7 +70,24 @@ class GazeData(pandas.DataFrame):
         or convertible to :class:`numpy.ndarray`
         """
 
-        super().__init__(data=data, columns=INIT_COLUMNS, copy=True)
+        # By default set new column names.
+        columns = INIT_COLUMNS
+
+        # But if we are dealing with a valid subset (see above),
+        # we want to preserve the columns of the subset.
+        if isinstance(data, pandas.core.internals.BlockManager):
+            columns = list(data.items)
+
+        # Otherwise if we are initializing from a pandas DataFrame,
+        # we want to preserve the columns only if they are valid,
+        # and reset the data to a bare array if not.
+        elif isinstance(data, pandas.DataFrame):
+            if list(data.columns)[:3] == INIT_COLUMNS:
+                columns = data.columns
+            else:
+                data = check_shape(data, (None, 3))
+
+        super().__init__(data=data, columns=columns, copy=True)
 
     # To allow subsets of the custom class to preserve their type,
     # we need to override the constructor that subsetting calls.
