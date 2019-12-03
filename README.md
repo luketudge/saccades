@@ -2,6 +2,8 @@
 
 [![Build Status](https://www.travis-ci.org/luketudge/saccades.svg?branch=master)](https://www.travis-ci.org/luketudge/saccades)
 [![codecov](https://codecov.io/gh/luketudge/saccades/branch/master/graph/badge.svg)](https://codecov.io/gh/luketudge/saccades)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/luketudge/saccades.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/luketudge/saccades/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/luketudge/saccades.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/luketudge/saccades/context:python)
 
 A Python package for working with saccades. A work in progress.
 

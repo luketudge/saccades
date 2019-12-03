@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 import numpy
 import pandas
+
+
+#%% Data
+
+DATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
 
 #%% Input types
@@ -21,7 +28,17 @@ DATAFRAME = pandas.DataFrame(ARRAY,
                              columns=('time', 'x', 'y'),
                              copy=True)
 
-INIT_TYPES = [SEQUENCE, ARRAY, DATAFRAME]
+DATAFRAME_EXTRA_COLUMN = DATAFRAME.copy()
+DATAFRAME_EXTRA_COLUMN['foo'] = 'foo'
+
+DATAFRAME_INVALID_COLUMNS = DATAFRAME.copy()
+DATAFRAME.columns = ['a', 'b', 'c']
+
+INIT_TYPES = [SEQUENCE,
+              ARRAY,
+              DATAFRAME,
+              DATAFRAME_EXTRA_COLUMN,
+              DATAFRAME_INVALID_COLUMNS]
 
 
 #%% Attributes

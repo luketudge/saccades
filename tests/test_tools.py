@@ -8,15 +8,6 @@ from . import constants
 from saccades import tools
 
 
-#%% Anything
-
-def test_Anything():
-
-    for val in [True, False, None, 0, 1, '', 'foo', numpy.nan]:
-        assert tools.Anything() == val
-        assert not (tools.Anything() != val)
-
-
 #%% check_shape()
 
 def test_check_shape_correct_shape():
