@@ -18,4 +18,6 @@ file_path = os.path.join(base_path, 'tests', 'data', 'example.csv')
 df = pandas.read_csv(file_path, header=None)
 gd = saccades.GazeData(df)
 
+gd.get_accelerations()
+
 print(gd)
