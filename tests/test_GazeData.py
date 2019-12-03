@@ -26,6 +26,15 @@ def test_GazeData_init_types(input_type):
     assert numpy.array_equal(gd[['time', 'x', 'y']], constants.ARRAY[:, :3])
 
 
+def test_empty_GazeData():
+
+    gd = gazedata.GazeData()
+    assert isinstance(gd, gazedata.GazeData)
+    assert isinstance(gd, pandas.DataFrame)
+    assert list(gd.columns) == ['time', 'x', 'y']
+    assert gd.empty
+
+
 # Check we get a copy and not a view.
 def test_GazeData_is_not_view():
 
@@ -66,19 +75,3 @@ def test_subset_incomplete_cols(gd):
     gd_subset = gd[['x', 'y']]
     assert numpy.array_equal(gd_subset, constants.ARRAY_XY)
     assert not isinstance(gd_subset, gazedata.GazeData)
-
-
-#%% pandas
-
-# Check that useful pandas DataFrame methods survive subclassing.
-
-def test_stats(gd):
-
-    assert numpy.array_equal(gd.mean(), constants.DATAFRAME.mean())
-    assert numpy.array_equal(gd.median(), constants.DATAFRAME.median())
-
-
-def test_plot(gd):
-
-    # No assertion, just checking this even works.
-    gd[['x', 'y']].plot()
