@@ -12,7 +12,7 @@ from saccades import gazedata
 # GazeData methods that wrap functions from other modules
 # are tested in the test files for those modules.
 # Compatibility of GazeData with other data science packages
-# is tested in test.compatibility.py.
+# is tested in test_compatibility.py.
 # This test file tests the other features of the GazeData class.
 
 
