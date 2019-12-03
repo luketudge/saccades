@@ -37,7 +37,7 @@ class GazeData(pandas.DataFrame):
     # _internal_names = pandas.DataFrame._internal_names + []
     # _internal_names_set = set(_internal_names)
 
-    def __new__(cls, data, **kwargs):
+    def __new__(cls, data=None, **kwargs):
 
         # When a new instance of the custom class is requested,
         # this can be for two different reasons:
@@ -62,7 +62,7 @@ class GazeData(pandas.DataFrame):
 
         return super().__new__(cls)
 
-    def __init__(self, data, **kwargs):
+    def __init__(self, data=None, **kwargs):
         """:param data: Gaze data with shape *(n, 3)*, \
         where *n* is the number of gaze samples, \
         and columns are *time*, *x gaze position*, *y gaze position*.
