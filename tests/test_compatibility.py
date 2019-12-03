@@ -23,13 +23,6 @@ base_path = os.path.dirname(os.path.abspath(__file__))
 
 #%% pandas
 
-def test_pandas_plot(gd):
-
-    # No assertion, just checking this at least doesn't error.
-    gd.plot('x', 'y')
-    gd.plot.line('x', 'y')
-
-
 def test_pandas_stats(gd):
 
     col_means = gd[['time', 'x', 'y']].mean()
