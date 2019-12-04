@@ -17,6 +17,8 @@ from .tools import _blockmanager_to_array
 
 INIT_COLUMNS = ['time', 'x', 'y']
 
+RAW_DATA_COLUMNS = ['x_raw', 'y_raw']
+
 
 #%% Main class
 
@@ -93,17 +95,24 @@ class GazeData(pandas.DataFrame):
 
     # To allow subsets of the custom class to preserve their type,
     # we need to override the constructor that subsetting calls.
-    # Otherwise it will still call pandas.DataFrame.
+    # Otherwise it will still call pandas.DataFrame().
     # https://pandas.pydata.org/pandas-docs/stable/development/extending.html#override-constructor-properties
     @property
     def _constructor(self):
         return GazeData
+
+    def _save_raw_coords(self):
+
+        if all((col not in self) for col in RAW_DATA_COLUMNS):
+            self[RAW_DATA_COLUMNS] = self[['x', 'y']]
 
     def center(self, origin):
         """Center gaze coordinates.
 
         See :func:`.geometry.center`.
         """
+
+        self._save_raw_coords()
 
         self[['x', 'y']] = center(self[['x', 'y']], origin)
 
@@ -112,6 +121,8 @@ class GazeData(pandas.DataFrame):
 
         See :func:`.geometry.rotate`.
         """
+
+        self._save_raw_coords()
 
         self[['x', 'y']] = rotate(self[['x', 'y']], theta, origin)
 
@@ -160,11 +171,15 @@ class GazeData(pandas.DataFrame):
 
         fig = plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
 
+        if show_raw:
+            fig = fig + plotnine.geom_line(plotnine.aes(x='x_raw', y='y_raw'),
+                                           linetype='dashed')
+
         fig = (fig + plotnine.geom_line()
                    + plotnine.geom_point(fill='gray')  # noqa: W503
                    + plotnine.coord_equal())  # noqa: W503
 
         if filename:
-            fig.save(filename, **kwargs)
+            fig.save(filename, verbose=verbose, **kwargs)
 
         return fig

@@ -50,3 +50,7 @@ Run the installation and testing script [install_and_test.sh](scripts/install_an
 ```
 
 If you make changes to the source code (in the main package directory [saccades](saccades)), you can run this script again to build and test your modified version.
+
+## Example
+
+You can see an example script (of sorts) in [test_script.py](tests/test_script.py).

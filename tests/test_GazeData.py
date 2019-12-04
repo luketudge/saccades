@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import functools
+
 import numpy
 import pandas
 import plotnine
@@ -15,6 +17,12 @@ from saccades import gazedata
 # Compatibility of GazeData with other data science packages
 # is tested in test_compatibility.py.
 # This test file tests the other features of the GazeData class.
+
+
+#%% Setup
+
+methods = [functools.partial(gazedata.GazeData.center, origin=constants.ORIGIN),
+           functools.partial(gazedata.GazeData.rotate, theta=constants.ANGLE)]
 
 
 #%% __init__()
@@ -57,10 +65,52 @@ def test_GazeData_is_not_view():
     assert a[0, 0] != 9000.
 
 
+#%% _save_raw_coords()
+
+def test_save_raw_coords(gd):
+
+    # Check first that the new columns aren't somehow already there.
+    assert 'x_raw' not in gd
+    assert 'y_raw' not in gd
+
+    gd._save_raw_coords()
+
+    assert numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
+
+    # Modify the coordinates and check that the raw ones are unharmed.
+    gd['x'] = 0.
+    assert not numpy.array_equal(gd['x_raw'], gd['x'])
+
+
+# We would like this 'private' method to store the current coordinates
+# but only if they have not already been stored.
+# So here we test that there is no effect of a second call.
+
+def test_save_raw_coords_with_existing_coords(gd):
+
+    gd._save_raw_coords()
+    gd['x'] = 0.
+    gd._save_raw_coords()
+
+    assert not numpy.array_equal(gd['x_raw'], gd['x'])
+
+
+@pytest.mark.parametrize('method', methods)
+def test_save_raw_coords_before_method_call(gd, method):
+
+    method(gd)
+
+    assert numpy.array_equal(gd[['x_raw', 'y_raw']], constants.ARRAY_XY)
+    assert not numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
+
+
 #%% plot()
 
 @pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARGS_NAMES)
 def test_GazeData_plot(gd, kwargs):
+
+    # Make a basic transform so as to distinguish data from raw data.
+    gd.center(origin=constants.ORIGIN)
 
     fig = gd.plot(**kwargs)
 
