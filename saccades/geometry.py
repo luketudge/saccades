@@ -72,11 +72,10 @@ def velocity(coords):
 
     coords = check_shape(coords, (None, 3))
 
-    diffs = numpy.diff(coords, axis=0)
+    diffs = numpy.diff(coords, axis=0, prepend=numpy.nan)
     distances = numpy.linalg.norm(diffs[:, 1:3], axis=1)
-    velocities = distances / diffs[:, 0]
 
-    return numpy.append([numpy.nan], velocities)
+    return distances / diffs[:, 0]
 
 
 def acceleration(t, v):
@@ -99,6 +98,7 @@ def acceleration(t, v):
     t = check_shape(t, (None, ))
     v = check_shape(v, (None, ))
 
-    accelerations = numpy.diff(v) / numpy.diff(t)
+    t_diffs = numpy.diff(t, prepend=numpy.nan)
+    v_diffs = numpy.diff(v, prepend=numpy.nan)
 
-    return numpy.append([numpy.nan], accelerations)
+    return v_diffs / t_diffs

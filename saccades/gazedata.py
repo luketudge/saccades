@@ -3,6 +3,7 @@
 """
 
 import pandas
+import plotnine
 
 from .geometry import acceleration
 from .geometry import center
@@ -37,7 +38,7 @@ class GazeData(pandas.DataFrame):
     # _internal_names = pandas.DataFrame._internal_names + []
     # _internal_names_set = set(_internal_names)
 
-    def __new__(cls, data, **kwargs):
+    def __new__(cls, data=None, **kwargs):
 
         # When a new instance of the custom class is requested,
         # this can be for two different reasons:
@@ -53,7 +54,7 @@ class GazeData(pandas.DataFrame):
             # A subset might still be a full valid table of gaze data,
             # if it contains the 3 essential columns 'time', 'x', and 'y'.
             # If so, we initialize an instance of the custom class.
-            if list(data.items)[:3] == INIT_COLUMNS:
+            if all((col in list(data.items)) for col in INIT_COLUMNS):
                 return super().__new__(cls)
 
             # Otherwise we initialize a standard pandas DataFrame.
@@ -62,7 +63,7 @@ class GazeData(pandas.DataFrame):
 
         return super().__new__(cls)
 
-    def __init__(self, data, **kwargs):
+    def __init__(self, data=None, **kwargs):
         """:param data: Gaze data with shape *(n, 3)*, \
         where *n* is the number of gaze samples, \
         and columns are *time*, *x gaze position*, *y gaze position*.
@@ -83,7 +84,7 @@ class GazeData(pandas.DataFrame):
         # we want to preserve the columns only if they are valid,
         # and reset the data to a bare array if not.
         elif isinstance(data, pandas.DataFrame):
-            if list(data.columns)[:3] == INIT_COLUMNS:
+            if all((col in data) for col in INIT_COLUMNS):
                 kwargs['columns'] = data.columns
             else:
                 data = check_shape(data, (None, 3))
@@ -137,3 +138,13 @@ class GazeData(pandas.DataFrame):
             self.get_velocities()
 
         self['acceleration'] = acceleration(self['time'], self['velocity'])
+
+    def plot(self):
+        """Plot gaze coordinates.
+        """
+
+        fig = (plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
+               + plotnine.geom_line()  # noqa: W503
+               + plotnine.geom_point())  # noqa: W503
+
+        return fig

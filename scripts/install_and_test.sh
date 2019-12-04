@@ -10,7 +10,7 @@ echo
 echo
 echo '#### Tests ####'
 echo
-pytest -v --cov=saccades --cov-report=term-missing
+./scripts/test.sh
 
 echo
 echo '#### Code style checks ####'

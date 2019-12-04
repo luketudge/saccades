@@ -3,6 +3,12 @@
 import setuptools
 
 
+dependencies = ['matplotlib',
+                'numpy',
+                'pandas',
+                'plotnine',
+                'scipy']
+
 setuptools.setup(
     name='saccades',
     version='0.1',
@@ -15,6 +21,6 @@ setuptools.setup(
     classifiers=['Programming Language :: Python :: 3',
                  'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)'],
     packages=['saccades'],
-    install_requires=['matplotlib', 'numpy', 'pandas'],
+    install_requires=dependencies,
     python_requires='>=3'
 )
