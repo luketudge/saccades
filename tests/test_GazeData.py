@@ -119,6 +119,9 @@ def test_flip_y(gd):
 @pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARGS_NAMES)
 def test_GazeData_plot(gd, kwargs):
 
+    # Make a basic transform so as to distinguish data from raw data.
+    gd.flip_y()
+
     fig = gd.plot(**kwargs)
 
     assert isinstance(fig, plotnine.ggplot)

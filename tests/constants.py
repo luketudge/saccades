@@ -144,7 +144,8 @@ ACCELERATION = numpy.array([numpy.nan, numpy.nan, 1.25])
 
 IMAGE_FORMAT = '.png'
 
-PLOT_ARGS = [{'filename': 'test_plot'}]
+PLOT_ARGS = [{'filename': 'test_plot'},
+             {'filename': 'test_plot_raw_data', 'show_raw': True}]
 
 PLOT_ARGS_NAMES = [x['filename'] for x in PLOT_ARGS]
 

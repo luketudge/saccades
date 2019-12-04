@@ -184,6 +184,9 @@ class GazeData(pandas.DataFrame):
 
         fig = plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
 
+        if show_raw:
+            fig = fig + plotnine.geom_line(plotnine.aes(x='x_raw', y='y_raw'), linetype='dashed')
+
         fig = (fig + plotnine.geom_line()
                    + plotnine.geom_point(fill='gray')  # noqa: W503
                    + plotnine.coord_equal())  # noqa: W503
