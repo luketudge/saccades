@@ -93,7 +93,7 @@ class GazeData(pandas.DataFrame):
 
     # To allow subsets of the custom class to preserve their type,
     # we need to override the constructor that subsetting calls.
-    # Otherwise it will still call pandas.DataFrame.
+    # Otherwise it will still call pandas.DataFrame().
     # https://pandas.pydata.org/pandas-docs/stable/development/extending.html#override-constructor-properties
     @property
     def _constructor(self):
@@ -176,6 +176,6 @@ class GazeData(pandas.DataFrame):
                    + plotnine.coord_equal())  # noqa: W503
 
         if filename:
-            fig.save(filename, **kwargs)
+            fig.save(filename, verbose=verbose, **kwargs)
 
         return fig
