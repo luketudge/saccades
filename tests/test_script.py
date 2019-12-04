@@ -37,7 +37,7 @@ def test_script():
     gd = saccades.GazeData(DF)
 
     ## Recenter.
-    gd.center(CENTER)
+    gd.center(origin=CENTER)
 
     ## Calculate velocity and acceleration.
     gd.get_accelerations()
@@ -46,7 +46,7 @@ def test_script():
     print(gd)
 
     ## Save a plot.
-    gd.plot(filename=IMAGE_PATH)
+    gd.plot(filename=IMAGE_PATH, show_raw=True)
 
 
 #%% Script mode

@@ -21,8 +21,7 @@ from saccades import gazedata
 
 #%% Setup
 
-methods = [gazedata.GazeData.flip_y,
-           functools.partial(gazedata.GazeData.center, origin=constants.ORIGIN),
+methods = [functools.partial(gazedata.GazeData.center, origin=constants.ORIGIN),
            functools.partial(gazedata.GazeData.rotate, theta=constants.ANGLE)]
 
 
@@ -105,22 +104,13 @@ def test_save_raw_coords_before_method_call(gd, method):
     assert not numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
 
 
-#%% flip_y()
-
-def test_flip_y(gd):
-
-    gd.flip_y()
-
-    assert numpy.array_equal(gd[['x', 'y']], constants.FLIPPED)
-
-
 #%% plot()
 
 @pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARGS_NAMES)
 def test_GazeData_plot(gd, kwargs):
 
     # Make a basic transform so as to distinguish data from raw data.
-    gd.flip_y()
+    gd.center(origin=constants.ORIGIN)
 
     fig = gd.plot(**kwargs)
 

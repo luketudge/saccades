@@ -106,19 +106,6 @@ class GazeData(pandas.DataFrame):
         if all((col not in self) for col in RAW_DATA_COLUMNS):
             self[RAW_DATA_COLUMNS] = self[['x', 'y']]
 
-    def flip_y(self):
-        """Flip y coordinates.
-
-        Many eyetracking systems use a coordinate system \
-        in which the vertical axis points downward. \
-        So this method is provided as a convenience \
-        in case an upward-pointing vertical axis is preferred.
-        """
-
-        self._save_raw_coords()
-
-        self['y'] = -self['y']
-
     def center(self, origin):
         """Center gaze coordinates.
 
@@ -185,7 +172,8 @@ class GazeData(pandas.DataFrame):
         fig = plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
 
         if show_raw:
-            fig = fig + plotnine.geom_line(plotnine.aes(x='x_raw', y='y_raw'), linetype='dashed')
+            fig = fig + plotnine.geom_line(plotnine.aes(x='x_raw', y='y_raw'),
+                                           linetype='dashed')
 
         fig = (fig + plotnine.geom_line()
                    + plotnine.geom_point(fill='gray')  # noqa: W503
