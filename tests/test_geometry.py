@@ -25,11 +25,11 @@ def test_center():
     assert numpy.array_equal(centered, constants.CENTERED)
 
 
-def test_center_as_GazeData_method(gd):
+def test_center_as_GazeData_method(gd_all):
 
-    gd.center(constants.ORIGIN)
+    gd_all.center(constants.ORIGIN)
 
-    assert numpy.array_equal(gd[['x', 'y']], constants.CENTERED)
+    assert numpy.array_equal(gd_all[['x', 'y']], constants.CENTERED)
 
 
 # Since casting a length-2 vector to a 2x2 array
@@ -61,11 +61,11 @@ def test_rotate_about_center():
     assert numpy.allclose(rotated, constants.CENTER_ROTATED)
 
 
-def test_rotate_as_GazeData_method(gd):
+def test_rotate_as_GazeData_method(gd_all):
 
-    gd.rotate(constants.ANGLE)
+    gd_all.rotate(constants.ANGLE)
 
-    assert numpy.allclose(gd[['x', 'y']], constants.ROTATED)
+    assert numpy.allclose(gd_all[['x', 'y']], constants.ROTATED)
 
 
 #%% velocity()
@@ -77,11 +77,13 @@ def test_velocity():
     assert numpy.allclose(velocity, constants.VELOCITY, equal_nan=True)
 
 
-def test_velocity_as_GazeData_method(gd):
+def test_velocity_as_GazeData_method(gd_all):
 
-    gd.get_velocities()
+    gd_all.get_velocities()
 
-    assert numpy.allclose(gd['velocity'], constants.VELOCITY, equal_nan=True)
+    observed = gd_all['velocity']
+
+    assert numpy.allclose(observed, constants.VELOCITY, equal_nan=True)
 
 
 #%% acceleration()
@@ -94,22 +96,26 @@ def test_acceleration():
     assert numpy.allclose(acceleration, constants.ACCELERATION, equal_nan=True)
 
 
-def test_acceleration_as_GazeData_method(gd):
+def test_acceleration_as_GazeData_method(gd_all):
 
-    gd.get_accelerations()
+    gd_all.get_accelerations()
 
-    assert numpy.allclose(gd['acceleration'], constants.ACCELERATION, equal_nan=True)
+    observed = gd_all['acceleration']
+
+    assert numpy.allclose(observed, constants.ACCELERATION, equal_nan=True)
 
     # Check also that the intermediate velocity column was created.
-    assert 'velocity' in gd
+    assert 'velocity' in gd_all
 
 
-def test_acceleration_as_GazeData_method_with_existing_velocities(gd):
+def test_acceleration_as_GazeData_method_with_existing_velocities(gd_all):
 
+    # Dummy velocity column filled with zeros.
     velocities = numpy.zeros_like(constants.VELOCITY)
-    accelerations = numpy.append([numpy.nan], velocities[1:])
+    gd_all['velocity'] = velocities
 
-    gd['velocity'] = velocities
-    gd.get_accelerations()
+    gd_all.get_accelerations()
 
-    assert numpy.allclose(gd['acceleration'], accelerations, equal_nan=True)
+    expected = numpy.append([numpy.nan], velocities[1:])
+
+    assert numpy.allclose(gd_all['acceleration'], expected, equal_nan=True)

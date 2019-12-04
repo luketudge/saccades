@@ -1,6 +1,6 @@
 #### Project-specific ignores ####
 
-tests/temp.png
+tests/images/test*
 
 
 #### General Python ignores ####

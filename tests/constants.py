@@ -6,14 +6,31 @@ import numpy
 import pandas
 
 
-#%% Data
+#%% Paths
 
-DATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+BASE_PATH = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_PATH, 'data')
+IMAGES_PATH = os.path.join(BASE_PATH, 'images')
+
+
+#%% Helper function
+
+# Checks equality of an image file with its reference file.
+
+def image_file_ok(filename):
+
+    img_bytes = open(filename, mode='rb').read()
+
+    reference_filename = os.path.basename(filename)
+    reference_path = os.path.join(IMAGES_PATH, 'refs', reference_filename)
+    reference_bytes = open(reference_path, mode='rb').read()
+
+    return img_bytes == reference_bytes
 
 
 #%% Valid init types
 
-# These are parametrized in conftest.py.
+# These are used for parametrization in conftest.py.
 
 SEQUENCE = [[2., 1., 0.],
             [4., 4., 4.],
@@ -46,7 +63,6 @@ VALID_INIT_TYPES = [SEQUENCE,
                     DF_EXTRA_COLUMN,
                     DF_REORDERED_COLUMNS]
 
-# Give these ones names because they are parametrized into many tests.
 VALID_INIT_TYPE_NAMES = ['seq',
                          'arr',
                          'df',
@@ -69,6 +85,10 @@ DF_INVALID_COLUMNS.columns = ['x', 'y', 'foo', 'bar']
 INVALID_INIT_TYPES = [ARRAY_XY,
                       DF_XY,
                       DF_INVALID_COLUMNS]
+
+INVALID_INIT_TYPE_NAMES = ['arr_xy',
+                           'df_xy',
+                           'df_invalid_cols']
 
 
 #%% Shapes
@@ -114,3 +134,15 @@ CENTER_ROTATED = numpy.array([[3., 2.],
 VELOCITY = numpy.array([numpy.nan, 2.5, 5.])
 
 ACCELERATION = numpy.array([numpy.nan, numpy.nan, 1.25])
+
+
+#%% Plotting
+
+IMAGE_FORMAT = '.png'
+
+PLOT_ARGS = [{'filename': 'test_plot'}]
+
+PLOT_ARGS_NAMES = [x['filename'] for x in PLOT_ARGS]
+
+for x in PLOT_ARGS:
+    x['filename'] = os.path.join(IMAGES_PATH, x['filename'] + IMAGE_FORMAT)

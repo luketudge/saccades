@@ -10,7 +10,7 @@ from .geometry import center
 from .geometry import rotate
 from .geometry import velocity
 from .tools import check_shape
-from .tools import blockmanager_to_array
+from .tools import _blockmanager_to_array
 
 
 #%% Constants
@@ -25,7 +25,7 @@ class GazeData(pandas.DataFrame):
 
     A :class:`pandas.DataFrame` \
     with some extra methods for processing gaze data. \
-    Most methods wrap functions from :py:mod:`.geometry`.
+    Most methods wrap functions from :mod:`.geometry`.
     """
 
     # pandas.DataFrame treats attributes as column names.
@@ -59,7 +59,7 @@ class GazeData(pandas.DataFrame):
 
             # Otherwise we initialize a standard pandas DataFrame.
             # This needs the array form of the data.
-            return pandas.DataFrame(blockmanager_to_array(data))
+            return pandas.DataFrame(_blockmanager_to_array(data))
 
         return super().__new__(cls)
 
@@ -139,12 +139,32 @@ class GazeData(pandas.DataFrame):
 
         self['acceleration'] = acceleration(self['time'], self['velocity'])
 
-    def plot(self):
+    def plot(self, show_raw=False, filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
+
+        Plotting is done with :mod:`plotnine` because it is good.
+
+        Additional keyword arguments are passed on to \
+        :meth:`plotnine.ggplot.save`
+
+        :param filename: File to save image to. \
+        By default, no image file is saved.
+        :type filename: str
+        :param verbose: Passed on to :meth:`plotnine.ggplot.save` \
+        but with a less annoying default value.
+        :type verbose: bool
+        :return: Plot object. Can be further customized \
+        by adding plot elements from :mod:`plotnine`.
+        :rtype: :class:`plotnine.ggplot`
         """
 
-        fig = (plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
-               + plotnine.geom_line()  # noqa: W503
-               + plotnine.geom_point())  # noqa: W503
+        fig = plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
+
+        fig = (fig + plotnine.geom_line()
+                   + plotnine.geom_point(fill='gray')  # noqa: W503
+                   + plotnine.coord_equal())  # noqa: W503
+
+        if filename:
+            fig.save(filename, **kwargs)
 
         return fig

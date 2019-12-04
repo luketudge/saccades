@@ -16,27 +16,25 @@ from . import constants
 # Most important are plotting and statistical summaries.
 
 
-#%% Setup
-
-base_path = os.path.dirname(os.path.abspath(__file__))
-
-
 #%% pandas
 
-def test_pandas_stats(gd):
+def test_pandas_stats(gd_all):
 
-    col_means = gd[['time', 'x', 'y']].mean()
+    col_means = gd_all[['time', 'x', 'y']].mean()
 
     assert numpy.array_equal(col_means, constants.DF.mean())
 
 
 #%% plotnine
 
-def test_plotnine_plot(gd_not_parametrized):
+def test_plotnine_plot(gd):
 
-    fig = (plotnine.ggplot(gd_not_parametrized, plotnine.aes(x='x', y='y'))
+    fig = (plotnine.ggplot(gd, plotnine.aes(x='x', y='y'))
            + plotnine.geom_point())  # noqa: W503
 
     fig.draw()
 
-    fig.save(os.path.join(base_path, 'temp.png'), verbose=False)
+    filename = os.path.join(constants.IMAGES_PATH, 'test_compatibility.png')
+    fig.save(filename, verbose=False)
+
+    assert constants.image_file_ok(filename)

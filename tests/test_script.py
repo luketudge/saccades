@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 """
 This file doubles as an example script demonstrating basic use, \
-and a very minimal functional test \
-that tests basic use and checks only that no exceptions occur.
+and a very minimal functional test that tests basic use \
+and checks only that no exceptions occur.
 """
 
 import os
+import webbrowser
 
 import pandas
 
@@ -15,14 +16,20 @@ import saccades
 
 #%% Setup
 
-FILENAME = 'example.csv'
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-FILE_PATH = os.path.join(BASE_PATH, 'data', FILENAME)
+
+DATA_FILENAME = 'example.csv'
+DATA_PATH = os.path.join(BASE_PATH, 'data', DATA_FILENAME)
+
+DF = pandas.read_csv(DATA_PATH, header=None)
 
 CENTER = (320, 240)
 
-DF = pandas.read_csv(FILE_PATH, header=None)
+IMAGE_FILENAME = 'test_script.png'
+IMAGE_PATH = os.path.join(BASE_PATH, 'images', IMAGE_FILENAME)
 
+
+#%% Test function
 
 def test_script():
 
@@ -38,5 +45,13 @@ def test_script():
     ## Display the data.
     print(gd)
 
-    ## Plot.
-    gd.plot()
+    ## Save a plot.
+    gd.plot(filename=IMAGE_PATH)
+
+
+#%% Script mode
+
+if __name__ == '__main__':
+
+    test_script()
+    webbrowser.open(IMAGE_PATH)
