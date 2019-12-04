@@ -99,6 +99,17 @@ class GazeData(pandas.DataFrame):
     def _constructor(self):
         return GazeData
 
+    def flip_y(self):
+        """Flip y coordinates.
+
+        Many eyetracking systems use a coordinate system \
+        in which the vertical axis points downward. \
+        So this method is provided as a convenience \
+        in case an upward-pointing vertical axis is preferred.
+        """
+
+        self['y'] = -self['y']
+
     def center(self, origin):
         """Center gaze coordinates.
 

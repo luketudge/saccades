@@ -112,6 +112,10 @@ WRONG_SHAPES = [(None, WRONG_SHAPE[1]),
 
 #%% Transformations
 
+FLIPPED = [[1., 0.],
+           [4., -4.],
+           [10., -12.]]
+
 ORIGIN = (1., 2.)
 
 CENTERED = numpy.array([[0., -2.],

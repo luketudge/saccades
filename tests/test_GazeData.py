@@ -57,6 +57,15 @@ def test_GazeData_is_not_view():
     assert a[0, 0] != 9000.
 
 
+#%% flip_y()
+
+def test_flip_y(gd_all):
+
+    gd_all.flip_y()
+
+    assert numpy.array_equal(gd_all[['x', 'y']], constants.FLIPPED)
+
+
 #%% plot()
 
 @pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARGS_NAMES)
