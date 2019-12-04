@@ -169,7 +169,8 @@ class GazeData(pandas.DataFrame):
                                            linetype='dashed')
 
         fig = (fig + plotnine.geom_line()
-                   + plotnine.geom_point(fill='gray'))  # noqa: W503
+                   + plotnine.geom_point(fill='gray')  # noqa: W503
+                   + plotnine.coord_equal())  # noqa: W503
 
         if filename:
             fig.save(filename, **kwargs)
