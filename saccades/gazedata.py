@@ -17,6 +17,8 @@ from .tools import _blockmanager_to_array
 
 INIT_COLUMNS = ['time', 'x', 'y']
 
+RAW_DATA_COLUMNS = ['x_raw', 'y_raw']
+
 
 #%% Main class
 
@@ -99,6 +101,11 @@ class GazeData(pandas.DataFrame):
     def _constructor(self):
         return GazeData
 
+    def _save_raw_coords(self):
+
+        if all((col not in self) for col in RAW_DATA_COLUMNS):
+            self[RAW_DATA_COLUMNS] = self[['x', 'y']]
+
     def flip_y(self):
         """Flip y coordinates.
 
@@ -108,6 +115,8 @@ class GazeData(pandas.DataFrame):
         in case an upward-pointing vertical axis is preferred.
         """
 
+        self._save_raw_coords()
+
         self['y'] = -self['y']
 
     def center(self, origin):
@@ -116,6 +125,8 @@ class GazeData(pandas.DataFrame):
         See :func:`.geometry.center`.
         """
 
+        self._save_raw_coords()
+
         self[['x', 'y']] = center(self[['x', 'y']], origin)
 
     def rotate(self, theta, origin=(0., 0.)):
@@ -123,6 +134,8 @@ class GazeData(pandas.DataFrame):
 
         See :func:`.geometry.rotate`.
         """
+
+        self._save_raw_coords()
 
         self[['x', 'y']] = rotate(self[['x', 'y']], theta, origin)
 
