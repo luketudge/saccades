@@ -2,6 +2,7 @@
 
 import numpy
 import pandas
+import plotnine
 import pytest
 
 from . import constants
@@ -56,7 +57,9 @@ def test_GazeData_is_not_view():
 
 def test_GazeData_plot(gd_not_parametrized):
 
-    gd_not_parametrized.plot()
+    fig = gd_not_parametrized.plot()
+
+    assert isinstance(fig, plotnine.ggplot)
 
 
 #%% Subsetting

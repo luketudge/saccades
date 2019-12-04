@@ -3,6 +3,7 @@
 """
 
 import pandas
+import plotnine
 
 from .geometry import acceleration
 from .geometry import center
@@ -137,3 +138,13 @@ class GazeData(pandas.DataFrame):
             self.get_velocities()
 
         self['acceleration'] = acceleration(self['time'], self['velocity'])
+
+    def plot(self):
+        """Plot gaze coordinates.
+        """
+
+        fig = (plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
+               + plotnine.geom_line()  # noqa: W503
+               + plotnine.geom_point())  # noqa: W503
+
+        return fig
