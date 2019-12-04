@@ -66,8 +66,11 @@ def test_GazeData_plot(gd, kwargs):
 
     assert isinstance(fig, plotnine.ggplot)
 
-    # Just to check inline rendering doesn't raise an exception either.
+    # Check inline rendering doesn't raise an exception.
     fig.draw()
+
+    # Check image content is actually as expected.
+    assert constants.image_file_ok(kwargs['filename'])
 
 
 #%% Subsetting

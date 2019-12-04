@@ -6,11 +6,26 @@ import numpy
 import pandas
 
 
-#%% Data
+#%% Paths
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_PATH, 'data')
 IMAGES_PATH = os.path.join(BASE_PATH, 'images')
+
+
+#%% Helper function
+
+# Checks equality of an image file with its reference file.
+
+def image_file_ok(filename):
+
+    img_bytes = open(filename, mode='rb').read()
+
+    reference_filename = os.path.basename(filename)
+    reference_path = os.path.join(IMAGES_PATH, 'refs', reference_filename)
+    reference_bytes = open(reference_path, mode='rb').read()
+
+    return img_bytes == reference_bytes
 
 
 #%% Valid init types
@@ -125,11 +140,9 @@ ACCELERATION = numpy.array([numpy.nan, numpy.nan, 1.25])
 
 IMAGE_FORMAT = '.png'
 
-PLOT_ARGS = [{'filename': 'plot', 'show_raw': False},
-             {'filename': 'plot_raw_data', 'show_raw': True}]
+PLOT_ARGS = [{'filename': 'test_plot'}]
 
 PLOT_ARGS_NAMES = [x['filename'] for x in PLOT_ARGS]
 
 for x in PLOT_ARGS:
-    x['filename'] = os.path.join(IMAGES_PATH,
-                                 'test_' + x['filename'] + IMAGE_FORMAT)
+    x['filename'] = os.path.join(IMAGES_PATH, x['filename'] + IMAGE_FORMAT)

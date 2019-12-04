@@ -34,5 +34,7 @@ def test_plotnine_plot(gd):
 
     fig.draw()
 
-    fig.save(os.path.join(constants.IMAGES_PATH, 'test_compatibility.png'),
-             verbose=False)
+    filename = os.path.join(constants.IMAGES_PATH, 'test_compatibility.png')
+    fig.save(filename, verbose=False)
+
+    assert constants.image_file_ok(filename)

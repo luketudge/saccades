@@ -147,10 +147,6 @@ class GazeData(pandas.DataFrame):
         Additional keyword arguments are passed on to \
         :meth:`plotnine.ggplot.save`
 
-        :param show_raw: Also plot the raw gaze coordinates \
-        if transformations have been applied since initialization. \
-        Silently ignored if no raw data have been saved.
-        :type show_raw: bool
         :param filename: File to save image to. \
         By default, no image file is saved.
         :type filename: str
@@ -163,10 +159,6 @@ class GazeData(pandas.DataFrame):
         """
 
         fig = plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
-
-        if show_raw and all((col in self) for col in ['x_raw', 'y_raw']):
-            fig = fig + plotnine.geom_line(plotnine.aes(x='x_raw', y='y_raw'),
-                                           linetype='dashed')
 
         fig = (fig + plotnine.geom_line()
                    + plotnine.geom_point(fill='gray')  # noqa: W503
