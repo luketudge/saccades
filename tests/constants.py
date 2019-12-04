@@ -8,12 +8,14 @@ import pandas
 
 #%% Data
 
-DATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+BASE_PATH = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_PATH, 'data')
+IMAGES_PATH = os.path.join(BASE_PATH, 'images')
 
 
 #%% Valid init types
 
-# These are parametrized in conftest.py.
+# These are used for parametrization in conftest.py.
 
 SEQUENCE = [[2., 1., 0.],
             [4., 4., 4.],
@@ -46,7 +48,6 @@ VALID_INIT_TYPES = [SEQUENCE,
                     DF_EXTRA_COLUMN,
                     DF_REORDERED_COLUMNS]
 
-# Give these ones names because they are parametrized into many tests.
 VALID_INIT_TYPE_NAMES = ['seq',
                          'arr',
                          'df',
@@ -69,6 +70,10 @@ DF_INVALID_COLUMNS.columns = ['x', 'y', 'foo', 'bar']
 INVALID_INIT_TYPES = [ARRAY_XY,
                       DF_XY,
                       DF_INVALID_COLUMNS]
+
+INVALID_INIT_TYPE_NAMES = ['arr_xy',
+                           'df_xy',
+                           'df_invalid_cols']
 
 
 #%% Shapes
@@ -114,3 +119,17 @@ CENTER_ROTATED = numpy.array([[3., 2.],
 VELOCITY = numpy.array([numpy.nan, 2.5, 5.])
 
 ACCELERATION = numpy.array([numpy.nan, numpy.nan, 1.25])
+
+
+#%% Plotting
+
+IMAGE_FORMAT = '.png'
+
+PLOT_ARGS = [{'filename': 'plot', 'show_raw': False},
+             {'filename': 'plot_raw_data', 'show_raw': True}]
+
+PLOT_ARGS_NAMES = [x['filename'] for x in PLOT_ARGS]
+
+for x in PLOT_ARGS:
+    x['filename'] = os.path.join(IMAGES_PATH,
+                                 'test_' + x['filename'] + IMAGE_FORMAT)

@@ -19,15 +19,19 @@ from saccades import gazedata
 
 #%% __init__()
 
-def test_GazeData_init_types(gd):
+def test_GazeData_init_types(gd_all):
 
-    assert isinstance(gd, gazedata.GazeData)
-    assert isinstance(gd, pandas.DataFrame)
-    assert all((col in gd.columns) for col in ['time', 'x', 'y'])
-    assert numpy.array_equal(gd[['time', 'x', 'y']], constants.ARRAY[:, :3])
+    assert isinstance(gd_all, gazedata.GazeData)
+    assert isinstance(gd_all, pandas.DataFrame)
+    assert all((col in gd_all.columns) for col in ['time', 'x', 'y'])
+
+    observed = gd_all[['time', 'x', 'y']]
+    expected = constants.ARRAY[:, :3]
+
+    assert numpy.array_equal(observed, expected)
 
 
-@pytest.mark.parametrize('input_type', constants.INVALID_INIT_TYPES)
+@pytest.mark.parametrize('input_type', constants.INVALID_INIT_TYPES, ids=constants.INVALID_INIT_TYPE_NAMES)
 def test_GazeData_invalid_init_types(input_type):
 
     with pytest.raises(ValueError):
@@ -55,11 +59,15 @@ def test_GazeData_is_not_view():
 
 #%% plot()
 
-def test_GazeData_plot(gd_not_parametrized):
+@pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARGS_NAMES)
+def test_GazeData_plot(gd, kwargs):
 
-    fig = gd_not_parametrized.plot()
+    fig = gd.plot(**kwargs)
 
     assert isinstance(fig, plotnine.ggplot)
+
+    # Just to check inline rendering doesn't raise an exception either.
+    fig.draw()
 
 
 #%% Subsetting
@@ -68,40 +76,40 @@ def test_GazeData_plot(gd_not_parametrized):
 # We would like different subsetting operations to return different types.
 # A subset of rows is still a valid table of gaze data.
 # So this should return an instance of the GazeData class.
-# A subset containing the 'time', 'x', and 'y' columns is complete.
+# A subset containing the 'time', 'x', and 'y' columns is also valid.
 # So this column subset should also return an instance of the GazeData class.
 # But a subset of other columns is an incomplete view of the data.
 # So this should not return an instance of the GazeData class.
 
-def test_subset_rows(gd):
+def test_subset_rows(gd_all):
 
-    gd_subset = gd[:2]
+    gd_subset = gd_all[:2]
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[:2, :])
     assert isinstance(gd_subset, gazedata.GazeData)
 
 
-def test_subset_rows_with_boolean(gd):
+def test_subset_rows_with_boolean(gd_all):
 
-    gd_subset = gd[gd['time'] > gd['time'][0]]
+    gd_subset = gd_all[gd_all['time'] > gd_all['time'][0]]
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[1:, :])
     assert isinstance(gd_subset, gazedata.GazeData)
 
 
-def test_subset_complete_cols(gd):
+def test_subset_complete_cols(gd_all):
 
-    gd_subset = gd[['time', 'x', 'y']]
+    gd_subset = gd_all[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
     assert isinstance(gd_subset, gazedata.GazeData)
 
 
-def test_subset_rearranged_cols(gd):
+def test_subset_rearranged_cols(gd_all):
 
-    gd_subset = gd[['y', 'time', 'x']]
+    gd_subset = gd_all[['y', 'time', 'x']]
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
@@ -118,9 +126,9 @@ def test_subset_extra_cols():
     assert isinstance(gd_subset, gazedata.GazeData)
 
 
-def test_subset_incomplete_cols(gd):
+def test_subset_incomplete_cols(gd_all):
 
-    gd_subset = gd[['x', 'y']]
+    gd_subset = gd_all[['x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY_XY)
     assert not isinstance(gd_subset, gazedata.GazeData)

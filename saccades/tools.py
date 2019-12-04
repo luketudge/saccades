@@ -5,7 +5,7 @@
 import numpy
 
 
-def blockmanager_to_array(blockmanager):
+def _blockmanager_to_array(blockmanager):
 
     # The .as_array() method is new to pandas v0.23.
     # Revert to the older .as_matrix() method if it fails.
@@ -25,7 +25,7 @@ def check_shape(array, shape):
     Occurrences of `None` indicate that a dimension may be of any size. \
     So for example `(None, 3)` allows for an *(n, 3)* array \
     for any value of *n*.
-    :type shape: `tuple`
+    :type shape: tuple
     :return: `array`, converted to :class:`numpy.ndarray`.
     :rtype: :class:`numpy.ndarray`
     :raises ValueError: If `array` is not of the expected shape.

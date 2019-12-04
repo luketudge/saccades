@@ -35,7 +35,7 @@ def rotate(coords, theta, origin=(0, 0)):
     :type coords: :class:`numpy.ndarray` \
     or sequence convertible to :class:`numpy.ndarray`
     :param theta: Angle of counterclockwise rotation, in radians.
-    :type theta: `float`
+    :type theta: float
     :param origin: *(x, y)* coordinates of origin \
     about which to rotate.
     :type origin: :class:`numpy.ndarray` \
