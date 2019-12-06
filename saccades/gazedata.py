@@ -150,7 +150,7 @@ class GazeData(pandas.DataFrame):
 
         self['acceleration'] = acceleration(self['time'], self['velocity'])
 
-    def plot(self, show_raw=False, filename=None, verbose=False, **kwargs):
+    def plot(self, reverse_y=False, show_raw=False, filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
 
         Plotting is done with :mod:`plotnine` because it is good.
@@ -158,6 +158,16 @@ class GazeData(pandas.DataFrame):
         Additional keyword arguments are passed on to \
         :meth:`plotnine.ggplot.save`
 
+        :param reverse_y: Many eyetracking systems \
+        use a coordinate system in which the *y* axis points downward. \
+        This argument reverses the y axis so that the plot \
+        matches such a system visually.
+        :type reverse_y: bool
+        :param show_raw: If transformations have been applied, \
+        the GazeData object will have saved the raw coordinates. \
+        This argument additionally displays the raw data, \
+        for comparison before and after transformation.
+        :type show_raw: bool
         :param filename: File to save image to. \
         By default, no image file is saved.
         :type filename: str
@@ -178,6 +188,9 @@ class GazeData(pandas.DataFrame):
         fig = (fig + plotnine.geom_line()
                    + plotnine.geom_point(fill='gray')  # noqa: W503
                    + plotnine.coord_equal())  # noqa: W503
+
+        if reverse_y:
+            fig = fig + plotnine.scale_y_continuous(trans='reverse')
 
         if filename:
             fig.save(filename, verbose=verbose, **kwargs)

@@ -112,10 +112,6 @@ WRONG_SHAPES = [(None, WRONG_SHAPE[1]),
 
 #%% Transformations
 
-FLIPPED = [[1., 0.],
-           [4., -4.],
-           [10., -12.]]
-
 ORIGIN = (1., 2.)
 
 CENTERED = numpy.array([[0., -2.],
@@ -145,6 +141,7 @@ ACCELERATION = numpy.array([numpy.nan, numpy.nan, 1.25])
 IMAGE_FORMAT = '.png'
 
 PLOT_ARGS = [{'filename': 'test_plot'},
+             {'filename': 'test_plot_reverse_y', 'reverse_y': True},
              {'filename': 'test_plot_raw_data', 'show_raw': True}]
 
 PLOT_ARGS_NAMES = [x['filename'] for x in PLOT_ARGS]
