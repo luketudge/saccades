@@ -46,7 +46,7 @@ def test_script():
     print(gd)
 
     ## Save a plot.
-    gd.plot(filename=IMAGE_PATH, show_raw=True)
+    gd.plot(filename=IMAGE_PATH, reverse_y=True, show_raw=True)
 
 
 #%% Script mode
