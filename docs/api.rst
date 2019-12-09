@@ -16,7 +16,7 @@ geometry
 saccadedetection
 ----------------
 
-.. automodule:: saccades.algorithms.saccadedetection
+.. automodule:: saccades.saccadedetection
     :members:
 
 tools

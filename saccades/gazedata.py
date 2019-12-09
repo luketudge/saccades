@@ -158,8 +158,12 @@ class GazeData(pandas.DataFrame):
         `func` should take a :class:`Gazedata` table \
         as its first input argument, \
         and return a boolean array of length equal to \
-        the number of rows in the table. \
+        the number of rows in the table.
+
         Additional keyword arguments are passed on to `func`.
+
+        See :mod:`.saccadedetection` for some ready-made \
+        saccade detection algorithms.
 
         :param func: Algorithm for detecting saccades.
         :type func: function
@@ -187,7 +191,8 @@ class GazeData(pandas.DataFrame):
         :type show_raw: bool
         :param saccades: Whether to plot saccades. \
         If saccade detection has been applied, \
-        saccades are shown in a different color.
+        saccades are shown in red. \
+        Otherwise this argument is ignored.
         :type saccades: bool
         :param filename: File to save image to. \
         By default, no image file is saved.
@@ -200,21 +205,27 @@ class GazeData(pandas.DataFrame):
         :rtype: :class:`plotnine.ggplot`
         """
 
-        fig = plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
+        # There seem to be some complex problems
+        # using a subclass of pandas.DataFrame with plotnine,
+        # so as a simple fix, create a dataframe for plotting.
+        df = pandas.DataFrame(self)
+
+        fig = plotnine.ggplot(df, plotnine.aes(x='x', y='y')) + plotnine.coord_equal()
+
+        if reverse_y:
+            fig = fig + plotnine.scale_y_continuous(trans='reverse')
 
         if show_raw:
             fig = fig + plotnine.geom_line(plotnine.aes(x='x_raw', y='y_raw'),
                                            linetype='dashed')
 
-        fig = (fig + plotnine.geom_line()
-                   + plotnine.geom_point(fill='gray')  # noqa: W503
-                   + plotnine.coord_equal())  # noqa: W503
+        fig = fig + plotnine.geom_line()
 
-        if saccades:
-            fig = fig + plotnine.aes(color='saccade', fill='saccade')
+        if saccades and ('saccade' in self):
+            fig = fig + plotnine.geom_line(data=df[self['saccade']],
+                                           color='red')
 
-        if reverse_y:
-            fig = fig + plotnine.scale_y_continuous(trans='reverse')
+        fig = fig + plotnine.geom_point(fill='gray')
 
         if filename:
             fig.save(filename, verbose=verbose, **kwargs)

@@ -158,7 +158,8 @@ IMAGE_FORMAT = '.png'
 
 PLOT_ARGS = [{'filename': 'test_plot'},
              {'filename': 'test_plot_reverse_y', 'reverse_y': True},
-             {'filename': 'test_plot_raw_data', 'show_raw': True}]
+             {'filename': 'test_plot_raw_data', 'show_raw': True},
+             {'filename': 'test_plot_saccades', 'saccades': True}]
 
 PLOT_ARGS_NAMES = [x['filename'] for x in PLOT_ARGS]
 

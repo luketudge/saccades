@@ -10,6 +10,7 @@ import pytest
 from . import constants
 
 from saccades import gazedata
+from saccades import saccadedetection
 
 
 # GazeData methods that wrap functions from other modules
@@ -139,8 +140,10 @@ def test_detect_saccades_with_keyword_arguments(gd):
 @pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARGS_NAMES)
 def test_GazeData_plot(gd, kwargs):
 
-    # Make a basic transform so as to distinguish data from raw data.
+    # Make a basic transform and add saccades,
+    # so that all plot parameters have visible effects.
     gd.center(origin=constants.ORIGIN)
+    gd.detect_saccades(saccadedetection.criterion, velocity=2.)
 
     fig = gd.plot(**kwargs)
 

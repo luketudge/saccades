@@ -7,5 +7,5 @@ def test_init():
 
     module_contents = dir(saccades)
 
-    for name in ['GazeData', 'geometry', 'algorithms']:
+    for name in ['GazeData', 'geometry', 'saccadedetection']:
         assert name in module_contents

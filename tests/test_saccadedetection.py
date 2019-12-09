@@ -4,7 +4,7 @@ import pytest
 
 from . import constants
 
-from saccades.algorithms import saccadedetection
+from saccades import saccadedetection
 
 
 @pytest.mark.parametrize('criteria', constants.CRITERIA)
