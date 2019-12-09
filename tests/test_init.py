@@ -7,11 +7,5 @@ def test_init():
 
     module_contents = dir(saccades)
 
-    for name in ['GazeData', 'algorithms']:
+    for name in ['GazeData', 'geometry', 'algorithms']:
         assert name in module_contents
-
-
-def test_import_submodules():
-
-    from saccades import algorithms  # noqa: F401
-    from saccades.algorithms import saccadedetection  # noqa: F401

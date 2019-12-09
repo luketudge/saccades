@@ -5,5 +5,4 @@
 from .gazedata import GazeData  # noqa: F401
 
 
-__all__ = ['algorithms', 'geometry']
 __version__ = '0.1'
