@@ -231,8 +231,6 @@ class GazeData(pandas.DataFrame):
             fig = fig + plotnine.geom_line(data=df[df['saccade']],
                                            color='red')
 
-        #fig = fig + plotnine.geom_point(fill='gray')
-
         if filename:
             fig.save(filename, verbose=verbose, **kwargs)
 
