@@ -150,6 +150,23 @@ class GazeData(pandas.DataFrame):
 
         self['acceleration'] = acceleration(self['time'], self['velocity'])
 
+    def detect_saccades(self, func, **kwargs):
+        """Mark samples as part of a saccade.
+
+        Function `func` is used to create a new boolean column \
+        called 'saccade', which marks samples as part of a saccade. \
+        `func` should take a :class:`Gazedata` table \
+        as its first input argument, \
+        and return a boolean array of length equal to \
+        the number of rows in the table. \
+        Additional keyword arguments are passed on to `func`.
+
+        :param func: Algorithm for detecting saccades.
+        :type func: function
+        """
+
+        self['saccade'] = func(self, **kwargs)
+
     def plot(self, reverse_y=False, show_raw=False, filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
 
