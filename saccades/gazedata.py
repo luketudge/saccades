@@ -40,7 +40,7 @@ class GazeData(pandas.DataFrame):
     # _internal_names = pandas.DataFrame._internal_names + []
     # _internal_names_set = set(_internal_names)
 
-    def __new__(cls, data=None, **kwargs):
+    def __new__(cls, data=None, *args, **kwargs):
 
         # When a new instance of the custom class is requested,
         # this can be for two different reasons:
@@ -61,11 +61,11 @@ class GazeData(pandas.DataFrame):
 
             # Otherwise we initialize a standard pandas DataFrame.
             # This needs the array form of the data.
-            return pandas.DataFrame(_blockmanager_to_array(data))
+            return pandas.DataFrame(_blockmanager_to_array(data), columns=list(data.items))
 
         return super().__new__(cls)
 
-    def __init__(self, data=None, **kwargs):
+    def __init__(self, data=None, *args, **kwargs):
         """:param data: Gaze data with shape *(n, 3)*, \
         where *n* is the number of gaze samples, \
         and columns are *time*, *x gaze position*, *y gaze position*.
@@ -96,7 +96,7 @@ class GazeData(pandas.DataFrame):
             else:
                 data = check_shape(data, (None, 3))
 
-        super().__init__(data=data, **kwargs)
+        super().__init__(data=data, *args, **kwargs)
 
     # To allow subsets of the custom class to preserve their type,
     # we need to override the constructor that subsetting calls.
