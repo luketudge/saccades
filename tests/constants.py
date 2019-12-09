@@ -151,6 +151,9 @@ CRITERIA = [{'velocity': 2., 'exp': [False, True, True]},
 
 #%% Plotting
 
+# Plotting saccades is tested in test_script.py
+# because the simple test data used here are too short for a saccade.
+
 IMAGE_FORMAT = '.png'
 
 PLOT_ARGS = [{'filename': 'test_plot'},

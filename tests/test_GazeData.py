@@ -118,7 +118,6 @@ def test_save_raw_coords_before_method_call(gd, method):
 
 def test_detect_saccades(gd):
 
-    # Check first that the new column isn't somehow already there.
     assert 'saccade' not in gd
 
     gd.detect_saccades(fun)
@@ -128,7 +127,6 @@ def test_detect_saccades(gd):
 
 def test_detect_saccades_with_keyword_arguments(gd):
 
-    # Check first that the new column isn't somehow already there.
     assert 'saccade' not in gd
 
     gd.detect_saccades(fun, val=False)

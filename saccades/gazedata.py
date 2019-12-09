@@ -167,7 +167,7 @@ class GazeData(pandas.DataFrame):
 
         self['saccade'] = func(self, **kwargs)
 
-    def plot(self, reverse_y=False, show_raw=False, filename=None, verbose=False, **kwargs):
+    def plot(self, reverse_y=False, show_raw=False, saccades=False, filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
 
         Plotting is done with :mod:`plotnine` because it is good.
@@ -185,6 +185,10 @@ class GazeData(pandas.DataFrame):
         This argument additionally displays the raw data, \
         for comparison before and after transformation.
         :type show_raw: bool
+        :param saccades: Whether to plot saccades. \
+        If saccade detection has been applied, \
+        saccades are shown in a different color.
+        :type saccades: bool
         :param filename: File to save image to. \
         By default, no image file is saved.
         :type filename: str
@@ -205,6 +209,9 @@ class GazeData(pandas.DataFrame):
         fig = (fig + plotnine.geom_line()
                    + plotnine.geom_point(fill='gray')  # noqa: W503
                    + plotnine.coord_equal())  # noqa: W503
+
+        if saccades:
+            fig = fig + plotnine.aes(color='saccade', fill='saccade')
 
         if reverse_y:
             fig = fig + plotnine.scale_y_continuous(trans='reverse')
