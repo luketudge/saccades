@@ -215,7 +215,8 @@ class GazeData(pandas.DataFrame):
         # so as a simple fix, create a dataframe for plotting.
         df = pandas.DataFrame(self)
 
-        fig = plotnine.ggplot(self, plotnine.aes(x='x', y='y')) + plotnine.coord_equal()
+        fig = (plotnine.ggplot(df, plotnine.aes(x='x', y='y'))
+               + plotnine.coord_equal())  # noqa: W503
 
         if reverse_y:
             fig = fig + plotnine.scale_y_continuous(trans='reverse')
@@ -227,10 +228,10 @@ class GazeData(pandas.DataFrame):
         fig = fig + plotnine.geom_line()
 
         if saccades and ('saccade' in self):
-            fig = fig + plotnine.geom_line(data=df[self['saccade']],
+            fig = fig + plotnine.geom_line(data=df[df['saccade']],
                                            color='red')
 
-        fig = fig + plotnine.geom_point(fill='gray')
+        #fig = fig + plotnine.geom_point(fill='gray')
 
         if filename:
             fig.save(filename, verbose=verbose, **kwargs)
