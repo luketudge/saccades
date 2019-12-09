@@ -136,6 +136,19 @@ VELOCITY = numpy.array([numpy.nan, 2.5, 5.])
 ACCELERATION = numpy.array([numpy.nan, numpy.nan, 1.25])
 
 
+#%% Saccade detection
+
+# The 'exp' key is popped before passing to criterion(),
+# and is used to check for the expected result.
+CRITERIA = [{'velocity': 2., 'exp': [False, True, True]},
+            {'velocity': 3., 'exp': [False, False, True]},
+            {'acceleration': 1., 'exp': [False, False, True]},
+            {'acceleration': 2., 'exp': [False, False, False]},
+            {'velocity': 2., 'acceleration': 1., 'exp': [False, False, True]},
+            {'velocity': 2., 'acceleration': 2., 'exp': [False, False, False]},
+            {'exp': [True, True, True]}]
+
+
 #%% Plotting
 
 IMAGE_FORMAT = '.png'
