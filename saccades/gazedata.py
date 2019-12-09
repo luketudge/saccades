@@ -73,10 +73,6 @@ class GazeData(pandas.DataFrame):
         or convertible to :class:`numpy.ndarray`
         """
 
-        # By default set new column names.
-        # And override any duplicated 'column' keyword arguments.
-        kwargs['columns'] = INIT_COLUMNS
-
         # If a copy or view is explicitly requested, respect this.
         # Otherwise ensure we get a copy.
         if 'copy' not in kwargs:
@@ -95,6 +91,10 @@ class GazeData(pandas.DataFrame):
                 kwargs['columns'] = data.columns
             else:
                 data = check_shape(data, (None, 3))
+
+        # Set new column names if none have been allocated so far.
+        if 'columns' not in kwargs:
+            kwargs['columns'] = INIT_COLUMNS
 
         super().__init__(data=data, *args, **kwargs)
 
