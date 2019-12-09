@@ -25,6 +25,14 @@ def test_pandas_stats(gd_all):
     assert numpy.array_equal(col_means, constants.DF.mean())
 
 
+# The dropna() method seems to be important for plotnine,
+# so we should test that it works for GazeData too.
+def test_pandas_dropna(gd_all):
+
+    # Just check for exceptions.
+    gd_all.dropna()
+
+
 #%% plotnine
 
 def test_plotnine_plot(gd):

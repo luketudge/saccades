@@ -44,7 +44,7 @@ def test_script():
     gd.get_accelerations()
 
     ## Add saccades.
-    gd.detect_saccades(criterion, velocity=0.22)
+    gd.detect_saccades(criterion, velocity=1.)
 
     ## Display the data.
     print(gd)

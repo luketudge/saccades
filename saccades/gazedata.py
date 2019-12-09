@@ -77,6 +77,11 @@ class GazeData(pandas.DataFrame):
         # And override any duplicated 'column' keyword arguments.
         kwargs['columns'] = INIT_COLUMNS
 
+        # If a copy or view is explicitly requested, respect this.
+        # Otherwise ensure we get a copy.
+        if 'copy' not in kwargs:
+            kwargs['copy'] = True
+
         # But if we are dealing with a valid subset (see above),
         # we want to preserve the columns of the subset.
         if isinstance(data, pandas.core.internals.BlockManager):
@@ -91,7 +96,7 @@ class GazeData(pandas.DataFrame):
             else:
                 data = check_shape(data, (None, 3))
 
-        super().__init__(data=data, copy=True, **kwargs)
+        super().__init__(data=data, **kwargs)
 
     # To allow subsets of the custom class to preserve their type,
     # we need to override the constructor that subsetting calls.
@@ -210,7 +215,7 @@ class GazeData(pandas.DataFrame):
         # so as a simple fix, create a dataframe for plotting.
         df = pandas.DataFrame(self)
 
-        fig = plotnine.ggplot(df, plotnine.aes(x='x', y='y')) + plotnine.coord_equal()
+        fig = plotnine.ggplot(self, plotnine.aes(x='x', y='y')) + plotnine.coord_equal()
 
         if reverse_y:
             fig = fig + plotnine.scale_y_continuous(trans='reverse')
