@@ -17,7 +17,7 @@ def px_to_dva(px, screen_res, screen_diag, viewing_dist):
     """Convert screen pixels to degrees of visual angle.
 
     :param px: Pixel value(s).
-    :type px: scalar or sequence
+    :type px: scalar or array-like
     :param screen_res: *(x, y)* pixel screen resolution.
     :type screen_res: tuple
     :param screen_diag: Diagonal size of screen, \
@@ -43,7 +43,7 @@ def dva_to_px(dva, screen_res, screen_diag, viewing_dist):
     """Convert degrees of visual angle to screen pixels.
 
     :param dva: Degree value(s).
-    :type dva: scalar or sequence
+    :type dva: scalar or array-like
     :param screen_res: *(x, y)* pixel screen resolution.
     :type screen_res: tuple
     :param screen_diag: Diagonal size of screen, \

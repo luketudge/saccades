@@ -100,7 +100,15 @@ INVALID_INIT_TYPE_NAMES = ['arr_xy',
 
 #%% Attributes
 
-ATTRIBUTES = ['screen_res', 'screen_diag', 'viewing_dist']
+SCREEN_RES = (4., 3.)
+SCREEN_DIAG = 10.
+VIEWING_DIST = 5.
+
+ATTRIBUTES = {'time_units': None,
+              'space_units': 'px',
+              'screen_res': SCREEN_RES,
+              'screen_diag': SCREEN_DIAG,
+              'viewing_dist': VIEWING_DIST}
 
 
 #%% Shapes
@@ -141,36 +149,41 @@ CENTER_ROTATED = numpy.array([[3., 2.],
                               [-9., 11.]])
 
 
+#%% Conversions
+
+VIEWING_DIST_PX = 2.5
+
+# The two easiest angles to check.
+PX = [2.5, 0.]
+DVA = [45., 0.]
+
+
 #%% Derivatives
 
 VELOCITY = numpy.array([numpy.nan, 2.5, 5.])
+VELOCITY_DVA = numpy.array([numpy.nan, 45., 63.43494882292201])
 
 ACCELERATION = numpy.array([numpy.nan, numpy.nan, 1.25])
+ACCELERATION_DVA = numpy.array([numpy.nan, numpy.nan, 9.217474411461005])
 
 
 #%% Saccade detection
 
+VELOCITY_LOW = 40.
+VELOCITY_HIGH = 50.
+
+ACCELERATION_LOW = 5.
+ACCELERATION_HIGH = 10.
+
 # The 'exp' key is popped before passing to criterion(),
 # and is used to check for the expected result.
-CRITERIA = [{'velocity': 2., 'exp': [False, True, True]},
-            {'velocity': 3., 'exp': [False, False, True]},
-            {'acceleration': 1., 'exp': [False, False, True]},
-            {'acceleration': 2., 'exp': [False, False, False]},
-            {'velocity': 2., 'acceleration': 1., 'exp': [False, False, True]},
-            {'velocity': 2., 'acceleration': 2., 'exp': [False, False, False]},
+CRITERIA = [{'velocity': VELOCITY_LOW, 'exp': [False, True, True]},
+            {'velocity': VELOCITY_HIGH, 'exp': [False, False, True]},
+            {'acceleration': ACCELERATION_LOW, 'exp': [False, False, True]},
+            {'acceleration': ACCELERATION_HIGH, 'exp': [False, False, False]},
+            {'velocity': VELOCITY_LOW, 'acceleration': ACCELERATION_LOW, 'exp': [False, False, True]},
+            {'velocity': VELOCITY_LOW, 'acceleration': ACCELERATION_HIGH, 'exp': [False, False, False]},
             {'exp': [True, True, True]}]
-
-
-#%% Conversions
-
-SCREEN_RES = (4., 3.)
-SCREEN_DIAG = 10.
-VIEWING_DIST = 3.
-
-VIEWING_DIST_PX = 1.5
-
-PX = [1.5, 0.]
-DVA = [45., 0.]
 
 
 #%% Plotting

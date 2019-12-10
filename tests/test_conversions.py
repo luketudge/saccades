@@ -7,7 +7,7 @@ from . import constants
 from saccades import conversions
 
 
-# Use numpy.allclose() in place of numpy.array_equal() or ==
+# Use numpy.allclose() in place of numpy.array_equal()
 # to allow for floating-point error where necessary.
 
 

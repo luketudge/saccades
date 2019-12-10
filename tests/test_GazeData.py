@@ -143,7 +143,8 @@ def test_GazeData_plot(gd, kwargs):
     # Make a basic transform and add saccades,
     # so that all plot parameters have visible effects.
     gd.center(origin=constants.ORIGIN)
-    gd.detect_saccades(saccadedetection.criterion, velocity=2.)
+    gd.detect_saccades(saccadedetection.criterion,
+                       velocity=constants.VELOCITY_LOW)
 
     fig = gd.plot(**kwargs)
 
@@ -162,17 +163,19 @@ def test_GazeData_plot(gd, kwargs):
 # some wrangling is needed in order to store attributes in the normal way.
 # So we should test that attributes can be set.
 
-@pytest.mark.parametrize('attr', constants.ATTRIBUTES)
-def test_attributes(gd_all, attr):
+@pytest.mark.parametrize('attr, val', constants.ATTRIBUTES.items())
+def test_has_attributes(gd_all, attr, val):
 
-    name = 'attribute_value'
+    assert getattr(gd_all, attr) == val
 
-    assert getattr(gd_all, attr) is None
 
-    setattr(gd_all, attr, name)
+@pytest.mark.parametrize('attr, val', constants.ATTRIBUTES.items())
+def test_set_attributes(gd_all, attr, val):
 
-    assert getattr(gd_all, attr) == name
-    assert name not in gd_all
+    new_value = 'new_value'
+    setattr(gd_all, attr, new_value)
+
+    assert getattr(gd_all, attr) == new_value
 
 
 #%% Subsetting
@@ -193,7 +196,9 @@ def test_subset_rows(gd_all):
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[:2, :])
     assert isinstance(gd_subset, gazedata.GazeData)
-    assert hasattr(gd_subset, constants.ATTRIBUTES[0])
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(gd_subset, attr) == val
 
 
 def test_subset_rows_with_boolean(gd_all):
@@ -203,7 +208,9 @@ def test_subset_rows_with_boolean(gd_all):
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[1:, :])
     assert isinstance(gd_subset, gazedata.GazeData)
-    assert hasattr(gd_subset, constants.ATTRIBUTES[0])
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(gd_subset, attr) == val
 
 
 def test_subset_complete_cols(gd_all):
@@ -212,7 +219,9 @@ def test_subset_complete_cols(gd_all):
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
     assert isinstance(gd_subset, gazedata.GazeData)
-    assert hasattr(gd_subset, constants.ATTRIBUTES[0])
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(gd_subset, attr) == val
 
 
 def test_subset_rearranged_cols(gd_all):
@@ -222,18 +231,22 @@ def test_subset_rearranged_cols(gd_all):
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
     assert isinstance(gd_subset, gazedata.GazeData)
-    assert hasattr(gd_subset, constants.ATTRIBUTES[0])
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(gd_subset, attr) == val
 
 
 def test_subset_extra_cols():
 
-    gd = gazedata.GazeData(constants.DF_EXTRA_COLUMN)
+    gd = gazedata.GazeData(constants.DF_EXTRA_COLUMN, **constants.ATTRIBUTES)
     gd_subset = gd[['y', 'time', 'foo', 'x']]
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
     assert isinstance(gd_subset, gazedata.GazeData)
-    assert hasattr(gd_subset, constants.ATTRIBUTES[0])
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(gd_subset, attr) == val
 
 
 def test_subset_incomplete_cols(gd_all):
@@ -243,4 +256,6 @@ def test_subset_incomplete_cols(gd_all):
     assert numpy.array_equal(gd_subset, constants.ARRAY_XY)
     assert not isinstance(gd_subset, gazedata.GazeData)
     assert isinstance(gd_subset, pandas.DataFrame)
-    assert not hasattr(gd_subset, constants.ATTRIBUTES[0])
+
+    for attr in constants.ATTRIBUTES:
+        assert not hasattr(gd_subset, attr)
