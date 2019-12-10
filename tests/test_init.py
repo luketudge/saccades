@@ -5,4 +5,7 @@ def test_init():
 
     import saccades
 
-    assert 'GazeData' in dir(saccades)
+    module_contents = dir(saccades)
+
+    for name in ['GazeData', 'geometry', 'saccadedetection']:
+        assert name in module_contents

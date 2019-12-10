@@ -16,7 +16,26 @@ from . import constants
 # Most important are plotting and statistical summaries.
 
 
-#%% pandas
+#%% pandas dropna()
+
+# Check for exceptions with the default arguments.
+def test_pandas_dropna(gd_all):
+
+    gd_all.dropna()
+
+
+# Check that dropna() also actually works.
+# The first row should have NaN for velocity after get_accelerations(),
+# so dropna should remove this row.
+def test_pandas_dropna_subset(gd_all):
+
+    gd_all.get_accelerations()
+    gd_subset = gd_all.dropna(subset=['velocity'])
+
+    assert len(gd_all) - len(gd_subset) == 1
+
+
+#%% pandas statistical summaries
 
 def test_pandas_stats(gd_all):
 

@@ -40,7 +40,7 @@ class GazeData(pandas.DataFrame):
     # _internal_names = pandas.DataFrame._internal_names + []
     # _internal_names_set = set(_internal_names)
 
-    def __new__(cls, data=None, **kwargs):
+    def __new__(cls, data=None, *args, **kwargs):
 
         # When a new instance of the custom class is requested,
         # this can be for two different reasons:
@@ -61,11 +61,11 @@ class GazeData(pandas.DataFrame):
 
             # Otherwise we initialize a standard pandas DataFrame.
             # This needs the array form of the data.
-            return pandas.DataFrame(_blockmanager_to_array(data))
+            return pandas.DataFrame(_blockmanager_to_array(data), columns=list(data.items))
 
         return super().__new__(cls)
 
-    def __init__(self, data=None, **kwargs):
+    def __init__(self, data=None, *args, **kwargs):
         """:param data: Gaze data with shape *(n, 3)*, \
         where *n* is the number of gaze samples, \
         and columns are *time*, *x gaze position*, *y gaze position*.
@@ -73,9 +73,10 @@ class GazeData(pandas.DataFrame):
         or convertible to :class:`numpy.ndarray`
         """
 
-        # By default set new column names.
-        # And override any duplicated 'column' keyword arguments.
-        kwargs['columns'] = INIT_COLUMNS
+        # If a copy or view is explicitly requested, respect this.
+        # Otherwise ensure we get a copy.
+        if 'copy' not in kwargs:
+            kwargs['copy'] = True
 
         # But if we are dealing with a valid subset (see above),
         # we want to preserve the columns of the subset.
@@ -91,7 +92,11 @@ class GazeData(pandas.DataFrame):
             else:
                 data = check_shape(data, (None, 3))
 
-        super().__init__(data=data, copy=True, **kwargs)
+        # Set new column names if none have been allocated so far.
+        if 'columns' not in kwargs:
+            kwargs['columns'] = INIT_COLUMNS
+
+        super().__init__(data=data, *args, **kwargs)
 
     # To allow subsets of the custom class to preserve their type,
     # we need to override the constructor that subsetting calls.
@@ -150,7 +155,28 @@ class GazeData(pandas.DataFrame):
 
         self['acceleration'] = acceleration(self['time'], self['velocity'])
 
-    def plot(self, reverse_y=False, show_raw=False, filename=None, verbose=False, **kwargs):
+    def detect_saccades(self, func, **kwargs):
+        """Mark samples as part of a saccade.
+
+        Function `func` is used to create a new boolean column \
+        called 'saccade', which marks samples as part of a saccade. \
+        `func` should take a :class:`Gazedata` table \
+        as its first input argument, \
+        and return a boolean array of length equal to \
+        the number of rows in the table.
+
+        Additional keyword arguments are passed on to `func`.
+
+        See :mod:`.saccadedetection` for some ready-made \
+        saccade detection algorithms.
+
+        :param func: Algorithm for detecting saccades.
+        :type func: function
+        """
+
+        self['saccade'] = func(self, **kwargs)
+
+    def plot(self, reverse_y=False, show_raw=False, saccades=False, filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
 
         Plotting is done with :mod:`plotnine` because it is good.
@@ -168,6 +194,11 @@ class GazeData(pandas.DataFrame):
         This argument additionally displays the raw data, \
         for comparison before and after transformation.
         :type show_raw: bool
+        :param saccades: Whether to plot saccades. \
+        If saccade detection has been applied, \
+        saccades are shown in red. \
+        Otherwise this argument is ignored.
+        :type saccades: bool
         :param filename: File to save image to. \
         By default, no image file is saved.
         :type filename: str
@@ -179,18 +210,26 @@ class GazeData(pandas.DataFrame):
         :rtype: :class:`plotnine.ggplot`
         """
 
-        fig = plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
+        # There seem to be some complex problems
+        # using a subclass of pandas.DataFrame with plotnine,
+        # so as a simple fix, create a dataframe for plotting.
+        df = pandas.DataFrame(self)
+
+        fig = (plotnine.ggplot(df, plotnine.aes(x='x', y='y'))
+               + plotnine.coord_equal())  # noqa: W503
+
+        if reverse_y:
+            fig = fig + plotnine.scale_y_continuous(trans='reverse')
 
         if show_raw:
             fig = fig + plotnine.geom_line(plotnine.aes(x='x_raw', y='y_raw'),
                                            linetype='dashed')
 
-        fig = (fig + plotnine.geom_line()
-                   + plotnine.geom_point(fill='gray')  # noqa: W503
-                   + plotnine.coord_equal())  # noqa: W503
+        fig = fig + plotnine.geom_line()
 
-        if reverse_y:
-            fig = fig + plotnine.scale_y_continuous(trans='reverse')
+        if saccades and ('saccade' in self):
+            fig = fig + plotnine.geom_line(data=df[df['saccade']],
+                                           color='red')
 
         if filename:
             fig.save(filename, verbose=verbose, **kwargs)

@@ -11,7 +11,8 @@ import webbrowser
 
 import pandas
 
-import saccades
+from saccades import GazeData
+from saccades.saccadedetection import criterion
 
 
 #%% Setup
@@ -34,7 +35,7 @@ IMAGE_PATH = os.path.join(BASE_PATH, 'images', IMAGE_FILENAME)
 def test_script():
 
     ## Turn a pandas DataFrame into GazeData.
-    gd = saccades.GazeData(DF)
+    gd = GazeData(DF)
 
     ## Recenter.
     gd.center(origin=CENTER)
@@ -42,11 +43,17 @@ def test_script():
     ## Calculate velocity and acceleration.
     gd.get_accelerations()
 
+    ## Add saccades.
+    gd.detect_saccades(criterion, velocity=1.)
+
     ## Display the data.
     print(gd)
 
     ## Save a plot.
-    gd.plot(filename=IMAGE_PATH, reverse_y=True, show_raw=True)
+    gd.plot(filename=IMAGE_PATH,
+            reverse_y=True,
+            show_raw=True,
+            saccades=True)
 
 
 #%% Script mode

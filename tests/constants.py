@@ -136,13 +136,30 @@ VELOCITY = numpy.array([numpy.nan, 2.5, 5.])
 ACCELERATION = numpy.array([numpy.nan, numpy.nan, 1.25])
 
 
+#%% Saccade detection
+
+# The 'exp' key is popped before passing to criterion(),
+# and is used to check for the expected result.
+CRITERIA = [{'velocity': 2., 'exp': [False, True, True]},
+            {'velocity': 3., 'exp': [False, False, True]},
+            {'acceleration': 1., 'exp': [False, False, True]},
+            {'acceleration': 2., 'exp': [False, False, False]},
+            {'velocity': 2., 'acceleration': 1., 'exp': [False, False, True]},
+            {'velocity': 2., 'acceleration': 2., 'exp': [False, False, False]},
+            {'exp': [True, True, True]}]
+
+
 #%% Plotting
+
+# Plotting saccades is tested in test_script.py
+# because the simple test data used here are too short for a saccade.
 
 IMAGE_FORMAT = '.png'
 
 PLOT_ARGS = [{'filename': 'test_plot'},
              {'filename': 'test_plot_reverse_y', 'reverse_y': True},
-             {'filename': 'test_plot_raw_data', 'show_raw': True}]
+             {'filename': 'test_plot_raw_data', 'show_raw': True},
+             {'filename': 'test_plot_saccades', 'saccades': True}]
 
 PLOT_ARGS_NAMES = [x['filename'] for x in PLOT_ARGS]
 

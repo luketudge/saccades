@@ -10,6 +10,7 @@ import pytest
 from . import constants
 
 from saccades import gazedata
+from saccades import saccadedetection
 
 
 # GazeData methods that wrap functions from other modules
@@ -21,8 +22,15 @@ from saccades import gazedata
 
 #%% Setup
 
+# Wrapped GazeData methods used in test_save_raw_coords_before_method_call().
 methods = [functools.partial(gazedata.GazeData.center, origin=constants.ORIGIN),
            functools.partial(gazedata.GazeData.rotate, theta=constants.ANGLE)]
+
+
+# An arbitrary function, used in test_detect_saccades().
+def fun(x, val=True):
+
+    return numpy.full(len(x), val)
 
 
 #%% __init__()
@@ -104,13 +112,38 @@ def test_save_raw_coords_before_method_call(gd, method):
     assert not numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
 
 
+#%% detect_saccades()
+
+# Here we test just that detect_saccades() can take a function argument.
+# Specific detection algorithms are tested in test_saccadedetection.py.
+
+def test_detect_saccades(gd):
+
+    assert 'saccade' not in gd
+
+    gd.detect_saccades(fun)
+
+    assert all(gd['saccade'])
+
+
+def test_detect_saccades_with_keyword_arguments(gd):
+
+    assert 'saccade' not in gd
+
+    gd.detect_saccades(fun, val=False)
+
+    assert not any(gd['saccade'])
+
+
 #%% plot()
 
 @pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARGS_NAMES)
 def test_GazeData_plot(gd, kwargs):
 
-    # Make a basic transform so as to distinguish data from raw data.
+    # Make a basic transform and add saccades,
+    # so that all plot parameters have visible effects.
     gd.center(origin=constants.ORIGIN)
+    gd.detect_saccades(saccadedetection.criterion, velocity=2.)
 
     fig = gd.plot(**kwargs)
 
