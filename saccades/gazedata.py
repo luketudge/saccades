@@ -5,6 +5,7 @@
 import pandas
 import plotnine
 
+from .conversions import px_to_dva
 from .geometry import acceleration
 from .geometry import center
 from .geometry import rotate
@@ -35,12 +36,14 @@ class GazeData(pandas.DataFrame):
     # it doesn't stick to *one* correct and intuitive method of indexing.)
     # So we must declare custom attributes here
     # to avoid them being treated as columns.
-    # (Not yet implemented, but just in case.)
     # https://pandas.pydata.org/pandas-docs/stable/development/extending.html#define-original-properties
-    # _internal_names = pandas.DataFrame._internal_names + []
-    # _internal_names_set = set(_internal_names)
+    _metadata = ['time_units',
+                 'space_units',
+                 'screen_res',
+                 'screen_diag',
+                 'viewing_dist']
 
-    def __new__(cls, data=None, *args, **kwargs):
+    def __new__(cls, data=None, **kwargs):
 
         # When a new instance of the custom class is requested,
         # this can be for two different reasons:
@@ -65,13 +68,38 @@ class GazeData(pandas.DataFrame):
 
         return super().__new__(cls)
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, data=None,
+                 time_units=None, space_units=None,
+                 screen_res=None, screen_diag=None, viewing_dist=None,
+                 **kwargs):
         """:param data: Gaze data with shape *(n, 3)*, \
         where *n* is the number of gaze samples, \
         and columns are *time*, *x gaze position*, *y gaze position*.
         :type data: :class:`numpy.ndarray` \
         or convertible to :class:`numpy.ndarray`
+        :param time_units: Units of *time* column.
+        :type time_units: str
+        :param space_units: Units of *x* and *y* columns. \
+        Pass `'dva'` to indicate that no conversion to \
+        degrees of visual angle is necessary.
+        :type space_units: str
+        :param screen_res: *(x, y)* screen resolution, \
+        in the same units as *x* and *y* gaze coordinates \
+        (usually pixels).
+        :type screen_res: tuple
+        :param screen_diag: Diagonal size of screen, \
+        in the same units as `viewing_dist`.
+        :type screen_diag: float
+        :param viewing_dist: Distance of eye from screen, \
+        in the same units as `screen_diag`.
+        :type viewing_dist: float
         """
+
+        self.time_units = time_units
+        self.space_units = space_units
+        self.screen_res = screen_res
+        self.screen_diag = screen_diag
+        self.viewing_dist = viewing_dist
 
         # If a copy or view is explicitly requested, respect this.
         # Otherwise ensure we get a copy.
@@ -96,7 +124,7 @@ class GazeData(pandas.DataFrame):
         if 'columns' not in kwargs:
             kwargs['columns'] = INIT_COLUMNS
 
-        super().__init__(data=data, *args, **kwargs)
+        super().__init__(data=data, **kwargs)
 
     # To allow subsets of the custom class to preserve their type,
     # we need to override the constructor that subsetting calls.
@@ -136,10 +164,23 @@ class GazeData(pandas.DataFrame):
 
         Velocities are added as a new column.
 
+        Values are converted to degrees of visual angle using \
+        attributes `screen_res`, `screen_diag`, and `viewing_dist`, \
+        unless the attribute `space_units` is `'dva'`, \
+        in which case no conversion is performed.
+
         See :func:`.geometry.velocity`.
         """
 
-        self['velocity'] = velocity(self[['time', 'x', 'y']])
+        velocities = velocity(self[['time', 'x', 'y']])
+
+        if self.space_units != 'dva':
+            velocities = px_to_dva(velocities,
+                                   screen_res=self.screen_res,
+                                   screen_diag=self.screen_diag,
+                                   viewing_dist=self.viewing_dist)
+
+        self['velocity'] = velocities
 
     def get_accelerations(self):
         """Calculate acceleration of gaze coordinates.

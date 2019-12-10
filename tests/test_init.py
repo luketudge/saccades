@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from . import constants
+
 
 def test_init():
 
@@ -7,5 +9,5 @@ def test_init():
 
     module_contents = dir(saccades)
 
-    for name in ['GazeData', 'geometry', 'saccadedetection']:
+    for name in constants.MODULE_CONTENTS:
         assert name in module_contents

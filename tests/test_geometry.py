@@ -81,6 +81,18 @@ def test_velocity_as_GazeData_method(gd):
 
     gd.get_velocities()
 
+    assert numpy.allclose(gd['velocity'], constants.VELOCITY_DVA, equal_nan=True)
+
+
+# If the units of the x and y columns are already dva,
+# then get_velocities() should not perform conversion.
+
+def test_velocity_as_GazeData_method_with_dva_units(gd):
+
+    gd.space_units = 'dva'
+
+    gd.get_velocities()
+
     assert numpy.allclose(gd['velocity'], constants.VELOCITY, equal_nan=True)
 
 
@@ -100,10 +112,21 @@ def test_acceleration_as_GazeData_method(gd):
 
     observed = gd['acceleration']
 
-    assert numpy.allclose(observed, constants.ACCELERATION, equal_nan=True)
+    assert numpy.allclose(observed, constants.ACCELERATION_DVA, equal_nan=True)
 
     # Check also that the intermediate velocity column was created.
     assert 'velocity' in gd
+
+
+def test_acceleration_as_GazeData_method_with_dva_units(gd):
+
+    gd.space_units = 'dva'
+
+    gd.get_accelerations()
+
+    observed = gd['acceleration']
+
+    assert numpy.allclose(observed, constants.ACCELERATION, equal_nan=True)
 
 
 def test_acceleration_as_GazeData_method_with_existing_velocities(gd):

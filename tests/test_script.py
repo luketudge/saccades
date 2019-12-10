@@ -24,7 +24,10 @@ DATA_PATH = os.path.join(BASE_PATH, 'data', DATA_FILENAME)
 
 DF = pandas.read_csv(DATA_PATH, header=None)
 
-CENTER = (320, 240)
+CENTER = (320., 240.)
+SCREEN_RES = (640., 480.)
+SCREEN_DIAG = 42.
+VIEWING_DIST = 100.
 
 IMAGE_FILENAME = 'test_script.png'
 IMAGE_PATH = os.path.join(BASE_PATH, 'images', IMAGE_FILENAME)
@@ -35,7 +38,10 @@ IMAGE_PATH = os.path.join(BASE_PATH, 'images', IMAGE_FILENAME)
 def test_script():
 
     ## Turn a pandas DataFrame into GazeData.
-    gd = GazeData(DF)
+    gd = GazeData(DF, time_units='ms', space_units='px',
+                  screen_res=SCREEN_RES,
+                  screen_diag=SCREEN_DIAG,
+                  viewing_dist=VIEWING_DIST)
 
     ## Recenter.
     gd.center(origin=CENTER)
@@ -44,7 +50,7 @@ def test_script():
     gd.get_accelerations()
 
     ## Add saccades.
-    gd.detect_saccades(criterion, velocity=1.)
+    gd.detect_saccades(criterion, velocity=0.022)
 
     ## Display the data.
     print(gd)
