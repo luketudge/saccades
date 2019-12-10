@@ -13,10 +13,9 @@ from . import constants
 # So here we check that a few basic useful things
 # that are possible with a pandas DataFrame
 # are still possible with a GazeData instance.
-# Most important are plotting and statistical summaries.
 
 
-#%% pandas dropna()
+#%% pandas.DataFrame.dropna()
 
 # Check for exceptions with the default arguments.
 def test_pandas_dropna(gd_all):
@@ -35,7 +34,7 @@ def test_pandas_dropna_subset(gd_all):
     assert len(gd_all) - len(gd_subset) == 1
 
 
-#%% pandas statistical summaries
+#%% pandas.DataFrame.mean()
 
 def test_pandas_stats(gd_all):
 

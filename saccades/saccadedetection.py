@@ -16,6 +16,9 @@ def criterion(gd, **criteria):
 
     Multiple metrics are combined with logical AND.
 
+    Note that if no metrics are supplied, \
+    by default all samples are marked as part of a saccade.
+
     Metrics that are not yet present in `gd` \
     but that are recognized as valid \
     are calculated automatically and added to `gd`.

@@ -13,6 +13,12 @@ geometry
 .. automodule:: saccades.geometry
     :members:
 
+conversions
+-----------
+
+.. automodule:: saccades.conversions
+    :members:
+
 saccadedetection
 ----------------
 

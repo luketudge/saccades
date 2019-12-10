@@ -13,10 +13,9 @@ DATA_PATH = os.path.join(BASE_PATH, 'data')
 IMAGES_PATH = os.path.join(BASE_PATH, 'images')
 
 
-#%% Helper function
+#%% Helper functions
 
 # Checks equality of an image file with its reference file.
-
 def image_file_ok(filename):
 
     img_bytes = open(filename, mode='rb').read()
@@ -26,6 +25,14 @@ def image_file_ok(filename):
     reference_bytes = open(reference_path, mode='rb').read()
 
     return img_bytes == reference_bytes
+
+
+#%% Expected contents of top module
+
+MODULE_CONTENTS = ['GazeData',
+                   'conversions',
+                   'geometry',
+                   'saccadedetection']
 
 
 #%% Valid init types
@@ -93,7 +100,7 @@ INVALID_INIT_TYPE_NAMES = ['arr_xy',
 
 #%% Attributes
 
-ATTRIBUTES = ['screen', 'viewing_dist']
+ATTRIBUTES = ['screen_res', 'screen_diag', 'viewing_dist']
 
 
 #%% Shapes
@@ -152,6 +159,18 @@ CRITERIA = [{'velocity': 2., 'exp': [False, True, True]},
             {'velocity': 2., 'acceleration': 1., 'exp': [False, False, True]},
             {'velocity': 2., 'acceleration': 2., 'exp': [False, False, False]},
             {'exp': [True, True, True]}]
+
+
+#%% Conversions
+
+SCREEN_RES = (4., 3.)
+SCREEN_DIAG = 10.
+VIEWING_DIST = 3.
+
+VIEWING_DIST_PX = 1.5
+
+PX = [1.5, 0.]
+DVA = [45., 0.]
 
 
 #%% Plotting

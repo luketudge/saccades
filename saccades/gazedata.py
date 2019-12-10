@@ -36,7 +36,7 @@ class GazeData(pandas.DataFrame):
     # So we must declare custom attributes here
     # to avoid them being treated as columns.
     # https://pandas.pydata.org/pandas-docs/stable/development/extending.html#define-original-properties
-    _metadata = ['screen', 'viewing_dist']
+    _metadata = ['screen_res', 'screen_diag', 'viewing_dist']
 
     def __new__(cls, data=None, *args, **kwargs):
 
@@ -63,20 +63,26 @@ class GazeData(pandas.DataFrame):
 
         return super().__new__(cls)
 
-    def __init__(self, data=None, screen=None, viewing_dist=None, *args, **kwargs):
+    def __init__(self, data=None, screen_res=None, screen_diag=None, viewing_dist=None, *args, **kwargs):
         """:param data: Gaze data with shape *(n, 3)*, \
         where *n* is the number of gaze samples, \
         and columns are *time*, *x gaze position*, *y gaze position*.
         :type data: :class:`numpy.ndarray` \
         or convertible to :class:`numpy.ndarray`
-        :param screen: *(x, y)* screen dimensions.
-        :type screen: tuple
+        :param screen_res: *(x, y)* screen resolution, \
+        in the same units as *x* and *y* gaze coordinates \
+        (usually pixels).
+        :type screen_res: tuple
+        :param screen_diag: Diagonal size of screen, \
+        in the same units as `viewing_dist`.
+        :type screen_diag: float
         :param viewing_dist: Distance of eye from screen, \
-        in the same units as `screen`.
+        in the same units as `screen_diag`.
         :type viewing_dist: float
         """
 
-        self.screen = screen
+        self.screen_res = screen_res
+        self.screen_diag = screen_diag
         self.viewing_dist = viewing_dist
 
         # If a copy or view is explicitly requested, respect this.
