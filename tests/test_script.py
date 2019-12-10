@@ -29,6 +29,8 @@ SCREEN_RES = (640., 480.)
 SCREEN_DIAG = 42.
 VIEWING_DIST = 100.
 
+VELOCITY_CRITERION = 0.022
+
 IMAGE_FILENAME = 'test_script.png'
 IMAGE_PATH = os.path.join(BASE_PATH, 'images', IMAGE_FILENAME)
 
@@ -50,7 +52,7 @@ def test_script():
     gd.get_accelerations()
 
     ## Add saccades.
-    gd.detect_saccades(criterion, velocity=0.022)
+    gd.detect_saccades(criterion, velocity=VELOCITY_CRITERION)
 
     ## Display the data.
     print(gd)
