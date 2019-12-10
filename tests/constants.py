@@ -91,6 +91,11 @@ INVALID_INIT_TYPE_NAMES = ['arr_xy',
                            'df_invalid_cols']
 
 
+#%% Attributes
+
+ATTRIBUTES = ['screen', 'viewing_dist']
+
+
 #%% Shapes
 
 SHAPE = [3, 3]

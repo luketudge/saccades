@@ -68,7 +68,7 @@ def test_GazeData_is_not_view():
 
     a = constants.ARRAY
     gd = gazedata.GazeData(a)
-    gd['time'][0] = 9000.
+    gd['time'] = 9000.
 
     assert a[0, 0] != 9000.
 
@@ -156,6 +156,25 @@ def test_GazeData_plot(gd, kwargs):
     assert constants.image_file_ok(kwargs['filename'])
 
 
+#%% Attributes
+
+# Because pandas treats DataFrame attributes as columns by default,
+# some wrangling is needed in order to store attributes in the normal way.
+# So we should test that attributes can be set.
+
+@pytest.mark.parametrize('attr', constants.ATTRIBUTES)
+def test_attributes(gd_all, attr):
+
+    name = 'attribute_value'
+
+    assert getattr(gd_all, attr) is None
+
+    setattr(gd_all, attr, name)
+
+    assert getattr(gd_all, attr) == name
+    assert name not in gd_all
+
+
 #%% Subsetting
 
 # Subsetting instances of the GazeData class presents some challenges.
@@ -174,6 +193,7 @@ def test_subset_rows(gd_all):
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[:2, :])
     assert isinstance(gd_subset, gazedata.GazeData)
+    assert hasattr(gd_subset, constants.ATTRIBUTES[0])
 
 
 def test_subset_rows_with_boolean(gd_all):
@@ -183,6 +203,7 @@ def test_subset_rows_with_boolean(gd_all):
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[1:, :])
     assert isinstance(gd_subset, gazedata.GazeData)
+    assert hasattr(gd_subset, constants.ATTRIBUTES[0])
 
 
 def test_subset_complete_cols(gd_all):
@@ -191,6 +212,7 @@ def test_subset_complete_cols(gd_all):
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
     assert isinstance(gd_subset, gazedata.GazeData)
+    assert hasattr(gd_subset, constants.ATTRIBUTES[0])
 
 
 def test_subset_rearranged_cols(gd_all):
@@ -200,6 +222,7 @@ def test_subset_rearranged_cols(gd_all):
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
     assert isinstance(gd_subset, gazedata.GazeData)
+    assert hasattr(gd_subset, constants.ATTRIBUTES[0])
 
 
 def test_subset_extra_cols():
@@ -210,6 +233,7 @@ def test_subset_extra_cols():
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
     assert isinstance(gd_subset, gazedata.GazeData)
+    assert hasattr(gd_subset, constants.ATTRIBUTES[0])
 
 
 def test_subset_incomplete_cols(gd_all):
@@ -219,3 +243,4 @@ def test_subset_incomplete_cols(gd_all):
     assert numpy.array_equal(gd_subset, constants.ARRAY_XY)
     assert not isinstance(gd_subset, gazedata.GazeData)
     assert isinstance(gd_subset, pandas.DataFrame)
+    assert not hasattr(gd_subset, constants.ATTRIBUTES[0])

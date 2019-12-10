@@ -35,10 +35,8 @@ class GazeData(pandas.DataFrame):
     # it doesn't stick to *one* correct and intuitive method of indexing.)
     # So we must declare custom attributes here
     # to avoid them being treated as columns.
-    # (Not yet implemented, but just in case.)
     # https://pandas.pydata.org/pandas-docs/stable/development/extending.html#define-original-properties
-    # _internal_names = pandas.DataFrame._internal_names + []
-    # _internal_names_set = set(_internal_names)
+    _metadata = ['screen', 'viewing_dist']
 
     def __new__(cls, data=None, *args, **kwargs):
 
@@ -65,13 +63,21 @@ class GazeData(pandas.DataFrame):
 
         return super().__new__(cls)
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, data=None, screen=None, viewing_dist=None, *args, **kwargs):
         """:param data: Gaze data with shape *(n, 3)*, \
         where *n* is the number of gaze samples, \
         and columns are *time*, *x gaze position*, *y gaze position*.
         :type data: :class:`numpy.ndarray` \
         or convertible to :class:`numpy.ndarray`
+        :param screen: *(x, y)* screen dimensions.
+        :type screen: tuple
+        :param viewing_dist: Distance of eye from screen, \
+        in the same units as `screen`.
+        :type viewing_dist: float
         """
+
+        self.screen = screen
+        self.viewing_dist = viewing_dist
 
         # If a copy or view is explicitly requested, respect this.
         # Otherwise ensure we get a copy.
