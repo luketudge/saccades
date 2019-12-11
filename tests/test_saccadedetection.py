@@ -31,10 +31,12 @@ def test_criterion_with_existing_column(gd):
 
 def test_criterion_exceptions(gd):
 
-    with pytest.raises(TypeError):
+    msg_pattern = 'Unrecognized metric'
+
+    with pytest.raises(TypeError, match=msg_pattern):
         saccadedetection.criterion(gd, foo=9000.)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=msg_pattern):
         saccadedetection.criterion(gd, velocity=22., foo=9000.)
 
 
