@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Module providing classes for representing gaze coordinates.
+"""Class for representing gaze coordinates.
 """
 
 import pandas
@@ -13,7 +13,7 @@ from .geometry import rotate
 from .geometry import velocity
 from .tools import check_shape
 from .tools import find_contiguous_subsets
-from .tools import _blockmanager_to_array
+from .tools import _blockmanager_to_dataframe
 
 
 #%% Constants
@@ -30,7 +30,8 @@ class GazeData(pandas.DataFrame):
 
     A :class:`pandas.DataFrame` \
     with some extra methods for processing gaze data. \
-    Most methods wrap functions from :mod:`.geometry`.
+    Many methods wrap functions from :mod:`.geometry` \
+    and :mod:`.conversions`.
     """
 
     # pandas.DataFrame treats attributes as column names.
@@ -66,7 +67,7 @@ class GazeData(pandas.DataFrame):
 
             # Otherwise we initialize a standard pandas DataFrame.
             # This needs the array form of the data.
-            return pandas.DataFrame(_blockmanager_to_array(data), columns=list(data.items))
+            return _blockmanager_to_dataframe(data)
 
         return super().__new__(cls)
 
@@ -154,6 +155,15 @@ class GazeData(pandas.DataFrame):
         if not ok:
             raise AttributeError(msg)
 
+    def reset_time(self):
+        """Reset the *time* column.
+
+        The first *time* value is subtracted from all the others \
+        so that *time* indicates time since first sample.
+        """
+
+        self['time'] = self['time'] - self['time'].iloc[0]
+
     def px_to_dva(self, px):
         """Convert pixels to degrees of visual angle.
 
@@ -234,7 +244,7 @@ class GazeData(pandas.DataFrame):
 
         self['acceleration'] = acceleration(self['time'], self['velocity'])
 
-    def detect_saccades(self, func=None, **kwargs):
+    def detect_saccades(self, func=None, n=None, **kwargs):
         """Get saccades from gaze data.
 
         Function `func` is used to detect saccades. \
@@ -243,7 +253,10 @@ class GazeData(pandas.DataFrame):
         and return a boolean array of length equal to \
         the number of rows in the table \
         and which marks samples as being (or not being) \
-        part of a saccade.
+        part of a saccade. \
+        If no function is supplied \
+        but saccades have previously been detected, \
+        the stored saccades are returned again.
 
         Additional keyword arguments are passed on to `func`.
 
@@ -252,8 +265,13 @@ class GazeData(pandas.DataFrame):
 
         :param func: Algorithm for detecting saccades.
         :type func: function
+        :param n: Maximum number of saccades to extract. \
+        Defaults to extracting all.
+        :type n: int
         :return: Subsets of gaze data, each containing one saccade.
         :rtype: list
+        :raises KeyError: If no function is supplied, \
+        and no 'saccade' column is yet present.
         """
 
         if func:
@@ -261,7 +279,12 @@ class GazeData(pandas.DataFrame):
         elif 'saccade' not in self:
             raise KeyError('Saccade detection function required but not supplied.')
 
-        return [self[i] for i in find_contiguous_subsets(self['saccade'])]
+        slices = find_contiguous_subsets(self['saccade'])
+
+        if n is not None:
+            slices = slices[:n]
+
+        return [self[i] for i in slices]
 
     def plot(self, reverse_y=False, show_raw=False, saccades=False, filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
@@ -297,12 +320,7 @@ class GazeData(pandas.DataFrame):
         :rtype: :class:`plotnine.ggplot`
         """
 
-        # There seem to be some complex problems
-        # using a subclass of pandas.DataFrame with plotnine,
-        # so as a simple fix, create a dataframe for plotting.
-        df = pandas.DataFrame(self)
-
-        fig = (plotnine.ggplot(df, plotnine.aes(x='x', y='y'))
+        fig = (plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
                + plotnine.coord_equal())  # noqa: W503
 
         if reverse_y:
@@ -315,7 +333,7 @@ class GazeData(pandas.DataFrame):
         fig = fig + plotnine.geom_line()
 
         if saccades and ('saccade' in self):
-            fig = fig + plotnine.geom_line(data=df[df['saccade']],
+            fig = fig + plotnine.geom_line(data=self[self['saccade']],
                                            color='red')
 
         if filename:

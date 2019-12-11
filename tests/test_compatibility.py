@@ -43,7 +43,7 @@ def test_pandas_stats(gd_all):
     assert numpy.array_equal(col_means, constants.DF.mean())
 
 
-#%% plotnine
+#%% plotnine.ggplot()
 
 def test_plotnine_plot(gd):
 
@@ -52,7 +52,8 @@ def test_plotnine_plot(gd):
 
     fig.draw()
 
-    filename = os.path.join(constants.IMAGES_PATH, 'test_compatibility.png')
-    fig.save(filename, verbose=False)
+    filename = 'test_plotnine_compatibility.png'
+    filepath = os.path.join(constants.IMAGES_PATH, filename)
+    fig.save(filepath, verbose=False)
 
-    assert constants.image_file_ok(filename)
+    assert constants.image_file_ok(filepath)

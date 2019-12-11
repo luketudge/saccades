@@ -49,6 +49,8 @@ DF = pandas.DataFrame(ARRAY,
                       columns=('time', 'x', 'y'),
                       copy=True)
 
+DF_REINDEXED = DF.set_index(numpy.array([9000, 9001, 9002]))
+
 DF_CORRECT_SHAPE = DF.copy()
 DF_CORRECT_SHAPE.columns = ['a', 'b', 'c']
 
@@ -66,6 +68,7 @@ STANDARD_INIT_TYPES = [SEQUENCE,
 VALID_INIT_TYPES = [SEQUENCE,
                     ARRAY,
                     DF,
+                    DF_REINDEXED,
                     DF_CORRECT_SHAPE,
                     DF_EXTRA_COLUMN,
                     DF_REORDERED_COLUMNS]
@@ -73,6 +76,7 @@ VALID_INIT_TYPES = [SEQUENCE,
 VALID_INIT_TYPE_NAMES = ['seq',
                          'arr',
                          'df',
+                         'df_non_zero_based_index',
                          'df_shape_only',
                          'df_extra_col',
                          'df_reordered']
