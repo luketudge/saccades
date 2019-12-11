@@ -3,6 +3,7 @@
 """
 
 import numpy
+from scipy import ndimage
 
 
 def _blockmanager_to_array(blockmanager):
@@ -44,3 +45,25 @@ def check_shape(array, shape):
             raise ValueError(msg.format(array.shape, shape))
 
     return array
+
+
+def find_contiguous_subsets(x):
+    """Find contiguous runs of True values in a vector.
+
+    :param x: Vector of boolean values.
+    :type x: :class:`numpy.ndarray` \
+    or sequence convertible to :class:`numpy.ndarray`
+    :return: Sequence of slices.
+    :rtype: list
+    """
+
+    x = check_shape(x, (None,))
+
+    # Special case because scipy.ndimage doesn't hande empty arrays.
+    if len(x) == 0:
+        return []
+
+    labels = ndimage.label(x)[0]
+    indices = ndimage.find_objects(labels)
+
+    return [i[0] for i in indices]

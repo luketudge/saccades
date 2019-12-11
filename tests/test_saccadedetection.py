@@ -31,15 +31,17 @@ def test_criterion_with_existing_column(gd):
 
 def test_criterion_exceptions(gd):
 
-    with pytest.raises(TypeError):
+    msg_pattern = 'Unrecognized metric'
+
+    with pytest.raises(TypeError, match=msg_pattern):
         saccadedetection.criterion(gd, foo=9000.)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=msg_pattern):
         saccadedetection.criterion(gd, velocity=22., foo=9000.)
 
 
 @pytest.mark.parametrize('criteria', constants.CRITERIA)
-def test_criterion_via_GazeData_method(gd, criteria):
+def test_criterion_as_GazeData_method(gd, criteria):
 
     # Pop out the 'exp' key.
     criteria = criteria.copy()

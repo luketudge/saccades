@@ -5,12 +5,14 @@
 import pandas
 import plotnine
 
+from .conversions import dva_to_px
 from .conversions import px_to_dva
 from .geometry import acceleration
 from .geometry import center
 from .geometry import rotate
 from .geometry import velocity
 from .tools import check_shape
+from .tools import find_contiguous_subsets
 from .tools import _blockmanager_to_array
 
 
@@ -139,6 +141,45 @@ class GazeData(pandas.DataFrame):
         if all((col not in self) for col in RAW_DATA_COLUMNS):
             self[RAW_DATA_COLUMNS] = self[['x', 'y']]
 
+    def _check_screen_info(self):
+
+        ok = True
+        msg = 'The following necessary attributes have not yet been set:'
+
+        for attr in ['screen_res', 'screen_diag', 'viewing_dist']:
+            if getattr(self, attr) is None:
+                msg = msg + ' {} '.format(attr)
+                ok = False
+
+        if not ok:
+            raise AttributeError(msg)
+
+    def px_to_dva(self, px):
+        """Convert pixels to degrees of visual angle.
+
+        See :func:`.conversions.px_to_dva`.
+        """
+
+        self._check_screen_info()
+
+        return px_to_dva(px,
+                         screen_res=self.screen_res,
+                         screen_diag=self.screen_diag,
+                         viewing_dist=self.viewing_dist)
+
+    def dva_to_px(self, dva):
+        """Convert degrees of visual angle to pixels.
+
+        See :func:`.conversions.dva_to_px`.
+        """
+
+        self._check_screen_info()
+
+        return dva_to_px(dva,
+                         screen_res=self.screen_res,
+                         screen_diag=self.screen_diag,
+                         viewing_dist=self.viewing_dist)
+
     def center(self, origin):
         """Center gaze coordinates.
 
@@ -175,10 +216,7 @@ class GazeData(pandas.DataFrame):
         velocities = velocity(self[['time', 'x', 'y']])
 
         if self.space_units != 'dva':
-            velocities = px_to_dva(velocities,
-                                   screen_res=self.screen_res,
-                                   screen_diag=self.screen_diag,
-                                   viewing_dist=self.viewing_dist)
+            velocities = self.px_to_dva(velocities)
 
         self['velocity'] = velocities
 
@@ -196,15 +234,16 @@ class GazeData(pandas.DataFrame):
 
         self['acceleration'] = acceleration(self['time'], self['velocity'])
 
-    def detect_saccades(self, func, **kwargs):
-        """Mark samples as part of a saccade.
+    def detect_saccades(self, func=None, **kwargs):
+        """Get saccades from gaze data.
 
-        Function `func` is used to create a new boolean column \
-        called 'saccade', which marks samples as part of a saccade. \
+        Function `func` is used to detect saccades. \
         `func` should take a :class:`Gazedata` table \
         as its first input argument, \
         and return a boolean array of length equal to \
-        the number of rows in the table.
+        the number of rows in the table \
+        and which marks samples as being (or not being) \
+        part of a saccade.
 
         Additional keyword arguments are passed on to `func`.
 
@@ -213,9 +252,16 @@ class GazeData(pandas.DataFrame):
 
         :param func: Algorithm for detecting saccades.
         :type func: function
+        :return: Subsets of gaze data, each containing one saccade.
+        :rtype: list
         """
 
-        self['saccade'] = func(self, **kwargs)
+        if func:
+            self['saccade'] = func(self, **kwargs)
+        elif 'saccade' not in self:
+            raise KeyError('Saccade detection function required but not supplied.')
+
+        return [self[i] for i in find_contiguous_subsets(self['saccade'])]
 
     def plot(self, reverse_y=False, show_raw=False, saccades=False, filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
