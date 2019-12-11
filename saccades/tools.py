@@ -3,17 +3,23 @@
 """
 
 import numpy
+import pandas
 from scipy import ndimage
 
 
-def _blockmanager_to_array(blockmanager):
+def _blockmanager_to_dataframe(blockmanager):
+
+    rownames = list(blockmanager.axes[1])
+    colnames = list(blockmanager.items)
 
     # The .as_array() method is new to pandas v0.23.
     # Revert to the older .as_matrix() method if it fails.
     try:
-        return blockmanager.as_array().transpose()
+        array = blockmanager.as_array().transpose()
     except AttributeError:
-        return blockmanager.as_matrix().transpose()
+        array = blockmanager.as_matrix().transpose()
+
+    return pandas.DataFrame(array, index=rownames, columns=colnames)
 
 
 def check_shape(array, shape):

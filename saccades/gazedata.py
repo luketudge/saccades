@@ -13,7 +13,7 @@ from .geometry import rotate
 from .geometry import velocity
 from .tools import check_shape
 from .tools import find_contiguous_subsets
-from .tools import _blockmanager_to_array
+from .tools import _blockmanager_to_dataframe
 
 
 #%% Constants
@@ -67,11 +67,7 @@ class GazeData(pandas.DataFrame):
 
             # Otherwise we initialize a standard pandas DataFrame.
             # This needs the array form of the data.
-            df = pandas.DataFrame(_blockmanager_to_array(data),
-                                  index=list(data.axes[1]),
-                                  columns=list(data.items))
-
-            return df
+            return _blockmanager_to_dataframe(data)
 
         return super().__new__(cls)
 
