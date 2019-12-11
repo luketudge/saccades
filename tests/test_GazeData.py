@@ -130,12 +130,7 @@ def test_save_raw_coords_before_method_call(gd, method):
 
 #%% detect_saccades()
 
-# Here we test the general aspects of detect_saccades():
-# Can it take a function argument?
-# Can it take additional keyword arguments passed on to the function?
-# Is the return value as expected?
-# Does a new 'saccade' column get added?
-
+# Here we test the general aspects of detect_saccades().
 # Specific detection algorithms are tested in test_saccadedetection.py.
 
 def test_detect_saccades(gd):
@@ -147,6 +142,19 @@ def test_detect_saccades(gd):
 
     assert len(result) == 1
     assert isinstance(result[0], gazedata.GazeData)
+
+
+@pytest.mark.parametrize('n', [0, 1, 2])
+def test_detect_saccades_first_n(gd, n):
+
+    # Add a dummy 'saccade' column with 2 saccades.
+    saccade = numpy.full(len(gd), False)
+    saccade[[0, -1]] = True
+    gd['saccade'] = saccade
+
+    result = gd.detect_saccades(n=n)
+
+    assert len(result) == n
 
 
 def test_detect_saccades_exception(gd):

@@ -43,7 +43,7 @@ def test_pandas_stats(gd_all):
     assert numpy.array_equal(col_means, constants.DF.mean())
 
 
-#%% plotnine
+#%% plotnine.ggplot()
 
 def test_plotnine_plot(gd):
 

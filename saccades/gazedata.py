@@ -234,7 +234,7 @@ class GazeData(pandas.DataFrame):
 
         self['acceleration'] = acceleration(self['time'], self['velocity'])
 
-    def detect_saccades(self, func=None, **kwargs):
+    def detect_saccades(self, func=None, n=None, **kwargs):
         """Get saccades from gaze data.
 
         Function `func` is used to detect saccades. \
@@ -243,7 +243,10 @@ class GazeData(pandas.DataFrame):
         and return a boolean array of length equal to \
         the number of rows in the table \
         and which marks samples as being (or not being) \
-        part of a saccade.
+        part of a saccade. \
+        If no function is supplied \
+        but saccades have previously been detected, \
+        the stored saccades are returned again.
 
         Additional keyword arguments are passed on to `func`.
 
@@ -252,8 +255,13 @@ class GazeData(pandas.DataFrame):
 
         :param func: Algorithm for detecting saccades.
         :type func: function
+        :param n: Maximum number of saccades to extract. \
+        Defaults to extracting all.
+        :type n: int
         :return: Subsets of gaze data, each containing one saccade.
         :rtype: list
+        :raises KeyError: If no function is supplied, \
+        and no 'saccade' column is yet present.
         """
 
         if func:
@@ -261,7 +269,12 @@ class GazeData(pandas.DataFrame):
         elif 'saccade' not in self:
             raise KeyError('Saccade detection function required but not supplied.')
 
-        return [self[i] for i in find_contiguous_subsets(self['saccade'])]
+        slices = find_contiguous_subsets(self['saccade'])
+
+        if n is not None:
+            slices = slices[:n]
+
+        return [self[i] for i in slices]
 
     def plot(self, reverse_y=False, show_raw=False, saccades=False, filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
