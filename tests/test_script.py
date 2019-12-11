@@ -54,10 +54,11 @@ def test_script():
     ## Display the data.
     print(gd)
 
-    ## Get saccades.
-    all_saccades = gd.detect_saccades(criterion, velocity=VELOCITY_CRITERION)
-    for s in all_saccades:
-        print(s)
+    ## Get first saccade.
+    first_saccade = gd.detect_saccades(criterion,
+                                       n=1,
+                                       velocity=VELOCITY_CRITERION)[0]
+    print(first_saccade)
 
     ## Save a plot.
     gd.plot(filename=IMAGE_PATH,
