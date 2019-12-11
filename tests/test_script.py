@@ -22,6 +22,9 @@ BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_FILENAME = 'example.csv'
 DATA_PATH = os.path.join(BASE_PATH, 'data', DATA_FILENAME)
 
+OUTPUT_FILENAME = 'example_saccade.csv'
+OUTPUT_PATH = os.path.join(BASE_PATH, OUTPUT_FILENAME)
+
 DF = pandas.read_csv(DATA_PATH, header=None)
 
 CENTER = (320., 240.)
@@ -31,8 +34,8 @@ VIEWING_DIST = 100.
 
 VELOCITY_CRITERION = 0.022
 
-IMAGE_FILENAME = 'test_script.png'
-IMAGE_PATH = os.path.join(BASE_PATH, 'images', IMAGE_FILENAME)
+IMAGE_FILENAME = 'example_saccade_plot.png'
+IMAGE_PATH = os.path.join(BASE_PATH, IMAGE_FILENAME)
 
 
 #%% Test function
@@ -59,6 +62,9 @@ def test_script():
                                        n=1,
                                        velocity=VELOCITY_CRITERION)[0]
     print(first_saccade)
+
+    ## Save first saccade to csv.
+    first_saccade.to_csv(OUTPUT_PATH, index=False)
 
     ## Save a plot.
     gd.plot(filename=IMAGE_PATH,
