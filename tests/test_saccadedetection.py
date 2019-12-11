@@ -41,7 +41,7 @@ def test_criterion_exceptions(gd):
 
 
 @pytest.mark.parametrize('criteria', constants.CRITERIA)
-def test_criterion_via_GazeData_method(gd, criteria):
+def test_criterion_as_GazeData_method(gd, criteria):
 
     # Pop out the 'exp' key.
     criteria = criteria.copy()

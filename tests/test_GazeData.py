@@ -130,25 +130,57 @@ def test_save_raw_coords_before_method_call(gd, method):
 
 #%% detect_saccades()
 
-# Here we test just that detect_saccades() can take a function argument.
+# Here we test the general aspects of detect_saccades():
+# Can it take a function argument?
+# Can it take additional keyword arguments passed on to the function?
+# Is the return value as expected?
+# Does a new 'saccade' column get added?
+
 # Specific detection algorithms are tested in test_saccadedetection.py.
 
 def test_detect_saccades(gd):
 
-    assert 'saccade' not in gd
+    # Add a dummy 'saccade' column.
+    gd['saccade'] = True
+
+    result = gd.detect_saccades()
+
+    assert len(result) == 1
+    assert isinstance(result[0], gazedata.GazeData)
+
+
+def test_detect_saccades_exception(gd):
+
+    msg_pattern = 'Saccade detection function required but not supplied.'
+
+    with pytest.raises(KeyError, match=msg_pattern):
+        gd.detect_saccades()
+
+
+def test_detect_saccades_with_function(gd):
 
     gd.detect_saccades(fun)
 
     assert all(gd['saccade'])
 
 
-def test_detect_saccades_with_keyword_arguments(gd):
+def test_detect_saccades_with_keyword_argument(gd):
 
-    assert 'saccade' not in gd
+    result = gd.detect_saccades(fun, val=False)
 
-    gd.detect_saccades(fun, val=False)
+    assert result == []
 
     assert not any(gd['saccade'])
+
+
+def test_detect_saccades_with_existing_saccade_column(gd):
+
+    # Add a dummy 'saccade' column.
+    gd['saccade'] = False
+
+    gd.detect_saccades(fun)
+
+    assert all(gd['saccade'])
 
 
 #%% plot()

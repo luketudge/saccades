@@ -12,6 +12,7 @@ from .geometry import center
 from .geometry import rotate
 from .geometry import velocity
 from .tools import check_shape
+from .tools import find_contiguous_subsets
 from .tools import _blockmanager_to_array
 
 
@@ -233,15 +234,16 @@ class GazeData(pandas.DataFrame):
 
         self['acceleration'] = acceleration(self['time'], self['velocity'])
 
-    def detect_saccades(self, func, **kwargs):
-        """Mark samples as part of a saccade.
+    def detect_saccades(self, func=None, **kwargs):
+        """Get saccades from gaze data.
 
-        Function `func` is used to create a new boolean column \
-        called 'saccade', which marks samples as part of a saccade. \
+        Function `func` is used to detect saccades. \
         `func` should take a :class:`Gazedata` table \
         as its first input argument, \
         and return a boolean array of length equal to \
-        the number of rows in the table.
+        the number of rows in the table \
+        and which marks samples as being (or not being) \
+        part of a saccade.
 
         Additional keyword arguments are passed on to `func`.
 
@@ -250,9 +252,16 @@ class GazeData(pandas.DataFrame):
 
         :param func: Algorithm for detecting saccades.
         :type func: function
+        :return: Subsets of gaze data, each containing one saccade.
+        :rtype: list
         """
 
-        self['saccade'] = func(self, **kwargs)
+        if func:
+            self['saccade'] = func(self, **kwargs)
+        elif 'saccade' not in self:
+            raise KeyError('Saccade detection function required but not supplied.')
+
+        return [self[i] for i in find_contiguous_subsets(self['saccade'])]
 
     def plot(self, reverse_y=False, show_raw=False, saccades=False, filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.

@@ -51,11 +51,13 @@ def test_script():
     ## Calculate velocity and acceleration.
     gd.get_accelerations()
 
-    ## Add saccades.
-    gd.detect_saccades(criterion, velocity=VELOCITY_CRITERION)
-
     ## Display the data.
     print(gd)
+
+    ## Get saccades.
+    all_saccades = gd.detect_saccades(criterion, velocity=VELOCITY_CRITERION)
+    for s in all_saccades:
+        print(s)
 
     ## Save a plot.
     gd.plot(filename=IMAGE_PATH,

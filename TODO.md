@@ -1,7 +1,7 @@
 # TODOs
 
+* Functions for saccade metrics.
 * A function for the 'velocity peak' saccade detection algorithm.
-* A method to the `GazeData` class that returns an iterator of saccades.
 * Functions for gaze coordinate smoothing.
   * `scipy` and `pandas` have some ready-made smoothing algorithms. But one difficulty is taking into account the *time* column.
   * A method to the `GazeData` class that accepts these functions as arguments.
