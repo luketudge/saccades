@@ -73,6 +73,22 @@ def test_GazeData_is_not_view():
     assert a[0, 0] != 9000.
 
 
+#%% _check_screen_info()
+
+def test_check_screen_info(gd):
+
+    gd._check_screen_info()
+
+
+@pytest.mark.parametrize('attr', constants.SCREEN_ATTRIBUTES)
+def test_check_screen_info_exceptions(gd, attr):
+
+    setattr(gd, attr, None)
+
+    with pytest.raises(AttributeError, match=attr):
+        gd._check_screen_info()
+
+
 #%% _save_raw_coords()
 
 def test_save_raw_coords(gd):
@@ -90,8 +106,8 @@ def test_save_raw_coords(gd):
     assert not numpy.array_equal(gd['x_raw'], gd['x'])
 
 
-# We would like this 'private' method to store the current coordinates
-# but only if they have not already been stored.
+# We would like this method to store the current coordinates
+# only if they have not already been stored.
 # So here we test that there is no effect of a second call.
 
 def test_save_raw_coords_with_existing_coords(gd):

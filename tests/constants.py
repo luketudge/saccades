@@ -105,10 +105,13 @@ SCREEN_DIAG = 10.
 VIEWING_DIST = 5.
 
 ATTRIBUTES = {'time_units': None,
-              'space_units': 'px',
-              'screen_res': SCREEN_RES,
-              'screen_diag': SCREEN_DIAG,
-              'viewing_dist': VIEWING_DIST}
+              'space_units': 'px'}
+
+SCREEN_ATTRIBUTES = {'screen_res': SCREEN_RES,
+                     'screen_diag': SCREEN_DIAG,
+                     'viewing_dist': VIEWING_DIST}
+
+ATTRIBUTES.update(SCREEN_ATTRIBUTES)
 
 
 #%% Shapes

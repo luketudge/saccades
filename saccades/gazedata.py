@@ -5,6 +5,7 @@
 import pandas
 import plotnine
 
+from .conversions import dva_to_px
 from .conversions import px_to_dva
 from .geometry import acceleration
 from .geometry import center
@@ -139,6 +140,45 @@ class GazeData(pandas.DataFrame):
         if all((col not in self) for col in RAW_DATA_COLUMNS):
             self[RAW_DATA_COLUMNS] = self[['x', 'y']]
 
+    def _check_screen_info(self):
+
+        ok = True
+        msg = 'The following necessary attributes have not yet been set:'
+
+        for attr in ['screen_res', 'screen_diag', 'viewing_dist']:
+            if getattr(self, attr) is None:
+                msg = msg + ' {} '.format(attr)
+                ok = False
+
+        if not ok:
+            raise AttributeError(msg)
+
+    def px_to_dva(self, px):
+        """Convert pixels to degrees of visual angle.
+
+        See :func:`.conversions.px_to_dva`.
+        """
+
+        self._check_screen_info()
+
+        return px_to_dva(px,
+                         screen_res=self.screen_res,
+                         screen_diag=self.screen_diag,
+                         viewing_dist=self.viewing_dist)
+
+    def dva_to_px(self, dva):
+        """Convert degrees of visual angle to pixels.
+
+        See :func:`.conversions.dva_to_px`.
+        """
+
+        self._check_screen_info()
+
+        return dva_to_px(dva,
+                         screen_res=self.screen_res,
+                         screen_diag=self.screen_diag,
+                         viewing_dist=self.viewing_dist)
+
     def center(self, origin):
         """Center gaze coordinates.
 
@@ -175,10 +215,7 @@ class GazeData(pandas.DataFrame):
         velocities = velocity(self[['time', 'x', 'y']])
 
         if self.space_units != 'dva':
-            velocities = px_to_dva(velocities,
-                                   screen_res=self.screen_res,
-                                   screen_diag=self.screen_diag,
-                                   viewing_dist=self.viewing_dist)
+            velocities = self.px_to_dva(velocities)
 
         self['velocity'] = velocities
 
