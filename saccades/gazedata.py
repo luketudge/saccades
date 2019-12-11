@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Module providing classes for representing gaze coordinates.
+"""Class for representing gaze coordinates.
 """
 
 import pandas
@@ -30,7 +30,8 @@ class GazeData(pandas.DataFrame):
 
     A :class:`pandas.DataFrame` \
     with some extra methods for processing gaze data. \
-    Most methods wrap functions from :mod:`.geometry`.
+    Many methods wrap functions from :mod:`.geometry` \
+    and :mod:`.conversions`.
     """
 
     # pandas.DataFrame treats attributes as column names.
