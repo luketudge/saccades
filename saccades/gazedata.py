@@ -67,7 +67,11 @@ class GazeData(pandas.DataFrame):
 
             # Otherwise we initialize a standard pandas DataFrame.
             # This needs the array form of the data.
-            return pandas.DataFrame(_blockmanager_to_array(data), columns=list(data.items))
+            df = pandas.DataFrame(_blockmanager_to_array(data),
+                                  index=list(data.axes[1]),
+                                  columns=list(data.items))
+
+            return df
 
         return super().__new__(cls)
 
@@ -154,6 +158,15 @@ class GazeData(pandas.DataFrame):
 
         if not ok:
             raise AttributeError(msg)
+
+    def reset_time(self):
+        """Reset the *time* column.
+
+        The first *time* value is subtracted from all the others \
+        so that *time* indicates time since first sample.
+        """
+
+        self['time'] = self['time'] - self['time'].iloc[0]
 
     def px_to_dva(self, px):
         """Convert pixels to degrees of visual angle.
@@ -311,12 +324,7 @@ class GazeData(pandas.DataFrame):
         :rtype: :class:`plotnine.ggplot`
         """
 
-        # There seem to be some complex problems
-        # using a subclass of pandas.DataFrame with plotnine,
-        # so as a simple fix, create a dataframe for plotting.
-        df = pandas.DataFrame(self)
-
-        fig = (plotnine.ggplot(df, plotnine.aes(x='x', y='y'))
+        fig = (plotnine.ggplot(self, plotnine.aes(x='x', y='y'))
                + plotnine.coord_equal())  # noqa: W503
 
         if reverse_y:
@@ -329,7 +337,7 @@ class GazeData(pandas.DataFrame):
         fig = fig + plotnine.geom_line()
 
         if saccades and ('saccade' in self):
-            fig = fig + plotnine.geom_line(data=df[df['saccade']],
+            fig = fig + plotnine.geom_line(data=self[self['saccade']],
                                            color='red')
 
         if filename:

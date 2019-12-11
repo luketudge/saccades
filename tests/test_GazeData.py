@@ -128,17 +128,29 @@ def test_save_raw_coords_before_method_call(gd, method):
     assert not numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
 
 
+#%% reset_time()
+
+def test_reset_time(gd_all):
+
+    t_0 = constants.ARRAY[0, 0]
+    t_end = constants.ARRAY[-1, 0]
+
+    gd_all.reset_time()
+
+    assert gd_all['time'].iloc[0] == 0.
+    assert gd_all['time'].iloc[-1] == t_end - t_0
+
+
 #%% detect_saccades()
 
 # Here we test the general aspects of detect_saccades().
 # Specific detection algorithms are tested in test_saccadedetection.py.
 
-def test_detect_saccades(gd):
+def test_detect_saccades(gd_all):
 
-    # Add a dummy 'saccade' column.
-    gd['saccade'] = True
+    gd_all['saccade'] = True
 
-    result = gd.detect_saccades()
+    result = gd_all.detect_saccades()
 
     assert len(result) == 1
     assert isinstance(result[0], gazedata.GazeData)
@@ -183,7 +195,6 @@ def test_detect_saccades_with_keyword_argument(gd):
 
 def test_detect_saccades_with_existing_saccade_column(gd):
 
-    # Add a dummy 'saccade' column.
     gd['saccade'] = False
 
     gd.detect_saccades(fun)
@@ -259,7 +270,7 @@ def test_subset_rows(gd_all):
 
 def test_subset_rows_with_boolean(gd_all):
 
-    gd_subset = gd_all[gd_all['time'] > gd_all['time'][0]]
+    gd_subset = gd_all[gd_all['time'] > gd_all['time'].iloc[0]]
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[1:, :])
