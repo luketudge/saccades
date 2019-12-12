@@ -77,11 +77,7 @@ class GazeData(pandas.DataFrame):
 
         return super().__new__(cls)
 
-    def __init__(self, data=None,
-                 time_units=None, space_units=None,
-                 screen_res=None, screen_diag=None, viewing_dist=None,
-                 target=None,
-                 **kwargs):
+    def __init__(self, data=None, **kwargs):
         """Initialize a new table of gaze data.
 
         :param data: Gaze data with shape *(n, 3)*, \
@@ -109,15 +105,12 @@ class GazeData(pandas.DataFrame):
         :type target: tuple
         """
 
-        # If we are initializing from an existing instance,
-        # then we want to preserve its GazeData-relevant attributes,
-        # unless they are being re-set in the arguments to __init__().
-        self.time_units = time_units
-        self.space_units = space_units
-        self.screen_res = screen_res
-        self.screen_diag = screen_diag
-        self.viewing_dist = viewing_dist
-        self.target = target
+        # Set attributes according to the following priorities:
+        # Use values set in the keyword arguments to __init__().
+        # Else if initializing from an existing instance, use its attributes.
+        # Else None.
+        for attr in ATTRIBUTES:
+            setattr(self, attr, kwargs.pop(attr, getattr(data, attr, None)))
 
         # If a copy or view is explicitly requested, respect this.
         # Otherwise ensure we get a copy.
