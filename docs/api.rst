@@ -25,6 +25,12 @@ saccadedetection
 .. automodule:: saccades.saccadedetection
     :members:
 
+saccademetrics
+--------------
+
+.. automodule:: saccades.saccademetrics
+    :members:
+
 tools
 -----
 

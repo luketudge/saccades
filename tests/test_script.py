@@ -48,6 +48,9 @@ def test_script():
                   screen_diag=SCREEN_DIAG,
                   viewing_dist=VIEWING_DIST)
 
+    ## Reset time index.
+    gd.reset_time()
+
     ## Recenter.
     gd.center(origin=CENTER)
 

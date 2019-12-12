@@ -32,7 +32,8 @@ def image_file_ok(filename):
 MODULE_CONTENTS = ['GazeData',
                    'conversions',
                    'geometry',
-                   'saccadedetection']
+                   'saccadedetection',
+                   'saccademetrics']
 
 
 #%% Valid init types
@@ -104,7 +105,7 @@ INVALID_INIT_TYPE_NAMES = ['arr_xy',
 
 #%% Attributes
 
-SCREEN_RES = (4., 3.)
+SCREEN_RES = [4., 3.]
 SCREEN_DIAG = 10.
 VIEWING_DIST = 5.
 
@@ -122,14 +123,14 @@ ATTRIBUTES.update(SCREEN_ATTRIBUTES)
 
 SHAPE = [3, 3]
 
-WILDCARD_SHAPES = [(None, SHAPE[1]),
-                   (SHAPE[0], None),
-                   (None, None)]
+WILDCARD_SHAPES = [[None, SHAPE[1]],
+                   [SHAPE[0], None],
+                   [None, None]]
 
 WRONG_SHAPE = [i + 1 for i in SHAPE]
 
-WRONG_SHAPES = [(None, WRONG_SHAPE[1]),
-                (WRONG_SHAPE[0], None),
+WRONG_SHAPES = [[None, WRONG_SHAPE[1]],
+                [WRONG_SHAPE[0], None],
                 SHAPE[:1],
                 SHAPE + [None],
                 SHAPE + [0],
@@ -191,6 +192,11 @@ CRITERIA = [{'velocity': VELOCITY_LOW, 'exp': [False, True, True]},
             {'velocity': VELOCITY_LOW, 'acceleration': ACCELERATION_LOW, 'exp': [False, False, True]},
             {'velocity': VELOCITY_LOW, 'acceleration': ACCELERATION_HIGH, 'exp': [False, False, False]},
             {'exp': [True, True, True]}]
+
+
+#%% Saccade metrics
+
+LATENCY = ARRAY[0, 0]
 
 
 #%% Plotting
