@@ -3,6 +3,7 @@
 """
 
 from .gazedata import GazeData  # noqa: F401
+from .gazedata import Saccade  # noqa: F401
 
 
 __version__ = '0.1'

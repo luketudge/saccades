@@ -10,6 +10,7 @@ import pytest
 from . import constants
 
 from saccades import GazeData
+from saccades import Saccade
 from saccades import saccadedetection
 
 
@@ -154,6 +155,7 @@ def test_detect_saccades(gd_all):
 
     assert len(result) == 1
     assert isinstance(result[0], GazeData)
+    assert isinstance(result[0], Saccade)
 
 
 @pytest.mark.parametrize('n', [0, 1, 2])

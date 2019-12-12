@@ -30,6 +30,7 @@ def image_file_ok(filename):
 #%% Expected contents of top module
 
 MODULE_CONTENTS = ['GazeData',
+                   'Saccade',
                    'conversions',
                    'geometry',
                    'saccadedetection',
@@ -108,9 +109,11 @@ INVALID_INIT_TYPE_NAMES = ['arr_xy',
 SCREEN_RES = [4., 3.]
 SCREEN_DIAG = 10.
 VIEWING_DIST = 5.
+TARGET = [6., 10.]
 
 ATTRIBUTES = {'time_units': None,
-              'space_units': 'px'}
+              'space_units': 'px',
+              'target': TARGET}
 
 SCREEN_ATTRIBUTES = {'screen_res': SCREEN_RES,
                      'screen_diag': SCREEN_DIAG,
@@ -140,7 +143,7 @@ WRONG_SHAPES = [[None, WRONG_SHAPE[1]],
 
 #%% Transformations
 
-ORIGIN = (1., 2.)
+ORIGIN = [1., 2.]
 
 CENTERED = numpy.array([[0., -2.],
                         [3., 2.],
@@ -194,9 +197,18 @@ CRITERIA = [{'velocity': VELOCITY_LOW, 'exp': [False, True, True]},
             {'exp': [True, True, True]}]
 
 
+#%% Saccade
+
+SACCADE = [[2., 1., 2.],
+           [4., 5., 5.],
+           [6., 9., 8.],
+           [8., 7., 10.]]
+
+
 #%% Saccade metrics
 
-LATENCY = ARRAY[0, 0]
+AMPLITUDE = 10.
+LATENCY = 2.
 
 
 #%% Plotting

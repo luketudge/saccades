@@ -8,6 +8,7 @@ import pytest
 from . import constants
 
 from saccades import GazeData
+from saccades import Saccade
 
 
 @pytest.fixture(scope='session')
@@ -32,3 +33,9 @@ def gd():
 def gd_all(request):
 
     return GazeData(request.param, **constants.ATTRIBUTES)
+
+
+@pytest.fixture
+def sacc():
+
+    return Saccade(constants.SACCADE, **constants.ATTRIBUTES)
