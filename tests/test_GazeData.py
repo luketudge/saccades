@@ -9,7 +9,7 @@ import pytest
 
 from . import constants
 
-from saccades import gazedata
+from saccades import GazeData
 from saccades import saccadedetection
 
 
@@ -23,8 +23,8 @@ from saccades import saccadedetection
 #%% Setup
 
 # Wrapped GazeData methods used in test_save_raw_coords_before_method_call().
-methods = [functools.partial(gazedata.GazeData.center, origin=constants.ORIGIN),
-           functools.partial(gazedata.GazeData.rotate, theta=constants.ANGLE)]
+methods = [functools.partial(GazeData.center, origin=constants.ORIGIN),
+           functools.partial(GazeData.rotate, theta=constants.ANGLE)]
 
 
 # An arbitrary function, used in test_detect_saccades().
@@ -37,7 +37,7 @@ def fun(x, val=True):
 
 def test_GazeData_init_types(gd_all):
 
-    assert isinstance(gd_all, gazedata.GazeData)
+    assert isinstance(gd_all, GazeData)
     assert isinstance(gd_all, pandas.DataFrame)
     assert all((col in gd_all.columns) for col in ['time', 'x', 'y'])
 
@@ -51,14 +51,14 @@ def test_GazeData_init_types(gd_all):
 def test_GazeData_invalid_init_types(input_type):
 
     with pytest.raises(ValueError):
-        gazedata.GazeData(input_type)
+        GazeData(input_type)
 
 
 def test_GazeData_empty_init():
 
-    gd = gazedata.GazeData()
+    gd = GazeData()
 
-    assert isinstance(gd, gazedata.GazeData)
+    assert isinstance(gd, GazeData)
     assert isinstance(gd, pandas.DataFrame)
     assert list(gd.columns) == ['time', 'x', 'y']
     assert gd.empty
@@ -67,7 +67,7 @@ def test_GazeData_empty_init():
 def test_GazeData_is_not_view():
 
     a = constants.ARRAY
-    gd = gazedata.GazeData(a)
+    gd = GazeData(a)
     gd['time'] = 9000.
 
     assert a[0, 0] != 9000.
@@ -153,7 +153,7 @@ def test_detect_saccades(gd_all):
     result = gd_all.detect_saccades()
 
     assert len(result) == 1
-    assert isinstance(result[0], gazedata.GazeData)
+    assert isinstance(result[0], GazeData)
 
 
 @pytest.mark.parametrize('n', [0, 1, 2])
@@ -262,7 +262,7 @@ def test_subset_rows(gd_all):
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[:2, :])
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
 
     for attr, val in constants.ATTRIBUTES.items():
         assert getattr(gd_subset, attr) == val
@@ -274,7 +274,7 @@ def test_subset_rows_with_boolean(gd_all):
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[1:, :])
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
 
     for attr, val in constants.ATTRIBUTES.items():
         assert getattr(gd_subset, attr) == val
@@ -285,7 +285,7 @@ def test_subset_complete_cols(gd_all):
     gd_subset = gd_all[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
 
     for attr, val in constants.ATTRIBUTES.items():
         assert getattr(gd_subset, attr) == val
@@ -297,7 +297,7 @@ def test_subset_rearranged_cols(gd_all):
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
 
     for attr, val in constants.ATTRIBUTES.items():
         assert getattr(gd_subset, attr) == val
@@ -305,12 +305,12 @@ def test_subset_rearranged_cols(gd_all):
 
 def test_subset_extra_cols():
 
-    gd = gazedata.GazeData(constants.DF_EXTRA_COLUMN, **constants.ATTRIBUTES)
+    gd = GazeData(constants.DF_EXTRA_COLUMN, **constants.ATTRIBUTES)
     gd_subset = gd[['y', 'time', 'foo', 'x']]
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
 
     for attr, val in constants.ATTRIBUTES.items():
         assert getattr(gd_subset, attr) == val
@@ -321,7 +321,7 @@ def test_subset_incomplete_cols(gd_all):
     gd_subset = gd_all[['x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY_XY)
-    assert not isinstance(gd_subset, gazedata.GazeData)
+    assert not isinstance(gd_subset, GazeData)
     assert isinstance(gd_subset, pandas.DataFrame)
 
     for attr in constants.ATTRIBUTES:
