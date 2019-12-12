@@ -7,19 +7,30 @@
 
 A Python package for working with saccades. A work in progress.
 
-## Aims
+## Status
 
-Implement algorithms for:
+We currently have:
 
-* extracting saccades from eye gaze coordinates
-* calculating basic parameters for a saccade, e.g.:
-  * latency
-  * duration
-  * amplitude
-  * peak velocity
-* calculating the various measures of saccade trajectory deviation described in [this article](https://doi.org/10.3758/s13428-016-0846-6)
+* Classes for representing eyetracking coordinates and saccades.
+* Methods for calculating velocity and acceleration.
+* Conversion from screen pixels to degrees of visual angle.
+* Methods for saccade detection.
+* Methods for calculating some saccade parameters.
+
+## TODO
+
+Some things still to be implemented, in approximate order of priority:
+
+* A sequence-like class that groups blocks of eyetracking coordinates as trials in an experiment.
+* Functions for reading various text eyetracking data files.
+* A quick-start page for the documentation, and some example notebooks.
+* Methods for gaze coordinate smoothing.
+* More saccade detection algorithms.
+* More saccade parameters.
 
 ## Install
+
+How to install and test the current development version.
 
 ### Virtual environment
 
