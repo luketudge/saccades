@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import numpy
 import pandas
 import pytest
 
@@ -37,14 +38,43 @@ def test_set_attributes(sacc, attr, val):
     assert getattr(sacc, attr) == new_value
 
 
-#%% Subsetting
+# We should also check that attributes of the parent GazeData
+# are preserved when a Saccade is initialized.
 
-# Subsetting a saccade doesn't really make sense,
-# so subsets should just revert to being normal GazeData.
+@pytest.mark.parametrize('attr, val', constants.ATTRIBUTES.items())
+def test_preserve_parent_attributes(gd, attr, val):
+
+    # Add a dummy 'saccade' column with 2 saccades.
+    saccade = numpy.full(len(gd), False)
+    saccade[[0, -1]] = True
+    gd['saccade'] = saccade
+
+    all_saccades = gd.detect_saccades()
+
+    for sacc in all_saccades:
+        assert getattr(sacc, attr) == val
+
+
+#%% Subsetting
 
 def test_subset_rows(sacc):
 
     sacc_subset = sacc[:2]
 
+    assert isinstance(sacc_subset, Saccade)
+
+
+def test_subset_complete_cols(sacc):
+
+    sacc_subset = sacc[['time', 'x', 'y']]
+
+    assert isinstance(sacc_subset, Saccade)
+
+
+def test_subset_incomplete_cols(sacc):
+
+    sacc_subset = sacc[['x', 'y']]
+
     assert not isinstance(sacc_subset, Saccade)
-    assert isinstance(sacc_subset, GazeData)
+    assert not isinstance(sacc_subset, GazeData)
+    assert isinstance(sacc_subset, pandas.DataFrame)

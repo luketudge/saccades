@@ -36,7 +36,7 @@ def fun(x, val=True):
 
 #%% __init__()
 
-def test_GazeData_init_types(gd_all):
+def test_init_types(gd_all):
 
     assert isinstance(gd_all, GazeData)
     assert isinstance(gd_all, pandas.DataFrame)
@@ -49,13 +49,13 @@ def test_GazeData_init_types(gd_all):
 
 
 @pytest.mark.parametrize('input_type', constants.INVALID_INIT_TYPES, ids=constants.INVALID_INIT_TYPE_NAMES)
-def test_GazeData_invalid_init_types(input_type):
+def test_invalid_init_types(input_type):
 
     with pytest.raises(ValueError):
         GazeData(input_type)
 
 
-def test_GazeData_empty_init():
+def test_empty_init():
 
     gd = GazeData()
 
@@ -72,6 +72,30 @@ def test_GazeData_is_not_view():
     gd['time'] = 9000.
 
     assert a[0, 0] != 9000.
+
+
+# And I suppose we ought to be able to initialize from an existing instance.
+# In this case, we want to keep its attributes.
+
+def test_init_from_instance(gd_all):
+
+    new_gd = GazeData(gd_all)
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(new_gd, attr) == val
+
+
+# Unless the attributes are re-set explicitly in the __init__() call.
+
+def test_init_from_instance_reset_attributes(gd_all):
+
+    new_value = 'new_value'
+    new_attributes = {attr: new_value for attr in constants.ATTRIBUTES}
+
+    new_gd = GazeData(gd_all, **new_attributes)
+
+    for attr in constants.ATTRIBUTES:
+        assert getattr(new_gd, attr) == new_value
 
 
 #%% _check_screen_info()

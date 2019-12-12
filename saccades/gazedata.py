@@ -109,6 +109,9 @@ class GazeData(pandas.DataFrame):
         :type target: tuple
         """
 
+        # If we are initializing from an existing instance,
+        # then we want to preserve its GazeData-relevant attributes,
+        # unless they are being re-set in the arguments to __init__().
         self.time_units = time_units
         self.space_units = space_units
         self.screen_res = screen_res
@@ -360,16 +363,20 @@ class Saccade(GazeData):
     """Table of gaze data containing a saccade.
 
     A subclass of :class:`GazeData`.
-    
+
     Additional methods calculate saccade metrics \
     using functions from :mod:`.saccademetrics` with the same name.
     """
 
+    @property
+    def _constructor(self):
+        return Saccade
+
     # This makes all suitable functions from saccademetrics
     # into methods of the Saccade class.
-    def __getattribute__(self, name):
+    def __getattr__(self, name):
 
         if name in saccademetrics.ALL_METRICS:
             return functools.partial(getattr(saccademetrics, name), self)
         else:
-            return super().__getattribute__(name)
+            return super().__getattr__(name)

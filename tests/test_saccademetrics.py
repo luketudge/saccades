@@ -19,3 +19,28 @@ def test_latency_as_Saccade_method(sacc):
     result = sacc.latency()
 
     assert result == constants.LATENCY
+
+
+#%% amplitude()
+
+def test_amplitude(sacc):
+
+    result = saccademetrics.amplitude(sacc)
+
+    assert result == constants.AMPLITUDE_DVA
+
+
+def test_amplitude_with_dva_units(sacc):
+
+    sacc.space_units = 'dva'
+
+    result = saccademetrics.amplitude(sacc)
+
+    assert result == constants.AMPLITUDE
+
+
+def test_amplitude_as_Saccade_method(sacc):
+
+    result = sacc.amplitude()
+
+    assert result == constants.AMPLITUDE_DVA

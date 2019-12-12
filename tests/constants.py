@@ -162,6 +162,8 @@ CENTER_ROTATED = numpy.array([[3., 2.],
 
 #%% Conversions
 
+# Obviously not realistic that someone sits 2.5 pixels from the screen.
+# But it makes the math a bit easier.
 VIEWING_DIST_PX = 2.5
 
 # The two easiest angles to check.
@@ -207,8 +209,9 @@ SACCADE = [[2., 1., 2.],
 
 #%% Saccade metrics
 
-AMPLITUDE = 10.
 LATENCY = 2.
+AMPLITUDE = 10.
+AMPLITUDE_DVA = 75.96375653207353
 
 
 #%% Plotting
