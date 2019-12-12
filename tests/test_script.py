@@ -40,6 +40,7 @@ IMAGE_PATH = os.path.join(BASE_PATH, IMAGE_FILENAME)
 
 RESULTS_PRINTOUT = """
 latency:   {latency}
+duration:  {duration}
 amplitude: {amplitude}
 """
 
@@ -68,19 +69,17 @@ def test_script():
     print(gd)
 
     ## Get first saccade.
-    first_saccade = gd.detect_saccades(criterion,
-                                       n=1,
-                                       velocity=VELOCITY_CRITERION)[0]
-    print(first_saccade)
+    sacc = gd.detect_saccades(criterion, n=1, velocity=VELOCITY_CRITERION)[0]
 
     ## Calculate saccade metrics.
     results = {}
-    results['latency'] = first_saccade.latency()
-    results['amplitude'] = first_saccade.amplitude()
+    results['latency'] = sacc.latency()
+    results['duration'] = sacc.duration()
+    results['amplitude'] = sacc.amplitude()
     print(RESULTS_PRINTOUT.format(**results))
 
     ## Save first saccade to csv.
-    first_saccade.to_csv(OUTPUT_PATH, index=False)
+    sacc.to_csv(OUTPUT_PATH, index=False)
 
     ## Save a plot.
     gd.plot(filename=IMAGE_PATH,

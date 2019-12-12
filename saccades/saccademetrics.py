@@ -6,6 +6,7 @@ import numpy
 
 
 ALL_METRICS = ['latency',
+               'duration',
                'amplitude']
 
 
@@ -20,6 +21,19 @@ def latency(gd):
     """
 
     return gd['time'].iloc[0]
+
+
+def duration(gd):
+    """Duration of a saccade.
+
+    :param gd: Table of gaze data containing a saccade.
+    :type gd: :class:`.gazedata.GazeData` \
+    (or :class:`.gazedata.Saccade`)
+    :return: Duration (in the units of the *time* column).
+    :rtype: float
+    """
+
+    return gd['time'].iloc[-1] - gd['time'].iloc[0]
 
 
 def amplitude(gd):

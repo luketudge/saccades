@@ -21,6 +21,22 @@ def test_latency_as_Saccade_method(sacc):
     assert result == constants.LATENCY
 
 
+#%% duration()
+
+def test_duration(sacc):
+
+    result = saccademetrics.duration(sacc)
+
+    assert result == constants.DURATION
+
+
+def test_duration_as_Saccade_method(sacc):
+
+    result = sacc.duration()
+
+    assert result == constants.DURATION
+
+
 #%% amplitude()
 
 def test_amplitude(sacc):

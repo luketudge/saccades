@@ -216,6 +216,7 @@ SACCADE = [[2., 1., 2.],
 #%% Saccade metrics
 
 LATENCY = 2.
+DURATION = 6.
 AMPLITUDE = 10.
 AMPLITUDE_DVA = 75.96375653207353
 
