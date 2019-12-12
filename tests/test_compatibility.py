@@ -13,10 +13,28 @@ from . import constants
 # So here we check that a few basic useful things
 # that are possible with a pandas DataFrame
 # are still possible with a GazeData instance.
-# Most important are plotting and statistical summaries.
 
 
-#%% pandas
+#%% pandas.DataFrame.dropna()
+
+# Check for exceptions with the default arguments.
+def test_pandas_dropna(gd_all):
+
+    gd_all.dropna()
+
+
+# Check that dropna() also actually works.
+# The first row should have NaN for velocity after get_accelerations(),
+# so dropna should remove this row.
+def test_pandas_dropna_subset(gd_all):
+
+    gd_all.get_accelerations()
+    gd_subset = gd_all.dropna(subset=['velocity'])
+
+    assert len(gd_all) - len(gd_subset) == 1
+
+
+#%% pandas.DataFrame.mean()
 
 def test_pandas_stats(gd_all):
 
@@ -25,7 +43,7 @@ def test_pandas_stats(gd_all):
     assert numpy.array_equal(col_means, constants.DF.mean())
 
 
-#%% plotnine
+#%% plotnine.ggplot()
 
 def test_plotnine_plot(gd):
 
@@ -34,7 +52,8 @@ def test_plotnine_plot(gd):
 
     fig.draw()
 
-    filename = os.path.join(constants.IMAGES_PATH, 'test_compatibility.png')
-    fig.save(filename, verbose=False)
+    filename = 'test_plotnine_compatibility.png'
+    filepath = os.path.join(constants.IMAGES_PATH, filename)
+    fig.save(filepath, verbose=False)
 
-    assert constants.image_file_ok(filename)
+    assert constants.image_file_ok(filepath)

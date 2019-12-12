@@ -11,7 +11,8 @@ import webbrowser
 
 import pandas
 
-import saccades
+from saccades import GazeData
+from saccades.saccadedetection import criterion
 
 
 #%% Setup
@@ -21,12 +22,27 @@ BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_FILENAME = 'example.csv'
 DATA_PATH = os.path.join(BASE_PATH, 'data', DATA_FILENAME)
 
+OUTPUT_FILENAME = 'example_saccade.csv'
+OUTPUT_PATH = os.path.join(BASE_PATH, OUTPUT_FILENAME)
+
 DF = pandas.read_csv(DATA_PATH, header=None)
 
-CENTER = (320, 240)
+CENTER = (320., 240.)
+SCREEN_RES = (640., 480.)
+SCREEN_DIAG = 42.
+VIEWING_DIST = 100.
+TARGET = None
 
-IMAGE_FILENAME = 'test_script.png'
-IMAGE_PATH = os.path.join(BASE_PATH, 'images', IMAGE_FILENAME)
+VELOCITY_CRITERION = 0.022
+
+IMAGE_FILENAME = 'example_saccade_plot.png'
+IMAGE_PATH = os.path.join(BASE_PATH, IMAGE_FILENAME)
+
+RESULTS_PRINTOUT = """
+latency:   {latency}
+duration:  {duration}
+amplitude: {amplitude}
+"""
 
 
 #%% Test function
@@ -34,7 +50,14 @@ IMAGE_PATH = os.path.join(BASE_PATH, 'images', IMAGE_FILENAME)
 def test_script():
 
     ## Turn a pandas DataFrame into GazeData.
-    gd = saccades.GazeData(DF)
+    gd = GazeData(DF, time_units='ms', space_units='px',
+                  screen_res=SCREEN_RES,
+                  screen_diag=SCREEN_DIAG,
+                  viewing_dist=VIEWING_DIST,
+                  target=TARGET)
+
+    ## Reset time index.
+    gd.reset_time()
 
     ## Recenter.
     gd.center(origin=CENTER)
@@ -45,8 +68,24 @@ def test_script():
     ## Display the data.
     print(gd)
 
+    ## Get first saccade.
+    sacc = gd.detect_saccades(criterion, n=1, velocity=VELOCITY_CRITERION)[0]
+
+    ## Calculate saccade metrics.
+    results = {}
+    results['latency'] = sacc.latency()
+    results['duration'] = sacc.duration()
+    results['amplitude'] = sacc.amplitude()
+    print(RESULTS_PRINTOUT.format(**results))
+
+    ## Save first saccade to csv.
+    sacc.to_csv(OUTPUT_PATH, index=False)
+
     ## Save a plot.
-    gd.plot(filename=IMAGE_PATH, show_raw=True)
+    gd.plot(filename=IMAGE_PATH,
+            reverse_y=True,
+            show_raw=True,
+            saccades=True)
 
 
 #%% Script mode

@@ -9,7 +9,9 @@ import pytest
 
 from . import constants
 
-from saccades import gazedata
+from saccades import GazeData
+from saccades import Saccade
+from saccades import saccadedetection
 
 
 # GazeData methods that wrap functions from other modules
@@ -21,15 +23,16 @@ from saccades import gazedata
 
 #%% Setup
 
-methods = [functools.partial(gazedata.GazeData.center, origin=constants.ORIGIN),
-           functools.partial(gazedata.GazeData.rotate, theta=constants.ANGLE)]
+# Wrapped GazeData methods used in test_save_raw_coords_before_method_call().
+methods = [functools.partial(GazeData.center, origin=constants.ORIGIN),
+           functools.partial(GazeData.rotate, theta=constants.ANGLE)]
 
 
 #%% __init__()
 
-def test_GazeData_init_types(gd_all):
+def test_init_types(gd_all):
 
-    assert isinstance(gd_all, gazedata.GazeData)
+    assert isinstance(gd_all, GazeData)
     assert isinstance(gd_all, pandas.DataFrame)
     assert all((col in gd_all.columns) for col in ['time', 'x', 'y'])
 
@@ -40,17 +43,17 @@ def test_GazeData_init_types(gd_all):
 
 
 @pytest.mark.parametrize('input_type', constants.INVALID_INIT_TYPES, ids=constants.INVALID_INIT_TYPE_NAMES)
-def test_GazeData_invalid_init_types(input_type):
+def test_invalid_init_types(input_type):
 
     with pytest.raises(ValueError):
-        gazedata.GazeData(input_type)
+        GazeData(input_type)
 
 
-def test_GazeData_empty_init():
+def test_empty_init():
 
-    gd = gazedata.GazeData()
+    gd = GazeData()
 
-    assert isinstance(gd, gazedata.GazeData)
+    assert isinstance(gd, GazeData)
     assert isinstance(gd, pandas.DataFrame)
     assert list(gd.columns) == ['time', 'x', 'y']
     assert gd.empty
@@ -59,10 +62,50 @@ def test_GazeData_empty_init():
 def test_GazeData_is_not_view():
 
     a = constants.ARRAY
-    gd = gazedata.GazeData(a)
-    gd['time'][0] = 9000.
+    gd = GazeData(a)
+    gd['time'] = 9000.
 
     assert a[0, 0] != 9000.
+
+
+# And I suppose we ought to be able to initialize from an existing instance.
+# In this case, we want to keep its attributes.
+
+def test_init_from_instance(gd_all):
+
+    new_gd = GazeData(gd_all)
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(new_gd, attr) == val
+
+
+# Unless the attributes are re-set explicitly in the __init__() call.
+
+def test_init_from_instance_reset_attributes(gd_all):
+
+    new_value = 'new_value'
+    new_attributes = {attr: new_value for attr in constants.ATTRIBUTES}
+
+    new_gd = GazeData(gd_all, **new_attributes)
+
+    for attr in constants.ATTRIBUTES:
+        assert getattr(new_gd, attr) == new_value
+
+
+#%% _check_screen_info()
+
+def test_check_screen_info(gd):
+
+    gd._check_screen_info()
+
+
+@pytest.mark.parametrize('attr', constants.SCREEN_ATTRIBUTES)
+def test_check_screen_info_exceptions(gd, attr):
+
+    setattr(gd, attr, None)
+
+    with pytest.raises(AttributeError, match=attr):
+        gd._check_screen_info()
 
 
 #%% _save_raw_coords()
@@ -82,8 +125,8 @@ def test_save_raw_coords(gd):
     assert not numpy.array_equal(gd['x_raw'], gd['x'])
 
 
-# We would like this 'private' method to store the current coordinates
-# but only if they have not already been stored.
+# We would like this method to store the current coordinates
+# only if they have not already been stored.
 # So here we test that there is no effect of a second call.
 
 def test_save_raw_coords_with_existing_coords(gd):
@@ -104,13 +147,91 @@ def test_save_raw_coords_before_method_call(gd, method):
     assert not numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
 
 
+#%% reset_time()
+
+def test_reset_time(gd_all):
+
+    t_0 = constants.ARRAY[0, 0]
+    t_end = constants.ARRAY[-1, 0]
+
+    gd_all.reset_time()
+
+    assert gd_all['time'].iloc[0] == 0.
+    assert gd_all['time'].iloc[-1] == t_end - t_0
+
+
+#%% detect_saccades()
+
+# Here we test the general aspects of detect_saccades().
+# Specific detection algorithms are tested in test_saccadedetection.py.
+
+def test_detect_saccades(gd_all):
+
+    gd_all['saccade'] = True
+
+    result = gd_all.detect_saccades()
+
+    assert len(result) == 1
+    assert isinstance(result[0], GazeData)
+    assert isinstance(result[0], Saccade)
+
+
+@pytest.mark.parametrize('n', [0, 1, 2])
+def test_detect_saccades_first_n(gd, n):
+
+    # Add a dummy 'saccade' column with 2 saccades.
+    saccade = numpy.full(len(gd), False)
+    saccade[[0, -1]] = True
+    gd['saccade'] = saccade
+
+    result = gd.detect_saccades(n=n)
+
+    assert len(result) == n
+
+
+def test_detect_saccades_exception(gd):
+
+    msg_pattern = 'Saccade detection function required but not supplied.'
+
+    with pytest.raises(KeyError, match=msg_pattern):
+        gd.detect_saccades()
+
+
+def test_detect_saccades_with_function(gd):
+
+    gd.detect_saccades(constants.fun)
+
+    assert all(gd['saccade'])
+
+
+def test_detect_saccades_with_keyword_argument(gd):
+
+    result = gd.detect_saccades(constants.fun, val=False)
+
+    assert result == []
+
+    assert not any(gd['saccade'])
+
+
+def test_detect_saccades_with_existing_saccade_column(gd):
+
+    gd['saccade'] = False
+
+    gd.detect_saccades(constants.fun)
+
+    assert all(gd['saccade'])
+
+
 #%% plot()
 
 @pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARGS_NAMES)
 def test_GazeData_plot(gd, kwargs):
 
-    # Make a basic transform so as to distinguish data from raw data.
+    # Make a basic transform and add saccades,
+    # so that all plot parameters have visible effects.
     gd.center(origin=constants.ORIGIN)
+    gd.detect_saccades(saccadedetection.criterion,
+                       velocity=constants.VELOCITY_LOW)
 
     fig = gd.plot(**kwargs)
 
@@ -121,6 +242,27 @@ def test_GazeData_plot(gd, kwargs):
 
     # Check image content is actually as expected.
     assert constants.image_file_ok(kwargs['filename'])
+
+
+#%% Attributes
+
+# Because pandas treats DataFrame attributes as columns by default,
+# some wrangling is needed in order to store attributes in the normal way.
+# So we should test that attributes can be set.
+
+@pytest.mark.parametrize('attr, val', constants.ATTRIBUTES.items())
+def test_has_attributes(gd_all, attr, val):
+
+    assert getattr(gd_all, attr) == val
+
+
+@pytest.mark.parametrize('attr, val', constants.ATTRIBUTES.items())
+def test_set_attributes(gd_all, attr, val):
+
+    new_value = 'new_value'
+    setattr(gd_all, attr, new_value)
+
+    assert getattr(gd_all, attr) == new_value
 
 
 #%% Subsetting
@@ -140,16 +282,22 @@ def test_subset_rows(gd_all):
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[:2, :])
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(gd_subset, attr) == val
 
 
 def test_subset_rows_with_boolean(gd_all):
 
-    gd_subset = gd_all[gd_all['time'] > gd_all['time'][0]]
+    gd_subset = gd_all[gd_all['time'] > gd_all['time'].iloc[0]]
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[1:, :])
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(gd_subset, attr) == val
 
 
 def test_subset_complete_cols(gd_all):
@@ -157,7 +305,10 @@ def test_subset_complete_cols(gd_all):
     gd_subset = gd_all[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(gd_subset, attr) == val
 
 
 def test_subset_rearranged_cols(gd_all):
@@ -166,17 +317,23 @@ def test_subset_rearranged_cols(gd_all):
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(gd_subset, attr) == val
 
 
 def test_subset_extra_cols():
 
-    gd = gazedata.GazeData(constants.DF_EXTRA_COLUMN)
+    gd = GazeData(constants.DF_EXTRA_COLUMN, **constants.ATTRIBUTES)
     gd_subset = gd[['y', 'time', 'foo', 'x']]
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(gd_subset, attr) == val
 
 
 def test_subset_incomplete_cols(gd_all):
@@ -184,5 +341,8 @@ def test_subset_incomplete_cols(gd_all):
     gd_subset = gd_all[['x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY_XY)
-    assert not isinstance(gd_subset, gazedata.GazeData)
+    assert not isinstance(gd_subset, GazeData)
     assert isinstance(gd_subset, pandas.DataFrame)
+
+    for attr in constants.ATTRIBUTES:
+        assert not hasattr(gd_subset, attr)

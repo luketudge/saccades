@@ -7,7 +7,8 @@ import pytest
 
 from . import constants
 
-from saccades import gazedata
+from saccades import GazeData
+from saccades import Saccade
 
 
 @pytest.fixture(scope='session')
@@ -25,10 +26,16 @@ def clear_image_files():
 @pytest.fixture
 def gd():
 
-    return gazedata.GazeData(constants.ARRAY)
+    return GazeData(constants.ARRAY, **constants.ATTRIBUTES)
 
 
 @pytest.fixture(params=constants.VALID_INIT_TYPES, ids=constants.VALID_INIT_TYPE_NAMES)
 def gd_all(request):
 
-    return gazedata.GazeData(request.param)
+    return GazeData(request.param, **constants.ATTRIBUTES)
+
+
+@pytest.fixture
+def sacc():
+
+    return Saccade(constants.SACCADE, **constants.ATTRIBUTES)
