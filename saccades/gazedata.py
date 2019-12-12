@@ -2,6 +2,8 @@
 """Classes for representing gaze coordinates and saccades.
 """
 
+import functools
+
 import pandas
 import plotnine
 
@@ -11,6 +13,7 @@ from .geometry import acceleration
 from .geometry import center
 from .geometry import rotate
 from .geometry import velocity
+from . import saccademetrics
 from .tools import check_shape
 from .tools import find_contiguous_subsets
 from .tools import _blockmanager_to_dataframe
@@ -356,7 +359,17 @@ class GazeData(pandas.DataFrame):
 class Saccade(GazeData):
     """Table of gaze data containing a saccade.
 
-    A subclass of :class:`GazeData` \
-    with some extra methods for calculating saccade metrics. \
-    Most methods wrap functions from :mod:`.saccademetrics`.
+    A subclass of :class:`GazeData`.
+    
+    Additional methods calculate saccade metrics \
+    using functions from :mod:`.saccademetrics` with the same name.
     """
+
+    # This makes all suitable functions from saccademetrics
+    # into methods of the Saccade class.
+    def __getattribute__(self, name):
+
+        if name in saccademetrics.ALL_METRICS:
+            return functools.partial(getattr(saccademetrics, name), self)
+        else:
+            return super().__getattribute__(name)

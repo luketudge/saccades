@@ -3,6 +3,9 @@
 """
 
 
+ALL_METRICS = ['latency']
+
+
 def latency(gd):
     """Latency of a saccade (a.k.a. saccadic reaction time).
 
