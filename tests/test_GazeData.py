@@ -28,12 +28,6 @@ methods = [functools.partial(GazeData.center, origin=constants.ORIGIN),
            functools.partial(GazeData.rotate, theta=constants.ANGLE)]
 
 
-# An arbitrary function, used in test_detect_saccades().
-def fun(x, val=True):
-
-    return numpy.full(len(x), val)
-
-
 #%% __init__()
 
 def test_init_types(gd_all):
@@ -205,14 +199,14 @@ def test_detect_saccades_exception(gd):
 
 def test_detect_saccades_with_function(gd):
 
-    gd.detect_saccades(fun)
+    gd.detect_saccades(constants.fun)
 
     assert all(gd['saccade'])
 
 
 def test_detect_saccades_with_keyword_argument(gd):
 
-    result = gd.detect_saccades(fun, val=False)
+    result = gd.detect_saccades(constants.fun, val=False)
 
     assert result == []
 
@@ -223,7 +217,7 @@ def test_detect_saccades_with_existing_saccade_column(gd):
 
     gd['saccade'] = False
 
-    gd.detect_saccades(fun)
+    gd.detect_saccades(constants.fun)
 
     assert all(gd['saccade'])
 

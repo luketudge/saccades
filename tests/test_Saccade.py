@@ -38,9 +38,6 @@ def test_set_attributes(sacc, attr, val):
     assert getattr(sacc, attr) == new_value
 
 
-# We should also check that attributes of the parent GazeData
-# are preserved when a Saccade is initialized.
-
 @pytest.mark.parametrize('attr, val', constants.ATTRIBUTES.items())
 def test_preserve_parent_attributes(gd, attr, val):
 
@@ -53,6 +50,14 @@ def test_preserve_parent_attributes(gd, attr, val):
 
     for sacc in all_saccades:
         assert getattr(sacc, attr) == val
+
+
+# And just in case, check that the auto-method wrangling
+# still correctly reports non-existent methods as missing.
+def test_nonexistent_method(sacc):
+
+    with pytest.raises(AttributeError):
+        sacc.nonexistent_method()
 
 
 #%% Subsetting

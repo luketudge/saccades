@@ -15,6 +15,12 @@ IMAGES_PATH = os.path.join(BASE_PATH, 'images')
 
 #%% Helper functions
 
+# An arbitrary function, used in test_detect_saccades().
+def fun(x, val=True):
+
+    return numpy.full(len(x), val)
+
+
 # Checks equality of an image file with its reference file.
 def image_file_ok(filename):
 
