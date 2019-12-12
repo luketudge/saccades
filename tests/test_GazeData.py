@@ -9,7 +9,8 @@ import pytest
 
 from . import constants
 
-from saccades import gazedata
+from saccades import GazeData
+from saccades import Saccade
 from saccades import saccadedetection
 
 
@@ -23,21 +24,15 @@ from saccades import saccadedetection
 #%% Setup
 
 # Wrapped GazeData methods used in test_save_raw_coords_before_method_call().
-methods = [functools.partial(gazedata.GazeData.center, origin=constants.ORIGIN),
-           functools.partial(gazedata.GazeData.rotate, theta=constants.ANGLE)]
-
-
-# An arbitrary function, used in test_detect_saccades().
-def fun(x, val=True):
-
-    return numpy.full(len(x), val)
+methods = [functools.partial(GazeData.center, origin=constants.ORIGIN),
+           functools.partial(GazeData.rotate, theta=constants.ANGLE)]
 
 
 #%% __init__()
 
-def test_GazeData_init_types(gd_all):
+def test_init_types(gd_all):
 
-    assert isinstance(gd_all, gazedata.GazeData)
+    assert isinstance(gd_all, GazeData)
     assert isinstance(gd_all, pandas.DataFrame)
     assert all((col in gd_all.columns) for col in ['time', 'x', 'y'])
 
@@ -48,17 +43,17 @@ def test_GazeData_init_types(gd_all):
 
 
 @pytest.mark.parametrize('input_type', constants.INVALID_INIT_TYPES, ids=constants.INVALID_INIT_TYPE_NAMES)
-def test_GazeData_invalid_init_types(input_type):
+def test_invalid_init_types(input_type):
 
     with pytest.raises(ValueError):
-        gazedata.GazeData(input_type)
+        GazeData(input_type)
 
 
-def test_GazeData_empty_init():
+def test_empty_init():
 
-    gd = gazedata.GazeData()
+    gd = GazeData()
 
-    assert isinstance(gd, gazedata.GazeData)
+    assert isinstance(gd, GazeData)
     assert isinstance(gd, pandas.DataFrame)
     assert list(gd.columns) == ['time', 'x', 'y']
     assert gd.empty
@@ -67,10 +62,34 @@ def test_GazeData_empty_init():
 def test_GazeData_is_not_view():
 
     a = constants.ARRAY
-    gd = gazedata.GazeData(a)
+    gd = GazeData(a)
     gd['time'] = 9000.
 
     assert a[0, 0] != 9000.
+
+
+# And I suppose we ought to be able to initialize from an existing instance.
+# In this case, we want to keep its attributes.
+
+def test_init_from_instance(gd_all):
+
+    new_gd = GazeData(gd_all)
+
+    for attr, val in constants.ATTRIBUTES.items():
+        assert getattr(new_gd, attr) == val
+
+
+# Unless the attributes are re-set explicitly in the __init__() call.
+
+def test_init_from_instance_reset_attributes(gd_all):
+
+    new_value = 'new_value'
+    new_attributes = {attr: new_value for attr in constants.ATTRIBUTES}
+
+    new_gd = GazeData(gd_all, **new_attributes)
+
+    for attr in constants.ATTRIBUTES:
+        assert getattr(new_gd, attr) == new_value
 
 
 #%% _check_screen_info()
@@ -153,7 +172,8 @@ def test_detect_saccades(gd_all):
     result = gd_all.detect_saccades()
 
     assert len(result) == 1
-    assert isinstance(result[0], gazedata.GazeData)
+    assert isinstance(result[0], GazeData)
+    assert isinstance(result[0], Saccade)
 
 
 @pytest.mark.parametrize('n', [0, 1, 2])
@@ -179,14 +199,14 @@ def test_detect_saccades_exception(gd):
 
 def test_detect_saccades_with_function(gd):
 
-    gd.detect_saccades(fun)
+    gd.detect_saccades(constants.fun)
 
     assert all(gd['saccade'])
 
 
 def test_detect_saccades_with_keyword_argument(gd):
 
-    result = gd.detect_saccades(fun, val=False)
+    result = gd.detect_saccades(constants.fun, val=False)
 
     assert result == []
 
@@ -197,7 +217,7 @@ def test_detect_saccades_with_existing_saccade_column(gd):
 
     gd['saccade'] = False
 
-    gd.detect_saccades(fun)
+    gd.detect_saccades(constants.fun)
 
     assert all(gd['saccade'])
 
@@ -262,7 +282,7 @@ def test_subset_rows(gd_all):
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[:2, :])
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
 
     for attr, val in constants.ATTRIBUTES.items():
         assert getattr(gd_subset, attr) == val
@@ -274,7 +294,7 @@ def test_subset_rows_with_boolean(gd_all):
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY[1:, :])
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
 
     for attr, val in constants.ATTRIBUTES.items():
         assert getattr(gd_subset, attr) == val
@@ -285,7 +305,7 @@ def test_subset_complete_cols(gd_all):
     gd_subset = gd_all[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
 
     for attr, val in constants.ATTRIBUTES.items():
         assert getattr(gd_subset, attr) == val
@@ -297,7 +317,7 @@ def test_subset_rearranged_cols(gd_all):
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
 
     for attr, val in constants.ATTRIBUTES.items():
         assert getattr(gd_subset, attr) == val
@@ -305,12 +325,12 @@ def test_subset_rearranged_cols(gd_all):
 
 def test_subset_extra_cols():
 
-    gd = gazedata.GazeData(constants.DF_EXTRA_COLUMN, **constants.ATTRIBUTES)
+    gd = GazeData(constants.DF_EXTRA_COLUMN, **constants.ATTRIBUTES)
     gd_subset = gd[['y', 'time', 'foo', 'x']]
     gd_subset = gd_subset[['time', 'x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY)
-    assert isinstance(gd_subset, gazedata.GazeData)
+    assert isinstance(gd_subset, GazeData)
 
     for attr, val in constants.ATTRIBUTES.items():
         assert getattr(gd_subset, attr) == val
@@ -321,7 +341,7 @@ def test_subset_incomplete_cols(gd_all):
     gd_subset = gd_all[['x', 'y']]
 
     assert numpy.array_equal(gd_subset, constants.ARRAY_XY)
-    assert not isinstance(gd_subset, gazedata.GazeData)
+    assert not isinstance(gd_subset, GazeData)
     assert isinstance(gd_subset, pandas.DataFrame)
 
     for attr in constants.ATTRIBUTES:

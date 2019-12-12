@@ -15,6 +15,12 @@ IMAGES_PATH = os.path.join(BASE_PATH, 'images')
 
 #%% Helper functions
 
+# An arbitrary function, used in test_detect_saccades().
+def fun(x, val=True):
+
+    return numpy.full(len(x), val)
+
+
 # Checks equality of an image file with its reference file.
 def image_file_ok(filename):
 
@@ -30,9 +36,11 @@ def image_file_ok(filename):
 #%% Expected contents of top module
 
 MODULE_CONTENTS = ['GazeData',
+                   'Saccade',
                    'conversions',
                    'geometry',
-                   'saccadedetection']
+                   'saccadedetection',
+                   'saccademetrics']
 
 
 #%% Valid init types
@@ -104,12 +112,14 @@ INVALID_INIT_TYPE_NAMES = ['arr_xy',
 
 #%% Attributes
 
-SCREEN_RES = (4., 3.)
+SCREEN_RES = [4., 3.]
 SCREEN_DIAG = 10.
 VIEWING_DIST = 5.
+TARGET = [6., 10.]
 
 ATTRIBUTES = {'time_units': None,
-              'space_units': 'px'}
+              'space_units': 'px',
+              'target': TARGET}
 
 SCREEN_ATTRIBUTES = {'screen_res': SCREEN_RES,
                      'screen_diag': SCREEN_DIAG,
@@ -122,14 +132,14 @@ ATTRIBUTES.update(SCREEN_ATTRIBUTES)
 
 SHAPE = [3, 3]
 
-WILDCARD_SHAPES = [(None, SHAPE[1]),
-                   (SHAPE[0], None),
-                   (None, None)]
+WILDCARD_SHAPES = [[None, SHAPE[1]],
+                   [SHAPE[0], None],
+                   [None, None]]
 
 WRONG_SHAPE = [i + 1 for i in SHAPE]
 
-WRONG_SHAPES = [(None, WRONG_SHAPE[1]),
-                (WRONG_SHAPE[0], None),
+WRONG_SHAPES = [[None, WRONG_SHAPE[1]],
+                [WRONG_SHAPE[0], None],
                 SHAPE[:1],
                 SHAPE + [None],
                 SHAPE + [0],
@@ -139,7 +149,7 @@ WRONG_SHAPES = [(None, WRONG_SHAPE[1]),
 
 #%% Transformations
 
-ORIGIN = (1., 2.)
+ORIGIN = [1., 2.]
 
 CENTERED = numpy.array([[0., -2.],
                         [3., 2.],
@@ -158,6 +168,8 @@ CENTER_ROTATED = numpy.array([[3., 2.],
 
 #%% Conversions
 
+# Obviously not realistic that someone sits 2.5 pixels from the screen.
+# But it makes the math a bit easier.
 VIEWING_DIST_PX = 2.5
 
 # The two easiest angles to check.
@@ -191,6 +203,22 @@ CRITERIA = [{'velocity': VELOCITY_LOW, 'exp': [False, True, True]},
             {'velocity': VELOCITY_LOW, 'acceleration': ACCELERATION_LOW, 'exp': [False, False, True]},
             {'velocity': VELOCITY_LOW, 'acceleration': ACCELERATION_HIGH, 'exp': [False, False, False]},
             {'exp': [True, True, True]}]
+
+
+#%% Saccade
+
+SACCADE = [[2., 1., 2.],
+           [4., 5., 5.],
+           [6., 9., 8.],
+           [8., 7., 10.]]
+
+
+#%% Saccade metrics
+
+LATENCY = 2.
+DURATION = 6.
+AMPLITUDE = 10.
+AMPLITUDE_DVA = 75.96375653207353
 
 
 #%% Plotting

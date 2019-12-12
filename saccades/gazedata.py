@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Class for representing gaze coordinates.
+"""Classes for representing gaze coordinates and saccades.
 """
+
+import functools
 
 import pandas
 import plotnine
@@ -11,12 +13,20 @@ from .geometry import acceleration
 from .geometry import center
 from .geometry import rotate
 from .geometry import velocity
+from . import saccademetrics
 from .tools import check_shape
 from .tools import find_contiguous_subsets
 from .tools import _blockmanager_to_dataframe
 
 
 #%% Constants
+
+ATTRIBUTES = ['time_units',
+              'space_units',
+              'screen_res',
+              'screen_diag',
+              'viewing_dist',
+              'target']
 
 INIT_COLUMNS = ['time', 'x', 'y']
 
@@ -40,11 +50,7 @@ class GazeData(pandas.DataFrame):
     # So we must declare custom attributes here
     # to avoid them being treated as columns.
     # https://pandas.pydata.org/pandas-docs/stable/development/extending.html#define-original-properties
-    _metadata = ['time_units',
-                 'space_units',
-                 'screen_res',
-                 'screen_diag',
-                 'viewing_dist']
+    _metadata = ATTRIBUTES
 
     def __new__(cls, data=None, **kwargs):
 
@@ -71,11 +77,10 @@ class GazeData(pandas.DataFrame):
 
         return super().__new__(cls)
 
-    def __init__(self, data=None,
-                 time_units=None, space_units=None,
-                 screen_res=None, screen_diag=None, viewing_dist=None,
-                 **kwargs):
-        """:param data: Gaze data with shape *(n, 3)*, \
+    def __init__(self, data=None, **kwargs):
+        """Initialize a new table of gaze data.
+
+        :param data: Gaze data with shape *(n, 3)*, \
         where *n* is the number of gaze samples, \
         and columns are *time*, *x gaze position*, *y gaze position*.
         :type data: :class:`numpy.ndarray` \
@@ -96,13 +101,16 @@ class GazeData(pandas.DataFrame):
         :param viewing_dist: Distance of eye from screen, \
         in the same units as `screen_diag`.
         :type viewing_dist: float
+        :param target: *(x, y)* coordinates of saccade target, if any.
+        :type target: tuple
         """
 
-        self.time_units = time_units
-        self.space_units = space_units
-        self.screen_res = screen_res
-        self.screen_diag = screen_diag
-        self.viewing_dist = viewing_dist
+        # Set attributes according to the following priorities:
+        # Use values set in the keyword arguments to __init__().
+        # Else if initializing from an existing instance, use its attributes.
+        # Else None.
+        for attr in ATTRIBUTES:
+            setattr(self, attr, kwargs.pop(attr, getattr(data, attr, None)))
 
         # If a copy or view is explicitly requested, respect this.
         # Otherwise ensure we get a copy.
@@ -284,7 +292,7 @@ class GazeData(pandas.DataFrame):
         if n is not None:
             slices = slices[:n]
 
-        return [self[i] for i in slices]
+        return [Saccade(self[i]) for i in slices]
 
     def plot(self, reverse_y=False, show_raw=False, saccades=False, filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
@@ -340,3 +348,28 @@ class GazeData(pandas.DataFrame):
             fig.save(filename, verbose=verbose, **kwargs)
 
         return fig
+
+
+#%% Saccade subclass
+
+class Saccade(GazeData):
+    """Table of gaze data containing a saccade.
+
+    A subclass of :class:`GazeData`.
+
+    Additional methods calculate saccade metrics \
+    using functions from :mod:`.saccademetrics` with the same name.
+    """
+
+    @property
+    def _constructor(self):
+        return Saccade
+
+    # This makes all suitable functions from saccademetrics
+    # into methods of the Saccade class.
+    def __getattr__(self, name):
+
+        if name in saccademetrics.ALL_METRICS:
+            return functools.partial(getattr(saccademetrics, name), self)
+        else:
+            return super().__getattr__(name)

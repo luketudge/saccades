@@ -31,11 +31,18 @@ CENTER = (320., 240.)
 SCREEN_RES = (640., 480.)
 SCREEN_DIAG = 42.
 VIEWING_DIST = 100.
+TARGET = None
 
 VELOCITY_CRITERION = 0.022
 
 IMAGE_FILENAME = 'example_saccade_plot.png'
 IMAGE_PATH = os.path.join(BASE_PATH, IMAGE_FILENAME)
+
+RESULTS_PRINTOUT = """
+latency:   {latency}
+duration:  {duration}
+amplitude: {amplitude}
+"""
 
 
 #%% Test function
@@ -46,7 +53,11 @@ def test_script():
     gd = GazeData(DF, time_units='ms', space_units='px',
                   screen_res=SCREEN_RES,
                   screen_diag=SCREEN_DIAG,
-                  viewing_dist=VIEWING_DIST)
+                  viewing_dist=VIEWING_DIST,
+                  target=TARGET)
+
+    ## Reset time index.
+    gd.reset_time()
 
     ## Recenter.
     gd.center(origin=CENTER)
@@ -58,13 +69,17 @@ def test_script():
     print(gd)
 
     ## Get first saccade.
-    first_saccade = gd.detect_saccades(criterion,
-                                       n=1,
-                                       velocity=VELOCITY_CRITERION)[0]
-    print(first_saccade)
+    sacc = gd.detect_saccades(criterion, n=1, velocity=VELOCITY_CRITERION)[0]
+
+    ## Calculate saccade metrics.
+    results = {}
+    results['latency'] = sacc.latency()
+    results['duration'] = sacc.duration()
+    results['amplitude'] = sacc.amplitude()
+    print(RESULTS_PRINTOUT.format(**results))
 
     ## Save first saccade to csv.
-    first_saccade.to_csv(OUTPUT_PATH, index=False)
+    sacc.to_csv(OUTPUT_PATH, index=False)
 
     ## Save a plot.
     gd.plot(filename=IMAGE_PATH,
