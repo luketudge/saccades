@@ -294,7 +294,8 @@ class GazeData(pandas.DataFrame):
 
         return [Saccade(self[i]) for i in slices]
 
-    def plot(self, reverse_y=False, show_raw=False, saccades=False, filename=None, verbose=False, **kwargs):
+    def plot(self, reverse_y=False, show_raw=False, saccades=False,
+             filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
 
         Plotting is done with :mod:`plotnine` because it is good.
