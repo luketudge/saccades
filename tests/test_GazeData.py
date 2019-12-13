@@ -147,6 +147,15 @@ def test_save_raw_coords_before_method_call(gd, method):
     assert not numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
 
 
+#%% viewing_parameters
+
+def test_viewing_parameters(gd):
+
+    params = gd.viewing_parameters
+
+    assert params == constants.ATTRIBUTES
+
+
 #%% reset_time()
 
 def test_reset_time(gd_all):

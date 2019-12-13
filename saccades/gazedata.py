@@ -145,6 +145,13 @@ class GazeData(pandas.DataFrame):
     def _constructor(self):
         return GazeData
 
+    @property
+    def viewing_parameters(self):
+        """Dictionary of viewing parameters.
+        """
+
+        return {attr: getattr(self, attr) for attr in ATTRIBUTES}
+
     def _save_raw_coords(self):
 
         if all((col not in self) for col in RAW_DATA_COLUMNS):
