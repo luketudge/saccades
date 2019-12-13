@@ -8,8 +8,11 @@ then
     exit 1
 fi
 
+# Use requirements.txt for the runtime dependencies.
+# Don't pin these.
 # Use test_requirements.txt just for the testing environment.
 # Make this reproducible by pinning all versions.
+pip install -r requirements.txt
 pip install -r test_requirements.txt
 
 # Use setup.py for actual package dependencies.
