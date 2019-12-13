@@ -43,6 +43,8 @@ MODULE_CONTENTS = ['GazeData',
                    'metrics',
                    '__version__']
 
+READERS_CONTENTS = []
+
 
 #%% Valid init types
 
