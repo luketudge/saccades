@@ -3,7 +3,7 @@
 from . import constants
 
 
-def test_init():
+def test_import():
 
     import saccades
 

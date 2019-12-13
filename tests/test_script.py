@@ -12,7 +12,7 @@ import webbrowser
 import pandas
 
 from saccades import GazeData
-from saccades.saccadedetection import criterion
+from saccades.detection import criterion
 
 
 #%% Setup

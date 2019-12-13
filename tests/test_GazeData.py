@@ -11,7 +11,7 @@ from . import constants
 
 from saccades import GazeData
 from saccades import Saccade
-from saccades import saccadedetection
+from saccades import detection
 
 
 # GazeData methods that wrap functions from other modules
@@ -163,7 +163,7 @@ def test_reset_time(gd_all):
 #%% detect_saccades()
 
 # Here we test the general aspects of detect_saccades().
-# Specific detection algorithms are tested in test_saccadedetection.py.
+# Specific detection algorithms are tested in test_detection.py.
 
 def test_detect_saccades(gd_all):
 
@@ -180,9 +180,9 @@ def test_detect_saccades(gd_all):
 def test_detect_saccades_first_n(gd, n):
 
     # Add a dummy 'saccade' column with 2 saccades.
-    saccade = numpy.full(len(gd), False)
-    saccade[[0, -1]] = True
-    gd['saccade'] = saccade
+    sacc = numpy.full(len(gd), False)
+    sacc[[0, -1]] = True
+    gd['saccade'] = sacc
 
     result = gd.detect_saccades(n=n)
 
@@ -230,7 +230,7 @@ def test_GazeData_plot(gd, kwargs):
     # Make a basic transform and add saccades,
     # so that all plot parameters have visible effects.
     gd.center(origin=constants.ORIGIN)
-    gd.detect_saccades(saccadedetection.criterion,
+    gd.detect_saccades(detection.criterion,
                        velocity=constants.VELOCITY_LOW)
 
     fig = gd.plot(**kwargs)
