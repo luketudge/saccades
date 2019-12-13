@@ -40,7 +40,8 @@ MODULE_CONTENTS = ['GazeData',
                    'conversions',
                    'geometry',
                    'detection',
-                   'metrics']
+                   'metrics',
+                   '__version__']
 
 
 #%% Valid init types

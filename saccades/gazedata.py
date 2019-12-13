@@ -369,7 +369,7 @@ class Saccade(GazeData):
     # into methods of the Saccade class.
     def __getattr__(self, name):
 
-        if name in metrics.ALL_METRICS:
+        if name in metrics.SACCADE_METRICS:
             return functools.partial(getattr(metrics, name), self)
         else:
             return super().__getattr__(name)

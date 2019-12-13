@@ -19,16 +19,16 @@ conversions
 .. automodule:: saccades.conversions
     :members:
 
-saccadedetection
-----------------
+detection
+---------
 
-.. automodule:: saccades.saccadedetection
+.. automodule:: saccades.detection
     :members:
 
-saccademetrics
---------------
+metrics
+-------
 
-.. automodule:: saccades.saccademetrics
+.. automodule:: saccades.metrics
     :members:
 
 tools

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Algorithms for detecting saccades.
+"""Algorithms for detecting eye movement events.
 """
 
 import numpy

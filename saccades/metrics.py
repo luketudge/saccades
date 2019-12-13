@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Functions for calculating various parameters of a saccade.
+"""Functions for calculating various parameters of gaze data.
 """
 
 import numpy
 
 
-ALL_METRICS = ['latency',
-               'duration',
-               'amplitude']
+SACCADE_METRICS = ['latency',
+                   'duration',
+                   'amplitude']
 
 
 def latency(gd):
