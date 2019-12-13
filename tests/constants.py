@@ -39,8 +39,11 @@ MODULE_CONTENTS = ['GazeData',
                    'Saccade',
                    'conversions',
                    'geometry',
-                   'saccadedetection',
-                   'saccademetrics']
+                   'detection',
+                   'metrics',
+                   '__version__']
+
+READERS_CONTENTS = []
 
 
 #%% Valid init types
@@ -196,13 +199,15 @@ ACCELERATION_HIGH = 10.
 
 # The 'exp' key is popped before passing to criterion(),
 # and is used to check for the expected result.
-CRITERIA = [{'velocity': VELOCITY_LOW, 'exp': [False, True, True]},
-            {'velocity': VELOCITY_HIGH, 'exp': [False, False, True]},
-            {'acceleration': ACCELERATION_LOW, 'exp': [False, False, True]},
-            {'acceleration': ACCELERATION_HIGH, 'exp': [False, False, False]},
-            {'velocity': VELOCITY_LOW, 'acceleration': ACCELERATION_LOW, 'exp': [False, False, True]},
-            {'velocity': VELOCITY_LOW, 'acceleration': ACCELERATION_HIGH, 'exp': [False, False, False]},
-            {'exp': [True, True, True]}]
+CRITERIA = [
+    {'velocity': VELOCITY_LOW, 'exp': [False, True, True]},
+    {'velocity': VELOCITY_HIGH, 'exp': [False, False, True]},
+    {'acceleration': ACCELERATION_LOW, 'exp': [False, False, True]},
+    {'acceleration': ACCELERATION_HIGH, 'exp': [False, False, False]},
+    {'velocity': VELOCITY_LOW, 'acceleration': ACCELERATION_LOW, 'exp': [False, False, True]},
+    {'velocity': VELOCITY_LOW, 'acceleration': ACCELERATION_HIGH, 'exp': [False, False, False]},
+    {'exp': [True, True, True]}
+]
 
 
 #%% Saccade

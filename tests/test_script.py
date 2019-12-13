@@ -12,7 +12,7 @@ import webbrowser
 import pandas
 
 from saccades import GazeData
-from saccades.saccadedetection import criterion
+from saccades.detection import criterion
 
 
 #%% Setup
@@ -49,39 +49,39 @@ amplitude: {amplitude}
 
 def test_script():
 
-    ## Turn a pandas DataFrame into GazeData.
+    # Turn a pandas DataFrame into GazeData.
     gd = GazeData(DF, time_units='ms', space_units='px',
                   screen_res=SCREEN_RES,
                   screen_diag=SCREEN_DIAG,
                   viewing_dist=VIEWING_DIST,
                   target=TARGET)
 
-    ## Reset time index.
+    # Reset time index.
     gd.reset_time()
 
-    ## Recenter.
+    # Recenter.
     gd.center(origin=CENTER)
 
-    ## Calculate velocity and acceleration.
+    # Calculate velocity and acceleration.
     gd.get_accelerations()
 
-    ## Display the data.
+    # Display the data.
     print(gd)
 
-    ## Get first saccade.
+    # Get first saccade.
     sacc = gd.detect_saccades(criterion, n=1, velocity=VELOCITY_CRITERION)[0]
 
-    ## Calculate saccade metrics.
+    # Calculate saccade metrics.
     results = {}
     results['latency'] = sacc.latency()
     results['duration'] = sacc.duration()
     results['amplitude'] = sacc.amplitude()
     print(RESULTS_PRINTOUT.format(**results))
 
-    ## Save first saccade to csv.
+    # Save first saccade to csv.
     sacc.to_csv(OUTPUT_PATH, index=False)
 
-    ## Save a plot.
+    # Save a plot.
     gd.plot(filename=IMAGE_PATH,
             reverse_y=True,
             show_raw=True,

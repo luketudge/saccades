@@ -26,6 +26,7 @@ Some things still to be implemented, in approximate order of priority:
 * A quick-start page for the documentation, and some example notebooks.
 * Methods for gaze coordinate smoothing.
 * More saccade detection algorithms.
+* Blink and fixation detection.
 * More saccade parameters.
 
 ## Install

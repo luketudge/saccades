@@ -13,7 +13,7 @@ from .geometry import acceleration
 from .geometry import center
 from .geometry import rotate
 from .geometry import velocity
-from . import saccademetrics
+from . import metrics
 from .tools import check_shape
 from .tools import find_contiguous_subsets
 from .tools import _blockmanager_to_dataframe
@@ -144,6 +144,13 @@ class GazeData(pandas.DataFrame):
     @property
     def _constructor(self):
         return GazeData
+
+    @property
+    def viewing_parameters(self):
+        """Dictionary of viewing parameters.
+        """
+
+        return {attr: getattr(self, attr) for attr in ATTRIBUTES}
 
     def _save_raw_coords(self):
 
@@ -294,7 +301,8 @@ class GazeData(pandas.DataFrame):
 
         return [Saccade(self[i]) for i in slices]
 
-    def plot(self, reverse_y=False, show_raw=False, saccades=False, filename=None, verbose=False, **kwargs):
+    def plot(self, reverse_y=False, show_raw=False, saccades=False,
+             filename=None, verbose=False, **kwargs):
         """Plot gaze coordinates.
 
         Plotting is done with :mod:`plotnine` because it is good.
@@ -358,18 +366,18 @@ class Saccade(GazeData):
     A subclass of :class:`GazeData`.
 
     Additional methods calculate saccade metrics \
-    using functions from :mod:`.saccademetrics` with the same name.
+    using functions from :mod:`.metrics` with the same name.
     """
 
     @property
     def _constructor(self):
         return Saccade
 
-    # This makes all suitable functions from saccademetrics
+    # This makes all suitable functions from metrics
     # into methods of the Saccade class.
     def __getattr__(self, name):
 
-        if name in saccademetrics.ALL_METRICS:
-            return functools.partial(getattr(saccademetrics, name), self)
+        if name in metrics.SACCADE_METRICS:
+            return functools.partial(getattr(metrics, name), self)
         else:
             return super().__getattr__(name)

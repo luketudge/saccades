@@ -2,14 +2,14 @@
 
 from . import constants
 
-from saccades import saccademetrics
+from saccades import metrics
 
 
 #%% latency()
 
 def test_latency(sacc):
 
-    result = saccademetrics.latency(sacc)
+    result = metrics.latency(sacc)
 
     assert result == constants.LATENCY
 
@@ -25,7 +25,7 @@ def test_latency_as_Saccade_method(sacc):
 
 def test_duration(sacc):
 
-    result = saccademetrics.duration(sacc)
+    result = metrics.duration(sacc)
 
     assert result == constants.DURATION
 
@@ -41,7 +41,7 @@ def test_duration_as_Saccade_method(sacc):
 
 def test_amplitude(sacc):
 
-    result = saccademetrics.amplitude(sacc)
+    result = metrics.amplitude(sacc)
 
     assert result == constants.AMPLITUDE_DVA
 
@@ -50,7 +50,7 @@ def test_amplitude_with_dva_units(sacc):
 
     sacc.space_units = 'dva'
 
-    result = saccademetrics.amplitude(sacc)
+    result = metrics.amplitude(sacc)
 
     assert result == constants.AMPLITUDE
 
