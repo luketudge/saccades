@@ -2,4 +2,5 @@ matplotlib
 numpy
 pandas
 plotnine
+regex
 scipy
