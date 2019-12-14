@@ -28,8 +28,15 @@ def clear_image_files():
 
 #%% readers
 
+def r():
+
+    filepath = os.path.join(constants.DATA_PATH, constants.FILENAMES[0])
+
+    return BaseReader(filepath)
+
+
 @pytest.fixture(params=constants.FILENAMES)
-def r(request):
+def r_all(request):
 
     filepath = os.path.join(constants.DATA_PATH, request.param)
 

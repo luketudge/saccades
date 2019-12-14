@@ -7,6 +7,8 @@ import regex
 
 #%% Regular expressions
 
+FLAGS = regex.V1
+
 DEFAULT_SEPARATOR = '\\s+'
 
 
@@ -23,10 +25,8 @@ class BaseReader:
 
         :param file: Path to a file containing gaze data.
         :type file: str
-        :param sep: Column separator for rows of gaze data.
-        :type sep: str or
+        :param sep: Regular expression column separator for rows of gaze data.
+        :type sep: str
         """
 
         self.file = open(file, mode='r', encoding=encoding, **kwargs)
-
-        self.sep = regex.compile(sep)
