@@ -9,7 +9,10 @@ from . import constants
 
 from saccades import GazeData
 from saccades import Saccade
+from saccades.readers import BaseReader
 
+
+#%% Test session setup
 
 @pytest.fixture(scope='session')
 def clear_image_files():
@@ -22,6 +25,18 @@ def clear_image_files():
         except FileNotFoundError:
             pass
 
+
+#%% readers
+
+@pytest.fixture(params=constants.FILENAMES)
+def r(request):
+
+    filepath = os.path.join(constants.DATA_PATH, request.param)
+
+    return BaseReader(filepath)
+
+
+#%% gazedata objects
 
 @pytest.fixture
 def gd():

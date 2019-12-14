@@ -43,12 +43,17 @@ MODULE_CONTENTS = ['GazeData',
                    'metrics',
                    '__version__']
 
-READERS_CONTENTS = []
+READERS_CONTENTS = ['BaseReader']
+
+
+#%% Data files
+
+FILENAMES = ['example_eyelink.txt',
+             'example_iView.txt',
+             's1_actioncliptest00001.txt']
 
 
 #%% Valid init types
-
-# These are used for parametrization in conftest.py.
 
 SEQUENCE = [[2., 1., 0.],
             [4., 4., 4.],
@@ -227,9 +232,6 @@ AMPLITUDE_DVA = 75.96375653207353
 
 
 #%% Plotting
-
-# Plotting saccades is tested in test_script.py
-# because the simple test data used here are too short for a saccade.
 
 IMAGE_FORMAT = '.png'
 

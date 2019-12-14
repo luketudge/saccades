@@ -1,6 +1,12 @@
 API
 ===
 
+basereader
+----------
+
+.. automodule:: saccades.readers.basereader
+    :members:
+
 gazedata
 --------
 
