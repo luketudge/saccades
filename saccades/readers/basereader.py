@@ -21,9 +21,6 @@ FLOAT = r'\d+\.\d+'
 # 0 or more occurrences of any character.
 FILLER = '.*'
 
-# Either the end of the string or 1 whitespace character followed by filler.
-ROW_END = r'($|\s' + FILLER + ')'
-
 
 #%% Main class
 
@@ -46,8 +43,9 @@ class BaseReader:
         """
 
         intervening_columns = sep.join(['(', '|', FILLER, ')'])
+        row_end = '($|{}{})'.format(sep, FILLER)
         row_groups = '(?P<time>{}){}(?P<x>{}){}(?P<y>{}){}'
-        row = row_groups.format(INTEGER, intervening_columns, FLOAT, sep, FLOAT, ROW_END)
+        row = row_groups.format(INTEGER, intervening_columns, FLOAT, sep, FLOAT, row_end)
         self.row_pattern = regex.compile(row, flags=FLAGS)
 
         self.file = open(file, mode='r', encoding=encoding, **kwargs)
