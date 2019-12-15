@@ -9,9 +9,6 @@ import regex
 
 FLAGS = regex.V1
 
-# 1 or more whitespace characters.
-SEPARATOR = r'\s+'
-
 # 1 or more digits.
 INTEGER = r'\d+'
 
@@ -31,7 +28,7 @@ class BaseReader:
     and reads in all other contents as unprocessed strings.
     """
 
-    def __init__(self, file, sep=SEPARATOR, encoding='utf-8', **kwargs):
+    def __init__(self, file, sep=r'\s+', encoding='utf-8', **kwargs):
         """File is always opened in read-only mode.
 
         Additional keyword arguments are passed on to :func:`open`.
