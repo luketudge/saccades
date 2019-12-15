@@ -27,7 +27,7 @@ def test_row_pattern_match(r, row):
 
 def test_row_pattern_groups(r):
 
-    match = r.row_pattern.fullmatch('0 1.0 2.0')
+    match = r.row_pattern.fullmatch('0 blah 1.0 2.0 blah')
 
     for num, col in enumerate(['time', 'x', 'y']):
         assert float(match.group(col)) == num
