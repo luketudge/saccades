@@ -21,6 +21,9 @@ FLOAT = r'\d+\.\d+'
 # 0 or more occurrences of any character.
 FILLER = '.*'
 
+# Either the end of the string or 1 whitespace character followed by filler.
+ROW_END = r'($|\s' + FILLER + ')'
+
 
 #%% Main class
 
@@ -38,14 +41,13 @@ class BaseReader:
 
         :param file: Path to a file containing gaze data.
         :type file: str
-        :param sep: Regular expression column separator for rows of gaze data.
+        :param sep: Column separator for rows of gaze data.
         :type sep: str
         """
 
-        # Build a regex for a row of data.
-        intervening_columns = sep.join(['(', '|', '.*', ')'])
-        row_end = r'($|\s' + FILLER + ')'
-        row = INTEGER + intervening_columns + FLOAT + sep + FLOAT + row_end
+        intervening_columns = sep.join(['(', '|', FILLER, ')'])
+        row_groups = '(?P<time>{}){}(?P<x>{}){}(?P<y>{}){}'
+        row = row_groups.format(INTEGER, intervening_columns, FLOAT, sep, FLOAT, ROW_END)
         self.row_pattern = regex.compile(row, flags=FLAGS)
 
         self.file = open(file, mode='r', encoding=encoding, **kwargs)
