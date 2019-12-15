@@ -9,16 +9,29 @@ import regex
 
 FLAGS = regex.V1
 
-DEFAULT_SEPARATOR = '\\s+'
+# 1 or more whitespace characters.
+SEPARATOR = r'\s+'
+
+# 1 or more digits.
+INTEGER = r'\d+'
+
+# 1 or more digits, then a dot, then 1 or more digits
+FLOAT = r'\d+\.\d+'
+
+# 0 or more occurrences of any character.
+FILLER = '.*'
 
 
 #%% Main class
 
 class BaseReader:
     """Read eye gaze data from a text file.
+
+    This base class just finds the coordinate gaze data \
+    and reads in all other contents as unprocessed strings.
     """
 
-    def __init__(self, file, sep=DEFAULT_SEPARATOR, encoding='utf-8', **kwargs):
+    def __init__(self, file, sep=SEPARATOR, encoding='utf-8', **kwargs):
         """File is always opened in read-only mode.
 
         Additional keyword arguments are passed on to :func:`open`.
@@ -28,5 +41,11 @@ class BaseReader:
         :param sep: Regular expression column separator for rows of gaze data.
         :type sep: str
         """
+
+        # Build a regex for a row of data.
+        intervening_columns = sep.join(['(', '|', '.*', ')'])
+        row_end = r'($|\s' + FILLER + ')'
+        row = INTEGER + intervening_columns + FLOAT + sep + FLOAT + row_end
+        self.row_pattern = regex.compile(row, flags=FLAGS)
 
         self.file = open(file, mode='r', encoding=encoding, **kwargs)
