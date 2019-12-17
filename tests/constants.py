@@ -6,14 +6,14 @@ import numpy
 import pandas
 
 
-#%% Paths
+# %% Paths
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_PATH, 'data')
 IMAGES_PATH = os.path.join(BASE_PATH, 'images')
 
 
-#%% Helper functions
+# %% Helper functions
 
 # An arbitrary function, used in test_detect_saccades().
 def fun(x, val=True):
@@ -33,7 +33,7 @@ def image_file_ok(filename):
     return img_bytes == reference_bytes
 
 
-#%% Expected contents of top module
+# %% Expected contents of top module
 
 MODULE_CONTENTS = ['GazeData',
                    'Saccade',
@@ -46,14 +46,14 @@ MODULE_CONTENTS = ['GazeData',
 READERS_CONTENTS = ['BaseReader']
 
 
-#%% Data files
+# %% Data files
 
 FILENAMES = ['example_eyelink.txt',
              'example_iView.txt',
              's1_actioncliptest00001.txt']
 
 
-#%% Data rows
+# %% Data rows
 
 VALID_ROWS = [
     '5908926586 SMP 1 275.7813 307.0769 0 1005 0  ',
@@ -78,7 +78,7 @@ INVALID_ROWS = [
 ]
 
 
-#%% Valid init types
+# %% Valid init types
 
 SEQUENCE = [[2., 1., 0.],
             [4., 4., 4.],
@@ -123,7 +123,7 @@ VALID_INIT_TYPE_NAMES = ['seq',
                          'df_reordered']
 
 
-#%% Invalid init types
+# %% Invalid init types
 
 ARRAY_XY = numpy.array(ARRAY[:, 1:3])
 
@@ -143,7 +143,7 @@ INVALID_INIT_TYPE_NAMES = ['arr_xy',
                            'df_invalid_cols']
 
 
-#%% Attributes
+# %% Attributes
 
 SCREEN_RES = [4., 3.]
 SCREEN_DIAG = 10.
@@ -161,7 +161,7 @@ SCREEN_ATTRIBUTES = {'screen_res': SCREEN_RES,
 ATTRIBUTES.update(SCREEN_ATTRIBUTES)
 
 
-#%% Shapes
+# %% Shapes
 
 SHAPE = [3, 3]
 
@@ -180,7 +180,7 @@ WRONG_SHAPES = [[None, WRONG_SHAPE[1]],
                 SHAPE + [2]]
 
 
-#%% Transformations
+# %% Transformations
 
 ORIGIN = [1., 2.]
 
@@ -199,7 +199,7 @@ CENTER_ROTATED = numpy.array([[3., 2.],
                               [-9., 11.]])
 
 
-#%% Conversions
+# %% Conversions
 
 # Obviously not realistic that someone sits 2.5 pixels from the screen.
 # But it makes the math a bit easier.
@@ -210,7 +210,7 @@ PX = [2.5, 0.]
 DVA = [45., 0.]
 
 
-#%% Derivatives
+# %% Derivatives
 
 VELOCITY = numpy.array([numpy.nan, 2.5, 5.])
 VELOCITY_DVA = numpy.array([numpy.nan, 45., 63.43494882292201])
@@ -219,7 +219,7 @@ ACCELERATION = numpy.array([numpy.nan, numpy.nan, 1.25])
 ACCELERATION_DVA = numpy.array([numpy.nan, numpy.nan, 9.217474411461005])
 
 
-#%% Saccade detection
+# %% Saccade detection
 
 VELOCITY_LOW = 40.
 VELOCITY_HIGH = 50.
@@ -240,7 +240,7 @@ CRITERIA = [
 ]
 
 
-#%% Saccade
+# %% Saccade
 
 SACCADE = [[2., 1., 2.],
            [4., 5., 5.],
@@ -248,7 +248,7 @@ SACCADE = [[2., 1., 2.],
            [8., 7., 10.]]
 
 
-#%% Saccade metrics
+# %% Saccade metrics
 
 LATENCY = 2.
 DURATION = 6.
@@ -256,7 +256,7 @@ AMPLITUDE = 10.
 AMPLITUDE_DVA = 75.96375653207353
 
 
-#%% Plotting
+# %% Plotting
 
 IMAGE_FORMAT = '.png'
 

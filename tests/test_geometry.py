@@ -16,7 +16,7 @@ from saccades import geometry
 # https://github.com/numpy/numpy/issues/9229
 
 
-#%% center()
+# %% center()
 
 def test_center():
 
@@ -43,7 +43,7 @@ def test_center_with_square_array():
     assert numpy.array_equal(centered, constants.CENTERED[:2, :])
 
 
-#%% rotate()
+# %% rotate()
 
 def test_rotate():
 
@@ -68,7 +68,7 @@ def test_rotate_as_GazeData_method(gd):
     assert numpy.allclose(gd[['x', 'y']], constants.ROTATED)
 
 
-#%% velocity()
+# %% velocity()
 
 def test_velocity():
 
@@ -96,7 +96,7 @@ def test_velocity_as_GazeData_method_with_dva_units(gd):
     assert numpy.allclose(gd['velocity'], constants.VELOCITY, equal_nan=True)
 
 
-#%% acceleration()
+# %% acceleration()
 
 def test_acceleration():
 

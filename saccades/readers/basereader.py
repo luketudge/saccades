@@ -5,7 +5,7 @@
 import regex
 
 
-#%% Regular expressions
+# %% Regular expressions
 
 FLAGS = regex.V1
 
@@ -19,7 +19,7 @@ FLOAT = r'\d+\.\d+'
 FILLER = '.*'
 
 
-#%% Main class
+# %% Main class
 
 class BaseReader:
     """Read eye gaze data from a text file.

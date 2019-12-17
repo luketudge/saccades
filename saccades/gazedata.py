@@ -19,7 +19,7 @@ from .tools import find_contiguous_subsets
 from .tools import _blockmanager_to_dataframe
 
 
-#%% Constants
+# %% Constants
 
 ATTRIBUTES = ['time_units',
               'space_units',
@@ -33,7 +33,7 @@ INIT_COLUMNS = ['time', 'x', 'y']
 RAW_DATA_COLUMNS = ['x_raw', 'y_raw']
 
 
-#%% Main class
+# %% Main class
 
 class GazeData(pandas.DataFrame):
     """Table of gaze data.
@@ -358,7 +358,7 @@ class GazeData(pandas.DataFrame):
         return fig
 
 
-#%% Saccade subclass
+# %% Saccade subclass
 
 class Saccade(GazeData):
     """Table of gaze data containing a saccade.

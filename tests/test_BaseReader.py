@@ -7,7 +7,7 @@ from . import constants
 from saccades.readers import BaseReader
 
 
-#%% __init__()
+# %% __init__()
 
 def test_init(r_all):
 
@@ -17,7 +17,7 @@ def test_init(r_all):
     assert not r_all.file.writable()
 
 
-#%% row_pattern
+# %% row_pattern
 
 @pytest.mark.parametrize('row', constants.VALID_ROWS)
 def test_row_pattern_match(r, row):

@@ -12,7 +12,7 @@ from saccades import Saccade
 from saccades.readers import BaseReader
 
 
-#%% Test session setup
+# %% Test session setup
 
 @pytest.fixture(scope='session')
 def clear_image_files():
@@ -26,7 +26,7 @@ def clear_image_files():
             pass
 
 
-#%% readers
+# %% readers
 
 @pytest.fixture
 def r():
@@ -44,7 +44,7 @@ def r_all(request):
     return BaseReader(filepath)
 
 
-#%% gazedata objects
+# %% gazedata objects
 
 @pytest.fixture
 def gd():

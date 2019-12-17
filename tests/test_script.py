@@ -15,7 +15,7 @@ from saccades import GazeData
 from saccades.detection import criterion
 
 
-#%% Setup
+# %% Setup
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -45,7 +45,7 @@ amplitude: {amplitude}
 """
 
 
-#%% Test function
+# %% Test function
 
 def test_script():
 
@@ -88,7 +88,7 @@ def test_script():
             saccades=True)
 
 
-#%% Script mode
+# %% Script mode
 
 if __name__ == '__main__':
 
