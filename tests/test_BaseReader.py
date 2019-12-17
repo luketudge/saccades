@@ -36,12 +36,23 @@ def test_row_pattern_non_match(r, row):
     assert r.row_pattern.fullmatch(row) is None
 
 
+# %% header
+
+ids = [x['filename'] for x in constants.DATA_FILES]
+@pytest.mark.parametrize('file', constants.DATA_FILES, ids=ids)
+def test_header(file):
+
+    r = BaseReader(file['filepath'])
+
+    assert r.header == file['header']
+    assert r.file.closed
+
+
 # %% Context manager
 
 def test_context_manager():
 
-    with BaseReader(constants.DATA_FILES[0]['filepath']) as f:
+    with BaseReader(constants.DATA_FILES[0]['filepath']) as r:
+        assert not r.file.closed
 
-        assert not f.file.closed
-
-    assert f.file.closed
+    assert r.file.closed

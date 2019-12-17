@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import functools
+import os
 
 import numpy
 import pandas
@@ -44,7 +45,6 @@ def test_init_types(gd_all):
 
 input_types = constants.INVALID_INIT_TYPES.values()
 ids = list(constants.INVALID_INIT_TYPES.keys())
-
 @pytest.mark.parametrize('input_type', input_types, ids=ids)
 def test_invalid_init_types(input_type):
 
@@ -236,8 +236,7 @@ def test_detect_saccades_with_existing_saccade_column(gd):
 
 # %% plot()
 
-ids = [x['filename'] for x in constants.PLOT_ARGS]
-
+ids = [os.path.basename(x['filename']) for x in constants.PLOT_ARGS]
 @pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=ids)
 def test_GazeData_plot(gd, kwargs):
 

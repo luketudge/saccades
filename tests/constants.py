@@ -34,11 +34,11 @@ def fun(x, val=True):
 
 
 # Checks equality of an image file with its reference file.
-def image_file_ok(filename):
+def image_file_ok(filepath):
 
-    img_bytes = open(filename, mode='rb').read()
+    img_bytes = open(filepath, mode='rb').read()
 
-    reference_filename = os.path.basename(filename)
+    reference_filename = os.path.basename(filepath)
     reference_path = os.path.join(IMAGES_PATH, 'refs', reference_filename)
     reference_bytes = open(reference_path, mode='rb').read()
 

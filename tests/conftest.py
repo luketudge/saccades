@@ -35,8 +35,8 @@ def r():
 
 
 params = [x['filepath'] for x in constants.DATA_FILES]
-
-@pytest.fixture(params=params)
+ids = [x['filename'] for x in constants.DATA_FILES]
+@pytest.fixture(params=params, ids=ids)
 def r_all(request):
 
     return BaseReader(request.param)
@@ -52,7 +52,6 @@ def gd():
 
 params = constants.VALID_INIT_TYPES.values()
 ids = list(constants.VALID_INIT_TYPES.keys())
-
 @pytest.fixture(params=params, ids=ids)
 def gd_all(request):
 
