@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 import pytest
 
 from . import constants
@@ -13,8 +15,19 @@ def test_init(r_all):
 
     assert isinstance(r_all, BaseReader)
 
-    assert r_all.file.readable()
-    assert not r_all.file.writable()
+
+# %% Context manager
+
+def test_context_manager():
+
+    filepath = os.path.join(constants.DATA_PATH,
+                            constants.DATA_FILES[0]['filename'])
+
+    with BaseReader(filepath) as f:
+
+        assert not f.file.closed
+
+    assert f.file.closed
 
 
 # %% row_pattern

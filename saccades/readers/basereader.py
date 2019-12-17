@@ -45,4 +45,17 @@ class BaseReader:
         row = row_groups.format(INTEGER, intervening_columns, FLOAT, sep, FLOAT, row_end)
         self.row_pattern = regex.compile(row, flags=FLAGS)
 
-        self.file = open(file, mode='r', encoding=encoding, **kwargs)
+        self.filename = file
+        self.encoding = encoding
+        self.open_kwargs = kwargs
+
+    def __enter__(self):
+
+        self.file = open(self.filename, mode='r',
+                         encoding=self.encoding, **self.open_kwargs)
+
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+
+        self.file.close()

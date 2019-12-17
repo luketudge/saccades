@@ -31,15 +31,17 @@ def clear_image_files():
 @pytest.fixture
 def r():
 
-    filepath = os.path.join(constants.DATA_PATH, constants.FILENAMES[0])
+    filepath = os.path.join(constants.DATA_PATH,
+                            constants.DATA_FILES[0]['filename'])
 
     return BaseReader(filepath)
 
 
-@pytest.fixture(params=constants.FILENAMES)
+@pytest.fixture(params=constants.DATA_FILES)
 def r_all(request):
 
-    filepath = os.path.join(constants.DATA_PATH, request.param)
+    filepath = os.path.join(constants.DATA_PATH,
+                            request.param['filename'])
 
     return BaseReader(filepath)
 

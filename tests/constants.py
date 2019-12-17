@@ -33,7 +33,7 @@ def image_file_ok(filename):
     return img_bytes == reference_bytes
 
 
-# %% Expected contents of top module
+# %% Expected contents of modules
 
 MODULE_CONTENTS = ['GazeData',
                    'Saccade',
@@ -48,9 +48,11 @@ READERS_CONTENTS = ['BaseReader']
 
 # %% Data files
 
-FILENAMES = ['example_eyelink.txt',
-             'example_iView.txt',
-             's1_actioncliptest00001.txt']
+DATA_FILES = [
+    {'filename': 'example_eyelink.txt'},
+    {'filename': 'example_iView.txt'},
+    {'filename': 's1_actioncliptest00001.txt'}
+]
 
 
 # %% Data rows
