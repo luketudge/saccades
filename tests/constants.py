@@ -61,6 +61,8 @@ READERS_CONTENTS = ['BaseReader']
 # %% Data files
 
 DATA_FILES = [
+    {'filename': 'example.tsv', 'data_start': 0},
+    {'filename': 'example.csv', 'data_start': 0, 'sep': ','},
     {'filename': 'example_iView.txt', 'data_start': 47},
     {'filename': 'example_eyelink.txt', 'data_start': 52},
     {'filename': 'example_eyelink_events.txt', 'data_start': 16},
@@ -68,8 +70,8 @@ DATA_FILES = [
 ]
 
 for f in DATA_FILES:
-    f['filepath'] = os.path.join(DATA_PATH, f['filename'])
-    f['header'] = get_header(f['filepath'], f['data_start'])
+    f['file'] = os.path.join(DATA_PATH, f['filename'])
+    f['header'] = get_header(f['file'], f['data_start'])
 
 
 # %% Data rows
@@ -94,6 +96,15 @@ INVALID_ROWS = [
     '5908926586 SMP 1 a275.7813 307.0769 0 1005 0  ',
     '5908926586 SMP 1 275.7813 307.0769a 0 1005 0  ',
     '5908926586,SMP,1,275.7813,307.0769,0,1005,0,,'
+]
+
+COLUMN_PATTERNS = [
+    '0 1.0 2.0',
+    '0 blah 1.0 2.0',
+    '0 1.0 2.0 blah',
+    '0 1.0 2.0 3.0 4.0',
+    '0 1.0 2.0 blah 3.0 4.0',
+    '0 1.0 2.0 blah 3.0 4.0 blah'
 ]
 
 

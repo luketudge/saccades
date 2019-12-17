@@ -39,15 +39,13 @@ class BaseReader:
         :type sep: str
         """
 
-        intervening_columns = sep.join(['(', '|', FILLER, ')'])
-        row_end = '($|{}{})'.format(sep, FILLER)
-        row_groups = '(?P<time>{}){}(?P<x>{}){}(?P<y>{}){}'
-        row = row_groups.format(INTEGER, intervening_columns, FLOAT, sep, FLOAT, row_end)
-        self.row_pattern = regex.compile(row, flags=FLAGS)
-
         self.filename = file
+        self.sep = sep
         self.encoding = encoding
         self.open_kwargs = kwargs
+
+        self.row_pattern = self.build_row_pattern()
+        self.header = self.get_header()
 
     def __enter__(self):
 
@@ -59,3 +57,45 @@ class BaseReader:
     def __exit__(self, exc_type, exc_value, traceback):
 
         self.file.close()
+
+    def build_row_pattern(self):
+        """Build a regular expression for a row of data.
+
+        A row of data:
+
+        * contains values separated by the separator \
+        specified in :meth:`__init__`
+        * begins with an integer value (the *time* column)
+        * contains two neighboring float values (the *x* and *y* columns) \
+        (the first such pair of values is used if more than one occurs)
+
+        :rtype: :class:`regex.regex.Pattern`
+        """
+
+        intervening_columns = self.sep.join(['(', '|', FILLER, ')'])
+        row_end = '($|{}{})'.format(self.sep, FILLER)
+        row_groups = '(?P<time>{}){}(?P<x>{}){}(?P<y>{}){}'
+        row = row_groups.format(INTEGER, intervening_columns, FLOAT,
+                                self.sep, FLOAT, row_end)
+
+        return regex.compile(row, flags=FLAGS)
+
+    def get_header(self):
+        """Get the header section of the file.
+
+        The header is all the rows up to the first row of data \
+        (see :meth:`build_row_pattern`).
+
+        :rtype: str
+        """
+
+        header_lines = []
+
+        with self:
+
+            for line in self.file:
+                if self.row_pattern.fullmatch(line.rstrip('\n')):
+                    break
+                header_lines.append(line)
+
+        return ''.join(header_lines).rstrip()

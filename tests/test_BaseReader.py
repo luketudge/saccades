@@ -22,9 +22,10 @@ def test_row_pattern_match(r, row):
     assert r.row_pattern.fullmatch(row) is not None
 
 
-def test_row_pattern_groups(r):
+@pytest.mark.parametrize('row', constants.COLUMN_PATTERNS)
+def test_row_pattern_groups(r, row):
 
-    match = r.row_pattern.fullmatch('0 blah 1.0 2.0 blah')
+    match = r.row_pattern.fullmatch(row)
 
     for num, col in enumerate(['time', 'x', 'y']):
         assert float(match.group(col)) == num
@@ -42,9 +43,15 @@ ids = [x['filename'] for x in constants.DATA_FILES]
 @pytest.mark.parametrize('file', constants.DATA_FILES, ids=ids)
 def test_header(file):
 
-    r = BaseReader(file['filepath'])
+    kwargs = file.copy()
+    header = kwargs.pop('header')
 
-    assert r.header == file['header']
+    for key in ['filename', 'data_start']:
+        del kwargs[key]
+
+    r = BaseReader(**kwargs)
+
+    assert r.header == header
     assert r.file.closed
 
 
@@ -52,7 +59,7 @@ def test_header(file):
 
 def test_context_manager():
 
-    with BaseReader(constants.DATA_FILES[0]['filepath']) as r:
+    with BaseReader(constants.DATA_FILES[0]['file']) as r:
         assert not r.file.closed
 
     assert r.file.closed

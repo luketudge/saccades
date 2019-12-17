@@ -31,15 +31,19 @@ def clear_image_files():
 @pytest.fixture
 def r():
 
-    return BaseReader(constants.DATA_FILES[0]['filepath'])
+    return BaseReader(constants.DATA_FILES[0]['file'])
 
 
-params = [x['filepath'] for x in constants.DATA_FILES]
 ids = [x['filename'] for x in constants.DATA_FILES]
-@pytest.fixture(params=params, ids=ids)
+@pytest.fixture(params=constants.DATA_FILES, ids=ids)
 def r_all(request):
 
-    return BaseReader(request.param)
+    kwargs = request.param.copy()
+
+    for key in ['filename', 'data_start', 'header']:
+        del kwargs[key]
+
+    return BaseReader(**kwargs)
 
 
 # %% gazedata objects
