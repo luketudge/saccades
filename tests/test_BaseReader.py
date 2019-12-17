@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
-
 import pytest
 
 from . import constants
@@ -14,20 +12,6 @@ from saccades.readers import BaseReader
 def test_init(r_all):
 
     assert isinstance(r_all, BaseReader)
-
-
-# %% Context manager
-
-def test_context_manager():
-
-    filepath = os.path.join(constants.DATA_PATH,
-                            constants.DATA_FILES[0]['filename'])
-
-    with BaseReader(filepath) as f:
-
-        assert not f.file.closed
-
-    assert f.file.closed
 
 
 # %% row_pattern
@@ -50,3 +34,14 @@ def test_row_pattern_groups(r):
 def test_row_pattern_non_match(r, row):
 
     assert r.row_pattern.fullmatch(row) is None
+
+
+# %% Context manager
+
+def test_context_manager():
+
+    with BaseReader(constants.DATA_FILES[0]['filepath']) as f:
+
+        assert not f.file.closed
+
+    assert f.file.closed

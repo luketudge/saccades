@@ -42,7 +42,10 @@ def test_init_types(gd_all):
     assert numpy.array_equal(observed, expected)
 
 
-@pytest.mark.parametrize('input_type', constants.INVALID_INIT_TYPES, ids=constants.INVALID_INIT_TYPE_NAMES)
+input_types = constants.INVALID_INIT_TYPES.values()
+ids = list(constants.INVALID_INIT_TYPES.keys())
+
+@pytest.mark.parametrize('input_type', input_types, ids=ids)
 def test_invalid_init_types(input_type):
 
     with pytest.raises(ValueError):
@@ -233,7 +236,9 @@ def test_detect_saccades_with_existing_saccade_column(gd):
 
 # %% plot()
 
-@pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARGS_NAMES)
+ids = [x['filename'] for x in constants.PLOT_ARGS]
+
+@pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=ids)
 def test_GazeData_plot(gd, kwargs):
 
     # Make a basic transform and add saccades,

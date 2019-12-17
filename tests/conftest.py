@@ -31,19 +31,15 @@ def clear_image_files():
 @pytest.fixture
 def r():
 
-    filepath = os.path.join(constants.DATA_PATH,
-                            constants.DATA_FILES[0]['filename'])
-
-    return BaseReader(filepath)
+    return BaseReader(constants.DATA_FILES[0]['filepath'])
 
 
-@pytest.fixture(params=constants.DATA_FILES)
+params = [x['filepath'] for x in constants.DATA_FILES]
+
+@pytest.fixture(params=params)
 def r_all(request):
 
-    filepath = os.path.join(constants.DATA_PATH,
-                            request.param['filename'])
-
-    return BaseReader(filepath)
+    return BaseReader(request.param)
 
 
 # %% gazedata objects
@@ -54,7 +50,10 @@ def gd():
     return GazeData(constants.ARRAY, **constants.ATTRIBUTES)
 
 
-@pytest.fixture(params=constants.VALID_INIT_TYPES, ids=constants.VALID_INIT_TYPE_NAMES)
+params = constants.VALID_INIT_TYPES.values()
+ids = list(constants.VALID_INIT_TYPES.keys())
+
+@pytest.fixture(params=params, ids=ids)
 def gd_all(request):
 
     return GazeData(request.param, **constants.ATTRIBUTES)

@@ -15,6 +15,18 @@ IMAGES_PATH = os.path.join(BASE_PATH, 'images')
 
 # %% Helper functions
 
+# Gets the header section of a text data file.
+def get_header(filename, n):
+
+    header = []
+
+    with open(filename, encoding='utf-8') as f:
+        for i in range(n):
+            header.append(f.readline())
+
+    return ''.join(header).rstrip()
+
+
 # An arbitrary function, used in test_detect_saccades().
 def fun(x, val=True):
 
@@ -49,10 +61,15 @@ READERS_CONTENTS = ['BaseReader']
 # %% Data files
 
 DATA_FILES = [
-    {'filename': 'example_eyelink.txt'},
-    {'filename': 'example_iView.txt'},
-    {'filename': 's1_actioncliptest00001.txt'}
+    {'filename': 'example_iView.txt', 'data_start': 47},
+    {'filename': 'example_eyelink.txt', 'data_start': 52},
+    {'filename': 'example_eyelink_events.txt', 'data_start': 16},
+    {'filename': 's1_actioncliptest00001.txt', 'data_start': 11}
 ]
+
+for f in DATA_FILES:
+    f['filepath'] = os.path.join(DATA_PATH, f['filename'])
+    f['header'] = get_header(f['filepath'], f['data_start'])
 
 
 # %% Data rows
@@ -103,26 +120,18 @@ DF_EXTRA_COLUMN['foo'] = 'foo'
 DF_REORDERED_COLUMNS = DF_EXTRA_COLUMN.copy()
 DF_REORDERED_COLUMNS = DF_REORDERED_COLUMNS[['foo', 'y', 'time', 'x']]
 
-STANDARD_INIT_TYPES = [SEQUENCE,
-                       ARRAY,
-                       DF,
-                       DF_CORRECT_SHAPE]
+STANDARD_INIT_TYPES = {'seq': SEQUENCE,
+                       'arr': ARRAY,
+                       'df': DF,
+                       'df_shape_only': DF_CORRECT_SHAPE}
 
-VALID_INIT_TYPES = [SEQUENCE,
-                    ARRAY,
-                    DF,
-                    DF_REINDEXED,
-                    DF_CORRECT_SHAPE,
-                    DF_EXTRA_COLUMN,
-                    DF_REORDERED_COLUMNS]
-
-VALID_INIT_TYPE_NAMES = ['seq',
-                         'arr',
-                         'df',
-                         'df_non_zero_based_index',
-                         'df_shape_only',
-                         'df_extra_col',
-                         'df_reordered']
+VALID_INIT_TYPES = {'seq': SEQUENCE,
+                    'arr': ARRAY,
+                    'df': DF,
+                    'df_non_zero_based_index': DF_REINDEXED,
+                    'df_shape_only': DF_CORRECT_SHAPE,
+                    'df_extra_col': DF_EXTRA_COLUMN,
+                    'df_reordered': DF_REORDERED_COLUMNS}
 
 
 # %% Invalid init types
@@ -136,13 +145,9 @@ DF_XY = pandas.DataFrame(ARRAY_XY,
 DF_INVALID_COLUMNS = DF_EXTRA_COLUMN.copy()
 DF_INVALID_COLUMNS.columns = ['x', 'y', 'foo', 'bar']
 
-INVALID_INIT_TYPES = [ARRAY_XY,
-                      DF_XY,
-                      DF_INVALID_COLUMNS]
-
-INVALID_INIT_TYPE_NAMES = ['arr_xy',
-                           'df_xy',
-                           'df_invalid_cols']
+INVALID_INIT_TYPES = {'arr_xy': ARRAY_XY,
+                      'df_xy': DF_XY,
+                      'df_invalid_cols': DF_INVALID_COLUMNS}
 
 
 # %% Attributes
@@ -266,8 +271,6 @@ PLOT_ARGS = [{'filename': 'test_plot'},
              {'filename': 'test_plot_reverse_y', 'reverse_y': True},
              {'filename': 'test_plot_raw_data', 'show_raw': True},
              {'filename': 'test_plot_saccades', 'saccades': True}]
-
-PLOT_ARGS_NAMES = [x['filename'] for x in PLOT_ARGS]
 
 for x in PLOT_ARGS:
     x['filename'] = os.path.join(IMAGES_PATH, x['filename'] + IMAGE_FORMAT)

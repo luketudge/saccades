@@ -16,7 +16,10 @@ row_ids = list(range(len(boolean_column)))
 
 # %% check_shape()
 
-@pytest.mark.parametrize('input_type', constants.STANDARD_INIT_TYPES)
+input_types = constants.STANDARD_INIT_TYPES.values()
+ids = list(constants.STANDARD_INIT_TYPES.keys())
+
+@pytest.mark.parametrize('input_type', input_types, ids=ids)
 def test_check_shape(input_type):
 
     checked = tools.check_shape(input_type, constants.SHAPE)
