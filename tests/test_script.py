@@ -1,91 +1,65 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-This file doubles as an example script demonstrating basic use, \
-and a very minimal functional test that tests basic use \
-and checks only that no exceptions occur.
+This file doubles as an example script and a minimal functional test \
+to check only that no exceptions occur during basic use.
 """
 
 import os
 import webbrowser
 
-import pandas
-
-from saccades import GazeData
-from saccades.detection import criterion
+from saccades.readers import BaseReader
+from saccades.readers.regexes import FILLER
+from saccades.readers.regexes import POS_INTEGER
+from saccades.readers.regexes import NUMBER
 
 
 # %% Setup
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
-DATA_FILENAME = 'example.csv'
+DATA_FILENAME = 's1_actioncliptest00001.txt'
 DATA_PATH = os.path.join(BASE_PATH, 'data', DATA_FILENAME)
 
-OUTPUT_FILENAME = 'example_saccade.csv'
-OUTPUT_PATH = os.path.join(BASE_PATH, OUTPUT_FILENAME)
-
-DF = pandas.read_csv(DATA_PATH, header=None)
-
-CENTER = (320., 240.)
-SCREEN_RES = (640., 480.)
-SCREEN_DIAG = 42.
-VIEWING_DIST = 100.
-TARGET = None
-
-VELOCITY_CRITERION = 0.022
-
-IMAGE_FILENAME = 'example_saccade_plot.png'
+IMAGE_FILENAME = 'example_plot.png'
 IMAGE_PATH = os.path.join(BASE_PATH, IMAGE_FILENAME)
 
-RESULTS_PRINTOUT = """
-latency:   {latency}
-duration:  {duration}
-amplitude: {amplitude}
-"""
+
+# %% Subclass of BaseReader
+
+class NewReader(BaseReader):
+
+    # The data row pattern for this file is:
+    # POS_INTEGER NUMBER NUMBER FILLER
+    # So we override the corresponding method.
+    def build_row_pattern(self):
+
+        row_groups = ['(?P<time>{})', '(?P<x>{})', '(?P<y>{})']
+        row_groups = self.sep.join(row_groups)
+
+        return row_groups.format(POS_INTEGER, NUMBER, NUMBER) + FILLER
 
 
 # %% Test function
 
 def test_script():
 
-    # Turn a pandas DataFrame into GazeData.
-    gd = GazeData(DF, time_units='ms', space_units='px',
-                  screen_res=SCREEN_RES,
-                  screen_diag=SCREEN_DIAG,
-                  viewing_dist=VIEWING_DIST,
-                  target=TARGET)
+    # Load the data using the new reader.
+    f = NewReader(DATA_PATH)
 
-    # Reset time index.
-    gd.reset_time()
+    # Check the header.
+    print(f.header)
 
-    # Recenter.
-    gd.center(origin=CENTER)
+    # Get the blocks of data.
+    blocks = list(f.get_blocks())
+    print('{} blocks loaded'.format(len(blocks)))
 
-    # Calculate velocity and acceleration.
-    gd.get_accelerations()
-
-    # Display the data.
+    # Get the first block.
+    gd = blocks[0]
     print(gd)
 
-    # Get first saccade.
-    sacc = gd.detect_saccades(criterion, n=1, velocity=VELOCITY_CRITERION)[0]
-
-    # Calculate saccade metrics.
-    results = {}
-    results['latency'] = sacc.latency()
-    results['duration'] = sacc.duration()
-    results['amplitude'] = sacc.amplitude()
-    print(RESULTS_PRINTOUT.format(**results))
-
-    # Save first saccade to csv.
-    sacc.to_csv(OUTPUT_PATH, index=False)
-
     # Save a plot.
-    gd.plot(filename=IMAGE_PATH,
-            reverse_y=True,
-            show_raw=True,
-            saccades=True)
+    gd.plot(filename=IMAGE_PATH)
 
 
 # %% Script mode

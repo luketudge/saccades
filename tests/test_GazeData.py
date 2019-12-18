@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import functools
-import os
 
 import numpy
 import pandas
@@ -236,8 +235,7 @@ def test_detect_saccades_with_existing_saccade_column(gd):
 
 # %% plot()
 
-ids = [os.path.basename(x['filename']) for x in constants.PLOT_ARGS]
-@pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=ids)
+@pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARG_IDS)
 def test_GazeData_plot(gd, kwargs):
 
     # Make a basic transform and add saccades,

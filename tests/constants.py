@@ -73,9 +73,9 @@ READERS_CONTENTS = ['BaseReader']
 # %% Data files
 
 DATA_FILES = [
-    {'filename': 'empty.txt', 'data_start': 0},
-    {'filename': 'example.tsv', 'data_start': 0},
-    {'filename': 'example.csv', 'data_start': 0, 'sep': ','},
+    {'filename': 'empty.txt', 'data_start': 0, 'n_blocks': 0},
+    {'filename': 'example.tsv', 'data_start': 0, 'n_blocks': 1},
+    {'filename': 'example.csv', 'data_start': 0, 'sep': ',', 'n_blocks': 1},
     {'filename': 'example_iView.txt', 'data_start': 47},
     {'filename': 'example_eyelink.txt', 'data_start': 52},
     {'filename': 'example_eyelink_events.txt', 'data_start': 16},
@@ -95,6 +95,11 @@ VALID_ROWS = [
     '5908926586 275.7813 307.0769',
     '5908926586 275. 307.',
     '5908926586 .7813 .0769',
+    '5908926586 -275.7813 -307.0769',
+    '5908926586 -.7813 -.0769',
+    '5908926586 -275. -307.',
+    '5908926586 . .',
+    '5908926586 -. -.',
     '5908926586 SMP 1 275.7813 307.0769 0 1005 0  ',
     '5908926586 SMP 1 275.7813 307.0769 0 1005 0',
     '5908926586 SMP 1 275.7813 307.0769  ',
@@ -108,6 +113,9 @@ VALID_ROWS = [
 INVALID_ROWS = [
     'SMP 1 275.7813 307.0769 0 1005 0  ',
     '5908926586 SMP 1 275.7813 ',
+    '-5908926586 SMP 1 275.7813 307.0769',
+    '. SMP 1 275.7813 307.0769',
+    '-. SMP 1 275.7813 307.0769',
     'a5908926586 SMP 1 275.7813 307.0769',
     '5908926586a SMP 1 275.7813 307.0769',
     '5908926586 SMP 1 a275.7813 307.0769 0 1005 0  ',
@@ -117,7 +125,6 @@ INVALID_ROWS = [
 
 COLUMN_PATTERNS = [
     '0 1.0 2.0',
-    '0 1. 2.',
     '0 blah 1.0 2.0',
     '0 1.0 2.0 blah',
     '0 1.0 2.0 3.0 4.0',
@@ -161,6 +168,13 @@ VALID_INIT_TYPES = {'seq': SEQUENCE,
                     'df_shape_only': DF_CORRECT_SHAPE,
                     'df_extra_col': DF_EXTRA_COLUMN,
                     'df_reordered': DF_REORDERED_COLUMNS}
+
+
+# %% String init types
+
+ARRAY_STRINGS = ARRAY.astype(str)
+
+DF_STRINGS = DF.astype(str)
 
 
 # %% Invalid init types
@@ -301,6 +315,8 @@ PLOT_ARGS = [{'filename': 'test_plot'},
              {'filename': 'test_plot_reverse_y', 'reverse_y': True},
              {'filename': 'test_plot_raw_data', 'show_raw': True},
              {'filename': 'test_plot_saccades', 'saccades': True}]
+
+PLOT_ARG_IDS = [x['filename'] for x in PLOT_ARGS]
 
 for x in PLOT_ARGS:
     x['filename'] = os.path.join(IMAGES_PATH, x['filename'] + IMAGE_FORMAT)

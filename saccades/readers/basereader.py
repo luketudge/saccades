@@ -2,26 +2,16 @@
 """The base class for file readers.
 """
 
+import numpy
+import pandas
 import regex
 
 from .. import GazeData
-
-
-# %% Regular expressions
-
-FLAGS = regex.V1
-
-# 1 or more digits.
-INTEGER = r'\d+'
-
-# 0 or more digits, then a dot, then 0 or more digits.
-FLOAT = r'\d*\.\d*'
-
-# INTEGER or FLOAT.
-NUMBER = '({}|{})'.format(INTEGER, FLOAT)
-
-# 0 or more occurrences of any character.
-FILLER = '.*'
+from ..gazedata import INIT_COLUMNS
+from .regexes import FILLER
+from .regexes import FLAGS
+from .regexes import FLOAT
+from .regexes import POS_INTEGER
 
 
 # %% Main class
@@ -44,7 +34,7 @@ class BaseReader:
     to modify gaze data according to any preceding messages.
     """
 
-    def __init__(self, file, sep=r'\s+', encoding='utf-8', **kwargs):
+    def __init__(self, file, sep=r'\s+', na_values=['.', '-.'], encoding='utf-8', **kwargs):
         """File is always opened in read-only mode.
 
         Additional keyword arguments are passed on to :func:`open`.
@@ -53,14 +43,18 @@ class BaseReader:
         :type file: str
         :param sep: Column separator for rows of gaze data.
         :type sep: str
+        :param na_values: Values to replace with `numpy.nan` \
+        if present in a data row.
+        :type na_values: sequence
         """
 
         self.filename = file
         self.sep = sep
+        self.na_values = na_values
         self.encoding = encoding
         self.open_kwargs = kwargs
 
-        self.row_pattern = self.build_row_pattern()
+        self.row_pattern = regex.compile(self.build_row_pattern(), flags=FLAGS)
         self.header = self.process_header(self.get_header())
 
     def __enter__(self):
@@ -86,16 +80,20 @@ class BaseReader:
         (the first such pair of values is used if more than one occurs)
 
         :return: Regular expression matching a row of data.
-        :rtype: :class:`regex.regex.Pattern`
+        :rtype: str
         """
 
         intervening_columns = self.sep.join(['(', '|', FILLER, ')'])
         row_end = '($|{}{})'.format(self.sep, FILLER)
-        row_groups = '(?P<time>{}){}(?P<x>{}){}(?P<y>{}){}'
-        row = row_groups.format(INTEGER, intervening_columns, FLOAT,
-                                self.sep, FLOAT, row_end)
+        row_groups = '(?P<{}>{}){}(?P<{}>{}){}(?P<{}>{}){}'
+        row = row_groups.format(INIT_COLUMNS[0], POS_INTEGER,
+                                intervening_columns,
+                                INIT_COLUMNS[1], FLOAT,
+                                self.sep,
+                                INIT_COLUMNS[2], FLOAT,
+                                row_end)
 
-        return regex.compile(row, flags=FLAGS)
+        return row
 
     def get_header(self):
         """Get the header section of the file.
@@ -139,22 +137,28 @@ class BaseReader:
         return messages
 
     def process_data(self, data, messages):
-        """Process gaze data together with accompanying messages.
+        """Process data together with accompanying messages.
 
-        This method just adds the raw messages \
-        to the *messages* attribute of the data.
+        This method ensures the essential columns are numeric, \
+        converts to :class:`GazeData`, \
+        and adds the messages to the *messages* attribute \
+        after processing with :meth:`process_messages`.
 
-        Override this method in subclasses.
+        Override this method in subclasses, \
+        calling ``super().process_data()`` \
+        to add these final steps.
 
         :return: Modified data.
         :rtype: :class:`GazeData`
         """
 
-        data.messages = messages
+        data = GazeData(data.astype({col: float for col in INIT_COLUMNS}))
+
+        data.messages = self.process_messages(messages)
 
         return data
 
-    def get_blocks(self, cols=['time', 'x', 'y']):
+    def get_blocks(self, cols=INIT_COLUMNS):
         """Get blocks of gaze data from the file.
 
         A block is a group of consecutive rows of data \
@@ -162,14 +166,13 @@ class BaseReader:
         The occurrence of a non-data line \
         marks the start of a new block.
 
-        Blocks are instances of :class:`GazeData`. \
-        Any non-data lines preceding the block \
-        are placed in the *messages* attribute, \
-        after processing with :meth:`process_messages`.
+        Blocks are instances of :class:`pandas.DataFrame`, \
+        and are passed on to :meth:`process_data`, \
+        together with any text messages preceding the block.
 
         :param cols: Columns to include.
         :type cols: sequence
-        :return: Successive instances of :class:`GazeData`.
+        :return: Successive blocks of data.
         :rtype: :class:`generator`
         """
 
@@ -185,8 +188,13 @@ class BaseReader:
 
                 # We have a row of data.
                 if match:
+
                     for col in cols:
-                        data_buffer[col].append(match.group(col))
+                        val = match.group(col)
+                        if val in self.na_values:
+                            val = numpy.nan
+                        data_buffer[col].append(val)
+
                     getting_data = True
 
                 # We have a message.
@@ -197,12 +205,19 @@ class BaseReader:
                     if getting_data:
 
                         messages = ''.join(message_buffer).rstrip('\n')
-                        messages = self.process_messages(messages)
 
-                        yield self.process_data(GazeData(data_buffer), messages)
+                        yield self.process_data(pandas.DataFrame(data_buffer), messages)
 
                         message_buffer = []
                         data_buffer = {col: [] for col in cols}
                         getting_data = False
 
                     message_buffer.append(line)
+
+        # We still have some data in the buffer at the end,
+        # so we put together the final block.
+        if message_buffer or data_buffer[cols[0]]:
+
+            messages = ''.join(message_buffer).rstrip('\n')
+
+            yield self.process_data(pandas.DataFrame(data_buffer), messages)

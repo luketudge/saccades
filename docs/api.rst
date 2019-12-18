@@ -37,6 +37,12 @@ metrics
 .. automodule:: saccades.metrics
     :members:
 
+regexes
+-------
+
+.. automodule:: saccades.readers.regexes
+    :members:
+
 tools
 -----
 

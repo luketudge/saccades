@@ -2,6 +2,7 @@
 
 import types
 
+import numpy
 import pytest
 
 from . import constants
@@ -68,13 +69,15 @@ def test_process_messages(r):
     assert r.process_messages(messages) == messages
 
 
-def test_process_data(r, gd):
-
-    assert gd.messages is None
+@pytest.mark.parametrize('df', [constants.DF, constants.DF_STRINGS], ids=['float', 'str'])
+def test_process_data(r, df):
 
     messages = 'foo'
-    gd = r.process_data(gd, messages)
 
+    gd = r.process_data(df, messages)
+
+    assert isinstance(gd, GazeData)
+    assert numpy.array_equal(gd, constants.ARRAY)
     assert gd.messages == messages
 
 
@@ -90,12 +93,19 @@ def test_get_blocks(file):
 
     assert isinstance(blocks, types.GeneratorType)
 
-    for i, b in enumerate(blocks):
+    block_count = 0
+
+    for b in blocks:
 
         assert isinstance(b, GazeData)
 
-        if i == 0:
+        if block_count == 0:
             assert b.messages == file['header']
+
+        block_count = block_count + 1
+
+    if 'n_blocks' in file:
+        assert block_count == file['n_blocks']
 
     assert r.file.closed
 
