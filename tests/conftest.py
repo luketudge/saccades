@@ -34,14 +34,10 @@ def r():
     return BaseReader(constants.DATA_FILES[0]['file'])
 
 
-ids = [x['filename'] for x in constants.DATA_FILES]
-@pytest.fixture(params=constants.DATA_FILES, ids=ids)
+@pytest.fixture(params=constants.DATA_FILES, ids=constants.DATA_FILE_IDS)
 def r_all(request):
 
-    kwargs = {'file': request.param['file']}
-
-    if 'sep' in request.param:
-        kwargs['sep'] = request.param['sep']
+    kwargs = constants.get_basereader_args(request.param)
 
     return BaseReader(**kwargs)
 

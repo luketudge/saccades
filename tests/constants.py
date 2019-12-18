@@ -27,6 +27,18 @@ def get_header(filename, n):
     return ''.join(header).rstrip('\n')
 
 
+# Gets the needed init arguments from a dictionary of file information,
+# like those defined in DATA_FILES below.
+def get_basereader_args(file):
+
+    kwargs = {'file': file['file']}
+
+    if 'sep' in file:
+        kwargs['sep'] = file['sep']
+
+    return kwargs
+
+
 # An arbitrary function, used in test_detect_saccades().
 def fun(x, val=True):
 
@@ -72,6 +84,8 @@ DATA_FILES = [
 for f in DATA_FILES:
     f['file'] = os.path.join(DATA_PATH, f['filename'])
     f['header'] = get_header(f['file'], f['data_start'])
+
+DATA_FILE_IDS = [x['filename'] for x in DATA_FILES]
 
 
 # %% Data rows

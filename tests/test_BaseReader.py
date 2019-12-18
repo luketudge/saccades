@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import types
+
 import pytest
 
 from . import constants
 
+from saccades import GazeData
 from saccades.readers import BaseReader
+
+
+# %%
 
 
 # %% __init__()
@@ -39,19 +45,36 @@ def test_row_pattern_non_match(r, row):
 
 # %% header
 
-ids = [x['filename'] for x in constants.DATA_FILES]
-@pytest.mark.parametrize('file', constants.DATA_FILES, ids=ids)
+@pytest.mark.parametrize('file', constants.DATA_FILES, ids=constants.DATA_FILE_IDS)
 def test_header(file):
 
-    kwargs = {'file': file['file']}
-
-    if 'sep' in file:
-        kwargs['sep'] = file['sep']
-
+    kwargs = constants.get_basereader_args(file)
     r = BaseReader(**kwargs)
 
     assert r.header == file['header']
     assert r.file.closed
+
+
+# %% get_blocks()
+
+@pytest.mark.parametrize('file', constants.DATA_FILES, ids=constants.DATA_FILE_IDS)
+def test_get_blocks(file):
+
+    kwargs = constants.get_basereader_args(file)
+    r = BaseReader(**kwargs)
+
+    blocks = r.get_blocks()
+
+    assert isinstance(blocks, types.GeneratorType)
+
+    for i, b in enumerate(blocks):
+
+        assert isinstance(b, GazeData)
+
+        if i == 0:
+            assert b.messages == file['header']
+        else:
+            assert len(b) > 0
 
 
 # %% Context manager
