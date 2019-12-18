@@ -121,7 +121,8 @@ class BaseReader:
 
         Override this method in subclasses.
 
-        :return: Unprocessed header.
+        :param header: Raw text header.
+        :type header: str
         """
 
         return header
@@ -131,7 +132,8 @@ class BaseReader:
 
         Override this method in subclasses.
 
-        :return: Unprocessed messages.
+        :param messages: Raw text messages.
+        :type header: str
         """
 
         return messages
@@ -139,24 +141,33 @@ class BaseReader:
     def process_data(self, data, messages):
         """Process data together with accompanying messages.
 
-        This method ensures the essential columns are numeric, \
-        converts to :class:`GazeData`, \
-        and adds the messages to the *messages* attribute \
-        after processing with :meth:`process_messages`.
+        * Inserts `numpy.nan` for any missing values \
+        defined in :meth:`__init__`.
+        * Ensures the essential columns are numeric.
+        * Converts to :class:`GazeData`.
+        * Adds the messages to the *messages* attribute \
+        of the gaze data table.
 
         Override this method in subclasses, \
-        calling ``super().process_data()`` \
+        finishing with a call to :meth:`process_data()` \
         to add these final steps.
 
+        :param data: Block of gaze data.
+        :type data: dict of lists
+        :messages: Messages preceding the block of data.
+        :type messages: any
         :return: Modified data.
         :rtype: :class:`GazeData`
         """
 
-        data = GazeData(data.astype({col: float for col in INIT_COLUMNS}))
+        df = pandas.DataFrame(data)
+        df = df.replace(self.na_values, numpy.nan)
+        df = df.astype({col: float for col in INIT_COLUMNS})
 
-        data.messages = self.process_messages(messages)
+        gd = GazeData(df)
+        gd.messages = messages
 
-        return data
+        return gd
 
     def get_blocks(self, cols=INIT_COLUMNS):
         """Get blocks of gaze data from the file.
@@ -166,9 +177,13 @@ class BaseReader:
         The occurrence of a non-data line \
         marks the start of a new block.
 
-        Blocks are instances of :class:`pandas.DataFrame`, \
-        and are passed on to :meth:`process_data`, \
-        together with any text messages preceding the block.
+        Blocks are dictionaries of *{column: values}* \
+        as can be used to initialize a :class:`pandas.DataFrame`. \
+        Data values are left as unprocessed strings, \
+        and passed on to :meth:`process_data` for processing. \
+        Any text messages preceding the block \
+        are also passed on to :meth:`process_data`, \
+        after processing with :meth:`process_messages`.
 
         :param cols: Columns to include.
         :type cols: sequence
@@ -188,12 +203,8 @@ class BaseReader:
 
                 # We have a row of data.
                 if match:
-
                     for col in cols:
-                        val = match.group(col)
-                        if val in self.na_values:
-                            val = numpy.nan
-                        data_buffer[col].append(val)
+                        data_buffer[col].append(match.group(col))
 
                     getting_data = True
 
@@ -205,8 +216,9 @@ class BaseReader:
                     if getting_data:
 
                         messages = ''.join(message_buffer).rstrip('\n')
+                        messages = self.process_messages(messages)
 
-                        yield self.process_data(pandas.DataFrame(data_buffer), messages)
+                        yield self.process_data(data_buffer, messages)
 
                         message_buffer = []
                         data_buffer = {col: [] for col in cols}
@@ -219,5 +231,6 @@ class BaseReader:
         if message_buffer or data_buffer[cols[0]]:
 
             messages = ''.join(message_buffer).rstrip('\n')
+            messages = self.process_messages(messages)
 
-            yield self.process_data(pandas.DataFrame(data_buffer), messages)
+            yield self.process_data(data_buffer, messages)
