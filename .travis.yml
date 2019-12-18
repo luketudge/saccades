@@ -11,22 +11,13 @@ python:
 # Test for compatibility with old pandas and numpy,
 # using the versions currently in the Ubuntu repos.
 env:
-  - NUMPY=1.13.* PANDAS=0.22.*
-  - NUMPY=1.* PANDAS=0.*
-
-# Exclude incompatible combinations of versions
-# (old libraries beyond Python 3.6).
-jobs:
-  exclude:
-  - python: '3.7'
-    env: NUMPY=1.13.* PANDAS=0.22.*
-  - python: '3.8'
-    env: NUMPY=1.13.* PANDAS=0.22.*
+  - NUMPY=1.16.*
+  - NUMPY=1.*
 
 install:
   - pip install -r requirements.txt
   - pip install -r test_requirements.txt
-  - pip install numpy==$NUMPY pandas==$PANDAS --force-reinstall
+  - pip install numpy==$NUMPY --force-reinstall
   - python setup.py bdist_wheel
   - pip install dist/saccades*.whl
 
