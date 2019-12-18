@@ -104,8 +104,8 @@ class GazeData(pandas.DataFrame):
         :type viewing_dist: float
         :param target: *(x, y)* coordinates of saccade target, if any.
         :type target: tuple
-        :param messages: Any additional message text accompanying the data.
-        :type messages: str
+        :param messages: Any additional messages accompanying the data, \
+        in any format desired.
         """
 
         # Set attributes according to the following priorities:

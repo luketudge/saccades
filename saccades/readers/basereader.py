@@ -28,6 +28,15 @@ class BaseReader:
 
     This base class just finds the coordinate gaze data \
     and reads in all other contents as unprocessed strings.
+
+    Subclasses will mainly need to override the following methods:
+
+    * :meth:`build_row_pattern` \
+    to construct a custom regular expression for a row of data.
+    * :meth:`process_header` \
+    to turn the raw text file header into something else.
+    * :meth:`process_messages` \
+    to turn raw text message lines into something else.
     """
 
     def __init__(self, file, sep=r'\s+', encoding='utf-8', **kwargs):
@@ -47,7 +56,7 @@ class BaseReader:
         self.open_kwargs = kwargs
 
         self.row_pattern = self.build_row_pattern()
-        self.header = self.get_header()
+        self.header = self.process_header(self.get_header())
 
     def __enter__(self):
 
@@ -104,7 +113,27 @@ class BaseReader:
 
         return ''.join(header_lines).rstrip('\n')
 
-    def get_blocks(self):
+    def process_header(self, header):
+        """Process the raw text header.
+
+        Override this method in subclasses.
+
+        :return: Unprocessed header.
+        """
+
+        return header
+
+    def process_messages(self, messages):
+        """Process raw text message lines.
+
+        Override this method in subclasses.
+
+        :return: Unprocessed messages.
+        """
+
+        return messages
+
+    def get_blocks(self, cols=['time', 'x', 'y']):
         """Get blocks of gaze data from the file.
 
         A block is a group of consecutive rows of data \
@@ -114,14 +143,17 @@ class BaseReader:
 
         Blocks are instances of :class:`GazeData`. \
         Any non-data lines preceding the block \
-        are placed in the *messages* attribute.
+        are placed in the *messages* attribute, \
+        after processing with :meth:`process_messages`.
 
+        :param cols: Columns to include.
+        :type cols: sequence
         :return: Successive instances of :class:`GazeData`.
         :rtype: :class:`generator`
         """
 
         message_buffer = []
-        data_buffer = {'time': [], 'x': [], 'y': []}
+        data_buffer = {col: [] for col in cols}
         getting_data = False
 
         with self:
@@ -132,7 +164,7 @@ class BaseReader:
 
                 # We have a row of data.
                 if match:
-                    for col in ['time', 'x', 'y']:
+                    for col in cols:
                         data_buffer[col].append(match.group(col))
                     getting_data = True
 
@@ -144,11 +176,12 @@ class BaseReader:
                     if getting_data:
 
                         messages = ''.join(message_buffer).rstrip('\n')
+                        messages = self.process_messages(messages)
 
                         yield GazeData(data_buffer, messages=messages)
 
                         message_buffer = []
-                        data_buffer = {'time': [], 'x': [], 'y': []}
+                        data_buffer = {col: [] for col in cols}
                         getting_data = False
 
                     message_buffer.append(line)
