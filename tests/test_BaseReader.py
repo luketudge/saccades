@@ -55,6 +55,32 @@ def test_header(file):
     assert r.file.closed
 
 
+# %% 'Dummy' methods.
+
+def test_process_header(r):
+
+    header = 'foo'
+
+    assert r.process_header(header) == header
+
+
+def test_process_messages(r):
+
+    messages = 'foo'
+
+    assert r.process_messages(messages) == messages
+
+
+def test_process_data(r, gd):
+
+    assert gd.messages is None
+
+    messages = 'foo'
+    gd = r.process_data(gd, messages)
+
+    assert gd.messages == messages
+
+
 # %% get_blocks()
 
 @pytest.mark.parametrize('file', constants.DATA_FILES, ids=constants.DATA_FILE_IDS)

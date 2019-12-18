@@ -40,6 +40,8 @@ class BaseReader:
     to turn the raw text file header into something else.
     * :meth:`process_messages` \
     to turn raw text message lines into something else.
+    * :meth:`process_data` \
+    to modify gaze data according to any preceding messages.
     """
 
     def __init__(self, file, sep=r'\s+', encoding='utf-8', **kwargs):
@@ -136,6 +138,22 @@ class BaseReader:
 
         return messages
 
+    def process_data(self, data, messages):
+        """Process gaze data together with accompanying messages.
+
+        This method just adds the raw messages \
+        to the *messages* attribute of the data.
+
+        Override this method in subclasses.
+
+        :return: Modified data.
+        :rtype: :class:`GazeData`
+        """
+
+        data.messages = messages
+
+        return data
+
     def get_blocks(self, cols=['time', 'x', 'y']):
         """Get blocks of gaze data from the file.
 
@@ -181,7 +199,7 @@ class BaseReader:
                         messages = ''.join(message_buffer).rstrip('\n')
                         messages = self.process_messages(messages)
 
-                        yield GazeData(data_buffer, messages=messages)
+                        yield self.process_data(GazeData(data_buffer), messages)
 
                         message_buffer = []
                         data_buffer = {col: [] for col in cols}
