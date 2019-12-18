@@ -11,19 +11,19 @@ A Python package for working with saccades. A work in progress.
 
 We currently have:
 
+* A reader class for reading eyetracking data from text files.
 * Classes for representing eyetracking coordinates and saccades.
 * Methods for calculating velocity and acceleration.
 * Conversion from screen pixels to degrees of visual angle.
 * Methods for saccade detection.
+* Methods for plotting a saccade.
 * Methods for calculating some saccade parameters.
 
 ## TODO
 
 Some things still to be implemented, in approximate order of priority:
 
-* A sequence-like class that groups blocks of eyetracking coordinates as trials in an experiment.
-* Functions for reading various text eyetracking data files.
-* A quick-start page for the documentation, and some example notebooks.
+* A quick-start page for the documentation, and an example notebook.
 * Methods for gaze coordinate smoothing.
 * More saccade detection algorithms.
 * Blink and fixation detection.
