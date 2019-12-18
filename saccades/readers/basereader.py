@@ -14,8 +14,8 @@ FLAGS = regex.V1
 # 1 or more digits.
 INTEGER = r'\d+'
 
-# 1 or more digits, then a dot, then 1 or more digits
-FLOAT = r'\d+\.\d+'
+# 0 or more digits, then a dot, then 0 or more digits
+FLOAT = r'\d*\.\d*'
 
 # 0 or more occurrences of any character.
 FILLER = '.*'
