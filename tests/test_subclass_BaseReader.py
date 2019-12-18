@@ -29,23 +29,31 @@ class NewReader(BaseReader):
 
         return row_groups.format(POS_INTEGER, NUMBER, NUMBER) + FILLER
 
-    # The final line of the header gives information
+    # The final lines of the header give information
     # about the viewing distance and screen dimensions.
     # So we override the appropriate method for this too.
     def process_header(self, header):
 
-        final_row = header.splitlines()[-1]
+        final_rows = ' '.join(header.splitlines()[-2:])
+
+        pattern = 'gaze ({}) ({})'.format(POS_INTEGER, POS_INTEGER)
+        match = regex.search(pattern, final_rows)
+        screen_res = [int(match.group(i)) for i in range(1, 3)]
 
         info = {}
 
         for item in ['distance', 'width', 'height']:
             pattern = '{} ({})'.format(item, FLOAT)
-            match = regex.search(pattern, final_row)
+            match = regex.search(pattern, final_rows)
             info[item] = float(match.group(1))
 
         screen_diag = numpy.linalg.norm([info['width'], info['height']])
 
-        return {'viewing_dist': info['distance'], 'screen_diag': screen_diag}
+        screen_info = {'screen_res': screen_res,
+                       'screen_diag': screen_diag,
+                       'viewing_dist': info['distance']}
+
+        return screen_info
 
     # And we would like to put the header information into each block.
     # So finally we override the method for this.
@@ -53,6 +61,7 @@ class NewReader(BaseReader):
 
         gd = super().process_data(data, messages)
 
+        gd.screen_res = self.header['screen_res']
         gd.screen_diag = self.header['screen_diag']
         gd.viewing_dist = self.header['viewing_dist']
 
@@ -98,6 +107,7 @@ def test_process_data(new_r):
     gd = new_r.process_data(data, messages)
 
     assert gd.messages == messages
+    assert gd.screen_res == constants.HEADER_SUBCLASS['screen_res']
     assert gd.screen_diag == constants.HEADER_SUBCLASS['screen_diag']
     assert gd.viewing_dist == constants.HEADER_SUBCLASS['viewing_dist']
 
@@ -107,4 +117,7 @@ def test_get_blocks(new_r):
     blocks = list(new_r.get_blocks())
 
     assert len(blocks) == 1
+
+    assert blocks[0].screen_res == constants.HEADER_SUBCLASS['screen_res']
     assert blocks[0].screen_diag == constants.HEADER_SUBCLASS['screen_diag']
+    assert blocks[0].viewing_dist == constants.HEADER_SUBCLASS['viewing_dist']

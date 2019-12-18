@@ -104,8 +104,9 @@ DATA_FILE_IDS = [x['filename'] for x in DATA_FILES]
 
 DATA_FILE_SUBCLASS = 's1_actioncliptest00001.txt'
 
-HEADER_SUBCLASS = {'viewing_dist': 0.753,
-                   'screen_diag': 0.5370576070786075}
+HEADER_SUBCLASS = {'screen_res': [576, 304],
+                   'screen_diag': 0.5370576070786075,
+                   'viewing_dist': 0.753}
 
 
 # %% Data rows
