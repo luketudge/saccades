@@ -73,8 +73,6 @@ def test_get_blocks(file):
 
         if i == 0:
             assert b.messages == file['header']
-        else:
-            assert len(b) > 0
 
     assert r.file.closed
 

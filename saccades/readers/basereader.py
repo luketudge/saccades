@@ -114,7 +114,7 @@ class BaseReader:
         return ''.join(header_lines).rstrip('\n')
 
     def process_header(self, header):
-        """Process the raw text header.
+        """Process a raw text header.
 
         Override this method in subclasses.
 

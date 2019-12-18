@@ -73,6 +73,7 @@ READERS_CONTENTS = ['BaseReader']
 # %% Data files
 
 DATA_FILES = [
+    {'filename': 'empty.txt', 'data_start': 0},
     {'filename': 'example.tsv', 'data_start': 0},
     {'filename': 'example.csv', 'data_start': 0, 'sep': ','},
     {'filename': 'example_iView.txt', 'data_start': 47},
