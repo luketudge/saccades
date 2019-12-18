@@ -4,6 +4,8 @@
 
 import regex
 
+from .. import GazeData
+
 
 # %% Regular expressions
 
@@ -69,6 +71,7 @@ class BaseReader:
         * contains two neighboring float values (the *x* and *y* columns) \
         (the first such pair of values is used if more than one occurs)
 
+        :return: Regular expression matching a row of data.
         :rtype: :class:`regex.regex.Pattern`
         """
 
@@ -86,6 +89,7 @@ class BaseReader:
         The header is all the rows up to the first row of data \
         (see :meth:`build_row_pattern`).
 
+        :return: Header content.
         :rtype: str
         """
 
@@ -99,3 +103,52 @@ class BaseReader:
                 header_lines.append(line)
 
         return ''.join(header_lines).rstrip('\n')
+
+    def get_blocks(self):
+        """Get blocks of gaze data from the file.
+
+        A block is a group of consecutive rows of data \
+        without intervening non-data lines. \
+        The occurrence of a non-data line \
+        marks the start of a new block.
+
+        Blocks are instances of :class:`GazeData`. \
+        Any non-data lines preceding the block \
+        are placed in the *messages* attribute.
+
+        :return: Successive instances of :class:`GazeData`.
+        :rtype: :class:`generator`
+        """
+
+        message_buffer = []
+        data_buffer = {'time': [], 'x': [], 'y': []}
+        getting_data = False
+
+        with self:
+
+            for line in self.file:
+
+                match = self.row_pattern.fullmatch(line.rstrip('\n'))
+
+                # We have a row of data.
+                if match:
+                    for col in ['time', 'x', 'y']:
+                        data_buffer[col].append(match.group(col))
+                    getting_data = True
+
+                # We have a message.
+                else:
+
+                    # But we were getting data,
+                    # so that means we are at the end of a block.
+                    if getting_data:
+
+                        messages = ''.join(message_buffer).rstrip('\n')
+
+                        yield GazeData(data_buffer, messages=messages)
+
+                        message_buffer = []
+                        data_buffer = {'time': [], 'x': [], 'y': []}
+                        getting_data = False
+
+                    message_buffer.append(line)

@@ -21,13 +21,13 @@ from .tools import _blockmanager_to_dataframe
 
 # %% Constants
 
-ATTRIBUTES = ['messages',
-              'time_units',
+ATTRIBUTES = ['time_units',
               'space_units',
               'screen_res',
               'screen_diag',
               'viewing_dist',
-              'target']
+              'target',
+              'messages']
 
 INIT_COLUMNS = ['time', 'x', 'y']
 
@@ -104,6 +104,8 @@ class GazeData(pandas.DataFrame):
         :type viewing_dist: float
         :param target: *(x, y)* coordinates of saccade target, if any.
         :type target: tuple
+        :param messages: Any additional message text accompanying the data.
+        :type messages: str
         """
 
         # Set attributes according to the following priorities:

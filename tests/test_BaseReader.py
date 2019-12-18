@@ -76,6 +76,8 @@ def test_get_blocks(file):
         else:
             assert len(b) > 0
 
+    assert r.file.closed
+
 
 # %% Context manager
 
