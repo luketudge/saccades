@@ -43,15 +43,14 @@ ids = [x['filename'] for x in constants.DATA_FILES]
 @pytest.mark.parametrize('file', constants.DATA_FILES, ids=ids)
 def test_header(file):
 
-    kwargs = file.copy()
-    header = kwargs.pop('header')
+    kwargs = {'file': file['file']}
 
-    for key in ['filename', 'data_start']:
-        del kwargs[key]
+    if 'sep' in file:
+        kwargs['sep'] = file['sep']
 
     r = BaseReader(**kwargs)
 
-    assert r.header == header
+    assert r.header == file['header']
     assert r.file.closed
 
 

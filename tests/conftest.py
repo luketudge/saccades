@@ -38,10 +38,10 @@ ids = [x['filename'] for x in constants.DATA_FILES]
 @pytest.fixture(params=constants.DATA_FILES, ids=ids)
 def r_all(request):
 
-    kwargs = request.param.copy()
+    kwargs = {'file': request.param['file']}
 
-    for key in ['filename', 'data_start', 'header']:
-        del kwargs[key]
+    if 'sep' in request.param:
+        kwargs['sep'] = request.param['sep']
 
     return BaseReader(**kwargs)
 
