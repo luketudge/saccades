@@ -98,4 +98,4 @@ class BaseReader:
                     break
                 header_lines.append(line)
 
-        return ''.join(header_lines).rstrip()
+        return ''.join(header_lines).rstrip('\n')
