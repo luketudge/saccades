@@ -73,13 +73,24 @@ READERS_CONTENTS = ['BaseReader']
 # %% Data files
 
 DATA_FILES = [
-    {'filename': 'empty.txt', 'data_start': 0, 'n_blocks': 0},
-    {'filename': 'example.tsv', 'data_start': 0, 'n_blocks': 1},
-    {'filename': 'example.csv', 'data_start': 0, 'sep': ',', 'n_blocks': 1},
-    {'filename': 'example_iView.txt', 'data_start': 47},
-    {'filename': 'example_eyelink.txt', 'data_start': 52},
-    {'filename': 'example_eyelink_events.txt', 'data_start': 16},
-    {'filename': 's1_actioncliptest00001.txt', 'data_start': 11}
+    {'filename': 'empty.txt',
+     'data_start': 0,
+     'n_blocks': 0},
+    {'filename': 'example.tsv',
+     'data_start': 0,
+     'n_blocks': 1},
+    {'filename': 'example.csv',
+     'data_start': 0,
+     'sep': ',',
+     'n_blocks': 1},
+    {'filename': 'example_iView.txt',
+     'data_start': 47},
+    {'filename': 'example_eyelink.txt',
+     'data_start': 52},
+    {'filename': 'example_eyelink_events.txt',
+     'data_start': 16},
+    {'filename': 's1_actioncliptest00001.txt',
+     'data_start': 11}
 ]
 
 for f in DATA_FILES:
@@ -87,6 +98,14 @@ for f in DATA_FILES:
     f['header'] = get_header(f['file'], f['data_start'])
 
 DATA_FILE_IDS = [x['filename'] for x in DATA_FILES]
+
+
+# %% Custom subclass of BaseReader
+
+DATA_FILE_SUBCLASS = 's1_actioncliptest00001.txt'
+
+HEADER_SUBCLASS = {'viewing_dist': 0.753,
+                   'screen_diag': 0.5370576070786075}
 
 
 # %% Data rows
@@ -113,24 +132,36 @@ VALID_ROWS = [
 INVALID_ROWS = [
     'SMP 1 275.7813 307.0769 0 1005 0  ',
     '5908926586 SMP 1 275.7813 ',
+    '5908926586.0 SMP 1 275.7813 307.0769',
     '-5908926586 SMP 1 275.7813 307.0769',
     '. SMP 1 275.7813 307.0769',
-    '-. SMP 1 275.7813 307.0769',
     'a5908926586 SMP 1 275.7813 307.0769',
     '5908926586a SMP 1 275.7813 307.0769',
     '5908926586 SMP 1 a275.7813 307.0769 0 1005 0  ',
     '5908926586 SMP 1 275.7813 307.0769a 0 1005 0  ',
-    '5908926586,SMP,1,275.7813,307.0769,0,1005,0,,'
+    '5908926586,SMP,1,275.7813,307.0769,0,1005,0,,',
+    '5908926586 SMP 1 275 307 0 1005 0  ',
 ]
 
 COLUMN_PATTERNS = [
     '0 1.0 2.0',
+    '0 1. 2.',
     '0 blah 1.0 2.0',
     '0 1.0 2.0 blah',
     '0 1.0 2.0 3.0 4.0',
     '0 1.0 2.0 blah 3.0 4.0',
     '0 1.0 2.0 blah 3.0 4.0 blah'
 ]
+
+
+# %% Data block
+
+DATA_IN = {'time': ['0', '1'],
+           'x': ['2.0', '.'],
+           'y': ['3.0', '.']}
+
+DATA_OUT = [[0., 2., 3.],
+            [1., numpy.nan, numpy.nan]]
 
 
 # %% Valid init types

@@ -69,16 +69,18 @@ def test_process_messages(r):
     assert r.process_messages(messages) == messages
 
 
-@pytest.mark.parametrize('df', [constants.DF, constants.DF_STRINGS], ids=['float', 'str'])
-def test_process_data(r, df):
+def test_process_data(r):
 
     messages = 'foo'
 
-    gd = r.process_data(df, messages)
+    gd = r.process_data(constants.DATA_IN, messages)
 
     assert isinstance(gd, GazeData)
-    assert numpy.array_equal(gd, constants.ARRAY)
     assert gd.messages == messages
+
+    # Weirdly, we have to use allclose() here,
+    # as array_equal() returns False if any values are NaN.
+    assert numpy.allclose(gd, constants.DATA_OUT, equal_nan=True)
 
 
 # %% get_blocks()

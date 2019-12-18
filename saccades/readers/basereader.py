@@ -34,7 +34,7 @@ class BaseReader:
     to modify gaze data according to any preceding messages.
     """
 
-    def __init__(self, file, sep=r'\s+', na_values=['.', '-.'], encoding='utf-8', **kwargs):
+    def __init__(self, file, sep=r'\s+', na_values=['.'], encoding='utf-8', **kwargs):
         """File is always opened in read-only mode.
 
         Additional keyword arguments are passed on to :func:`open`.
@@ -78,6 +78,9 @@ class BaseReader:
         * begins with an integer value (the *time* column)
         * contains two neighboring float values (the *x* and *y* columns) \
         (the first such pair of values is used if more than one occurs)
+
+        The columns in the row are named groups, \
+        with names the same as those of the corresponding columns.
 
         :return: Regular expression matching a row of data.
         :rtype: str
@@ -149,8 +152,9 @@ class BaseReader:
         of the gaze data table.
 
         Override this method in subclasses, \
-        finishing with a call to :meth:`process_data()` \
-        to add these final steps.
+        starting or finishing with a call to \
+        :meth:`process_data()` \
+        to begin with or end with these steps.
 
         :param data: Block of gaze data.
         :type data: dict of lists

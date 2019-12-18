@@ -9,35 +9,17 @@ import os
 import webbrowser
 
 from saccades.readers import BaseReader
-from saccades.readers.regexes import FILLER
-from saccades.readers.regexes import POS_INTEGER
-from saccades.readers.regexes import NUMBER
 
 
 # %% Setup
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
-DATA_FILENAME = 's1_actioncliptest00001.txt'
+DATA_FILENAME = 'example_eyelink.txt'
 DATA_PATH = os.path.join(BASE_PATH, 'data', DATA_FILENAME)
 
 IMAGE_FILENAME = 'example_plot.png'
 IMAGE_PATH = os.path.join(BASE_PATH, IMAGE_FILENAME)
-
-
-# %% Subclass of BaseReader
-
-class NewReader(BaseReader):
-
-    # The data row pattern for this file is:
-    # POS_INTEGER NUMBER NUMBER FILLER
-    # So we override the corresponding method.
-    def build_row_pattern(self):
-
-        row_groups = ['(?P<time>{})', '(?P<x>{})', '(?P<y>{})']
-        row_groups = self.sep.join(row_groups)
-
-        return row_groups.format(POS_INTEGER, NUMBER, NUMBER) + FILLER
 
 
 # %% Test function
@@ -45,7 +27,7 @@ class NewReader(BaseReader):
 def test_script():
 
     # Load the data using the new reader.
-    f = NewReader(DATA_PATH)
+    f = BaseReader(DATA_PATH)
 
     # Check the header.
     print(f.header)
