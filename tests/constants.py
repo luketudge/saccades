@@ -24,7 +24,7 @@ def get_header(filename, n):
         for i in range(n):
             header.append(f.readline())
 
-    return ''.join(header).rstrip()
+    return ''.join(header).rstrip('\n')
 
 
 # An arbitrary function, used in test_detect_saccades().
@@ -168,7 +168,8 @@ SCREEN_DIAG = 10.
 VIEWING_DIST = 5.
 TARGET = [6., 10.]
 
-ATTRIBUTES = {'time_units': None,
+ATTRIBUTES = {'messages': None,
+              'time_units': None,
               'space_units': 'px',
               'target': TARGET}
 

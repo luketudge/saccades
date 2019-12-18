@@ -21,7 +21,8 @@ from .tools import _blockmanager_to_dataframe
 
 # %% Constants
 
-ATTRIBUTES = ['time_units',
+ATTRIBUTES = ['messages',
+              'time_units',
               'space_units',
               'screen_res',
               'screen_diag',
