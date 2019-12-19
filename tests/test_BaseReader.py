@@ -53,6 +53,16 @@ def test_header(file):
     assert r.file.closed
 
 
+# %% __repr__()
+
+def test_repr(r):
+
+    r_printout = str(r)
+
+    assert str(r.filename) in r_printout
+    assert str(r.header) in r_printout
+
+
 # %% 'Dummy' methods.
 
 def test_process_header(r):

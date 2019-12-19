@@ -54,6 +54,8 @@ class BaseReader:
         self.encoding = encoding
         self.open_kwargs = kwargs
 
+        self.file = None
+
         self.row_pattern = regex.compile(self.build_row_pattern(), flags=FLAGS)
         self.header = self.process_header(self.get_header())
 
@@ -67,6 +69,10 @@ class BaseReader:
     def __exit__(self, exc_type, exc_value, traceback):
 
         self.file.close()
+
+    def __repr__(self):
+
+        return '{}:\n{}'.format(self.filename, self.header)
 
     def build_row_pattern(self):
         """Build a regular expression for a row of data.
