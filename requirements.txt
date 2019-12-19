@@ -1,5 +1,6 @@
 matplotlib
-numpy
-pandas
+numpy>=1.16
+pandas>=0.25
 plotnine
+regex
 scipy

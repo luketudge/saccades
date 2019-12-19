@@ -8,15 +8,17 @@ from . import constants
 from saccades import tools
 
 
-#%% Setup
+# %% Setup
 
 boolean_column = [False, True, True, True, False, False, True, False]
 row_ids = list(range(len(boolean_column)))
 
 
-#%% check_shape()
+# %% check_shape()
 
-@pytest.mark.parametrize('input_type', constants.STANDARD_INIT_TYPES)
+input_types = constants.STANDARD_INIT_TYPES.values()
+ids = list(constants.STANDARD_INIT_TYPES.keys())
+@pytest.mark.parametrize('input_type', input_types, ids=ids)
 def test_check_shape(input_type):
 
     checked = tools.check_shape(input_type, constants.SHAPE)
@@ -39,7 +41,7 @@ def test_check_shape_exceptions(shape):
         tools.check_shape(constants.ARRAY, shape)
 
 
-#%% find_contiguous_subsets()
+# %% find_contiguous_subsets()
 
 def test_find_contiguous_subsets():
 

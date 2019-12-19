@@ -1,8 +1,7 @@
 #### Project-specific ignores ####
 
 tests/images/test*
-tests/example_saccade.csv
-tests/example_saccade_plot.png
+tests/example_plot.png
 
 
 #### General Python ignores ####

@@ -19,21 +19,22 @@ from .tools import find_contiguous_subsets
 from .tools import _blockmanager_to_dataframe
 
 
-#%% Constants
+# %% Constants
 
 ATTRIBUTES = ['time_units',
               'space_units',
               'screen_res',
               'screen_diag',
               'viewing_dist',
-              'target']
+              'target',
+              'messages']
 
 INIT_COLUMNS = ['time', 'x', 'y']
 
 RAW_DATA_COLUMNS = ['x_raw', 'y_raw']
 
 
-#%% Main class
+# %% Main class
 
 class GazeData(pandas.DataFrame):
     """Table of gaze data.
@@ -103,6 +104,8 @@ class GazeData(pandas.DataFrame):
         :type viewing_dist: float
         :param target: *(x, y)* coordinates of saccade target, if any.
         :type target: tuple
+        :param messages: Any additional messages accompanying the data, \
+        in any format.
         """
 
         # Set attributes according to the following priorities:
@@ -358,7 +361,7 @@ class GazeData(pandas.DataFrame):
         return fig
 
 
-#%% Saccade subclass
+# %% Saccade subclass
 
 class Saccade(GazeData):
     """Table of gaze data containing a saccade.

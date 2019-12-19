@@ -10,7 +10,7 @@ from saccades import GazeData
 from saccades import Saccade
 
 
-#%% __init__()
+# %% __init__()
 
 def test_init_from_GazeData(gd_all):
 
@@ -21,7 +21,7 @@ def test_init_from_GazeData(gd_all):
     assert isinstance(sacc, pandas.DataFrame)
 
 
-#%% Attributes
+# %% Attributes
 
 @pytest.mark.parametrize('attr, val', constants.ATTRIBUTES.items())
 def test_has_attributes(sacc, attr, val):
@@ -60,7 +60,7 @@ def test_nonexistent_method(sacc):
         sacc.nonexistent_method()
 
 
-#%% Subsetting
+# %% Subsetting
 
 def test_subset_rows(sacc):
 

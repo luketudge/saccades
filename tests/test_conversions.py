@@ -11,7 +11,7 @@ from saccades import conversions
 # to allow for floating-point error where necessary.
 
 
-#%% _viewing_dist_to_px()
+# %% _viewing_dist_to_px()
 
 def test_viewing_dist_to_px():
 
@@ -22,7 +22,7 @@ def test_viewing_dist_to_px():
     assert result == constants.VIEWING_DIST_PX
 
 
-#%% px_to_dva()
+# %% px_to_dva()
 
 def test_px_to_dva():
 
@@ -41,7 +41,7 @@ def test_px_to_dva_as_GazeData_method(gd):
     assert numpy.allclose(result, constants.DVA)
 
 
-#%% dva_to_px()
+# %% dva_to_px()
 
 def test_dva_to_px():
 

@@ -15,7 +15,7 @@ from . import constants
 # are still possible with a GazeData instance.
 
 
-#%% pandas.DataFrame.dropna()
+# %% pandas.DataFrame.dropna()
 
 # Check for exceptions with the default arguments.
 def test_pandas_dropna(gd_all):
@@ -34,7 +34,7 @@ def test_pandas_dropna_subset(gd_all):
     assert len(gd_all) - len(gd_subset) == 1
 
 
-#%% pandas.DataFrame.mean()
+# %% pandas.DataFrame.mean()
 
 def test_pandas_stats(gd_all):
 
@@ -43,7 +43,7 @@ def test_pandas_stats(gd_all):
     assert numpy.array_equal(col_means, constants.DF.mean())
 
 
-#%% plotnine.ggplot()
+# %% plotnine.ggplot()
 
 def test_plotnine_plot(gd):
 

@@ -21,14 +21,14 @@ from saccades import detection
 # This test file tests the other features of the GazeData class.
 
 
-#%% Setup
+# %% Setup
 
 # Wrapped GazeData methods used in test_save_raw_coords_before_method_call().
 methods = [functools.partial(GazeData.center, origin=constants.ORIGIN),
            functools.partial(GazeData.rotate, theta=constants.ANGLE)]
 
 
-#%% __init__()
+# %% __init__()
 
 def test_init_types(gd_all):
 
@@ -42,7 +42,9 @@ def test_init_types(gd_all):
     assert numpy.array_equal(observed, expected)
 
 
-@pytest.mark.parametrize('input_type', constants.INVALID_INIT_TYPES, ids=constants.INVALID_INIT_TYPE_NAMES)
+input_types = constants.INVALID_INIT_TYPES.values()
+ids = list(constants.INVALID_INIT_TYPES.keys())
+@pytest.mark.parametrize('input_type', input_types, ids=ids)
 def test_invalid_init_types(input_type):
 
     with pytest.raises(ValueError):
@@ -92,7 +94,7 @@ def test_init_from_instance_reset_attributes(gd_all):
         assert getattr(new_gd, attr) == new_value
 
 
-#%% _check_screen_info()
+# %% _check_screen_info()
 
 def test_check_screen_info(gd):
 
@@ -108,7 +110,7 @@ def test_check_screen_info_exceptions(gd, attr):
         gd._check_screen_info()
 
 
-#%% _save_raw_coords()
+# %% _save_raw_coords()
 
 def test_save_raw_coords(gd):
 
@@ -147,7 +149,7 @@ def test_save_raw_coords_before_method_call(gd, method):
     assert not numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
 
 
-#%% viewing_parameters
+# %% viewing_parameters
 
 def test_viewing_parameters(gd):
 
@@ -156,7 +158,7 @@ def test_viewing_parameters(gd):
     assert params == constants.ATTRIBUTES
 
 
-#%% reset_time()
+# %% reset_time()
 
 def test_reset_time(gd_all):
 
@@ -169,7 +171,7 @@ def test_reset_time(gd_all):
     assert gd_all['time'].iloc[-1] == t_end - t_0
 
 
-#%% detect_saccades()
+# %% detect_saccades()
 
 # Here we test the general aspects of detect_saccades().
 # Specific detection algorithms are tested in test_detection.py.
@@ -231,9 +233,9 @@ def test_detect_saccades_with_existing_saccade_column(gd):
     assert all(gd['saccade'])
 
 
-#%% plot()
+# %% plot()
 
-@pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARGS_NAMES)
+@pytest.mark.parametrize('kwargs', constants.PLOT_ARGS, ids=constants.PLOT_ARG_IDS)
 def test_GazeData_plot(gd, kwargs):
 
     # Make a basic transform and add saccades,
@@ -253,7 +255,7 @@ def test_GazeData_plot(gd, kwargs):
     assert constants.image_file_ok(kwargs['filename'])
 
 
-#%% Attributes
+# %% Attributes
 
 # Because pandas treats DataFrame attributes as columns by default,
 # some wrangling is needed in order to store attributes in the normal way.
@@ -274,7 +276,7 @@ def test_set_attributes(gd_all, attr, val):
     assert getattr(gd_all, attr) == new_value
 
 
-#%% Subsetting
+# %% Subsetting
 
 # Subsetting instances of the GazeData class presents some challenges.
 # We would like different subsetting operations to return different types.

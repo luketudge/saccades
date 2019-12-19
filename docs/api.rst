@@ -1,6 +1,12 @@
 API
 ===
 
+basereader
+----------
+
+.. automodule:: saccades.readers.basereader
+    :members:
+
 gazedata
 --------
 
@@ -29,6 +35,12 @@ metrics
 -------
 
 .. automodule:: saccades.metrics
+    :members:
+
+regexes
+-------
+
+.. automodule:: saccades.readers.regexes
     :members:
 
 tools

@@ -5,7 +5,7 @@ from . import constants
 from saccades import metrics
 
 
-#%% latency()
+# %% latency()
 
 def test_latency(sacc):
 
@@ -21,7 +21,7 @@ def test_latency_as_Saccade_method(sacc):
     assert result == constants.LATENCY
 
 
-#%% duration()
+# %% duration()
 
 def test_duration(sacc):
 
@@ -37,7 +37,7 @@ def test_duration_as_Saccade_method(sacc):
     assert result == constants.DURATION
 
 
-#%% amplitude()
+# %% amplitude()
 
 def test_amplitude(sacc):
 
