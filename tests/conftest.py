@@ -11,6 +11,32 @@ from . import TEMP_PATH
 from .cases import reading
 
 
+# %% Command line options
+
+# https://docs.pytest.org/en/latest/example/simple.html#control-skipping-of-tests-according-to-command-line-option
+
+def pytest_addoption(parser):
+
+    parser.addoption('--quick',
+                     action='store_true',
+                     default=False,
+                     help='exclude slow tests')
+
+
+def pytest_configure(config):
+
+    config.addinivalue_line('markers', 'slow: mark test as slow to run')
+
+
+def pytest_collection_modifyitems(config, items):
+
+    if config.getoption('--quick'):
+        skip_slow = pytest.mark.skip(reason='not run with --quick option')
+        for item in items:
+            if 'slow' in item.keywords:
+                item.add_marker(skip_slow)
+
+
 # %% Helper functions
 
 def prepare_case(case):
@@ -48,5 +74,11 @@ def data_file(request):
 
 @pytest.fixture(**prepare_case(reading.ROW_FORMATS))
 def row_format(request):
+
+    return request.param
+
+
+@pytest.fixture(**prepare_case(reading.DATA_BLOCKS))
+def data_block(request):
 
     return request.param
