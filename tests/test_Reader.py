@@ -5,11 +5,24 @@
 from saccades.readers import Reader
 
 
+# %% Helper functions
+
+def init_reader(file, **kwargs):
+    """Initialize a Reader from a data file test case,
+    with additional keyword arguments if necessary.
+    """
+
+    reader = file['in']['reader']
+    filepath = file['in']['filepath']
+
+    return reader(filepath, **file['in']['kwargs'], **kwargs)
+
+
 # %% __init__()
 
 def test_init(file):
 
-    r = file['in']['reader'](file['in']['filepath'], **file['in']['kwargs'])
+    r = init_reader(file)
 
     assert isinstance(r, Reader)
 
@@ -18,6 +31,6 @@ def test_init(file):
 
 def test_header(file):
 
-    r = file['in']['reader'](file['in']['filepath'], **file['in']['kwargs'])
+    r = init_reader(file)
 
     assert r.header == file['out']['header']
