@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Fixtures for tests.
+"""Setup for tests.
+
+Gather test cases from the cases submodule,
+and parametrize them into fixtures.
 """
 
 import os
