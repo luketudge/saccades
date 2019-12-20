@@ -44,3 +44,9 @@ def clear_temp_files():
 def file(request):
 
     return request.param
+
+
+@pytest.fixture(**prepare_case(reading.ROW_FORMATS))
+def row(request):
+
+    return request.param

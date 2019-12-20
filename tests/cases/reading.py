@@ -282,8 +282,6 @@ for case in ROW_FORMATS:
 
     if ROW_FORMATS[case]['out']['valid']:
         ROW_FORMATS[case]['out']['values'] = [float(val) for val in values]
-    else:
-        ROW_FORMATS[case]['out']['values'] = None
 
 
 # %% Data blocks
