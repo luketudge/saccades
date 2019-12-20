@@ -9,15 +9,15 @@ from saccades.readers import Reader
 
 # %% Helper functions
 
-def init_reader(data_file, **kwargs):
+def init_reader(file, **kwargs):
     """Initialize a Reader from a data file test case,
     with additional keyword arguments if necessary.
     """
 
-    reader = data_file['in']['reader']
-    filepath = data_file['in']['filepath']
+    reader = file['in']['reader']
+    filepath = file['in']['filepath']
 
-    return reader(filepath, **data_file['in']['kwargs'], **kwargs)
+    return reader(filepath, **file['in']['kwargs'], **kwargs)
 
 
 # %% __init__()
@@ -42,7 +42,8 @@ def test_row_pattern(data_file, row_format):
     match = r.row_pattern.fullmatch(row)
 
     if row_format['out']['valid']:
-        assert match is not None
+        values = [abs(float(match.group(col))) for col in ['time', 'x', 'y']]
+        assert values == row_format['out']['values']
     else:
         assert match is None
 
