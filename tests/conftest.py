@@ -8,9 +8,11 @@ import shutil
 import pytest
 
 from . import TEMP_PATH
+from . import helpers
+from .cases import reading
 
 
-# %% Session
+# %% Session fixtures
 
 @pytest.fixture(scope='session')
 def clear_temp_files():
@@ -25,39 +27,9 @@ def clear_temp_files():
         pass
 
 
-# %% reader objects
+# %% Data files
 
-#@pytest.fixture
-#def r():
+@pytest.fixture(**helpers.prepare_case(reading.DATA_FILES))
+def file(request):
 
-#    return BaseReader(constants.DATA_FILES[0]['file'])
-
-
-#@pytest.fixture(params=constants.DATA_FILES, ids=constants.DATA_FILE_IDS)
-#def r_all(request):
-
-#    kwargs = constants.get_basereader_args(request.param)
-
-#    return BaseReader(**kwargs)
-
-
-# %% gazedata objects
-
-#@pytest.fixture
-#def gd():
-
-#    return GazeData(constants.ARRAY, **constants.ATTRIBUTES)
-
-
-#params = constants.VALID_INIT_TYPES.values()
-#ids = list(constants.VALID_INIT_TYPES.keys())
-#@pytest.fixture(params=params, ids=ids)
-#def gd_all(request):
-
-#    return GazeData(request.param, **constants.ATTRIBUTES)
-
-
-#@pytest.fixture
-#def sacc():
-
-#    return Saccade(constants.SACCADE, **constants.ATTRIBUTES)
+    return request.param

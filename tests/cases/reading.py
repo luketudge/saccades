@@ -12,7 +12,7 @@ import regex
 from .. import DATA_PATH
 from .. import helpers
 
-from saccades.readers import BaseReader as Reader
+from saccades.readers import Reader
 from saccades.readers import regexes
 
 
@@ -83,38 +83,31 @@ DATA_FILES = {
     'empty': {
         'in': {
             'file': 'empty.txt',
-            'reader': Reader,
             },
         'out': {
-            'header': '',
             'n_blocks': 0,
         }
     },
     'csv': {
         'in': {
             'file': 'comma_delimited.csv',
-            'reader': Reader,
             'sep': ',',
         },
         'out': {
-            'header': '',
             'n_blocks': 1,
         }
     },
     'tsv': {
         'in': {
-            'file': 'tab_delimited.csv',
-            'reader': Reader,
+            'file': 'tab_delimited.tsv',
         },
         'out': {
-            'header': '',
             'n_blocks': 1,
         }
     },
     'iView': {
         'in': {
             'file': 'iView.txt',
-            'reader': Reader,
         },
         'out': {
             'header_rows': 47,
@@ -123,7 +116,6 @@ DATA_FILES = {
     'eyelink': {
         'in': {
             'file': 'eyelink.txt',
-            'reader': Reader,
         },
         'out': {
             'header_rows': 52,
@@ -132,39 +124,62 @@ DATA_FILES = {
     'eyelink_events': {
         'in': {
             'file': 'eyelink_events.txt',
-            'reader': Reader,
         },
         'out': {
             'header_rows': 16,
         }
-    }
-}
-
-# Add the expected header for the bigger files.
-
-for case in ['iView', 'eyelink', 'eyelink_events']:
-    file = DATA_FILES[case]['in']['file']
-    n = DATA_FILES[case]['out']['header_rows']
-    header = helpers.get_header(os.path.join(DATA_PATH, file), n)
-    DATA_FILES[case]['out']['header'] = header
-
-# Add the custom format one.
-# Here we expect the header to be processed into a dictionary.
-
-DATA_FILES['custom_format'] = {
-    'in': {
-        'file': 'preprocessed.txt',
-        'reader': NewReader,
     },
-    'out': {
-        'header': {
-            'screen_res': [576., 304.],
-            'screen_diag': 0.5370576070786075,
-            'viewing_dist': 0.753,
-            },
-        'n_blocks': 1,
-    }
+    'custom_format': {
+        'in': {
+            'file': 'preprocessed.txt',
+            'reader': NewReader,
+        },
+        'out': {
+            'header': {
+                'screen_res': [576., 304.],
+                'screen_diag': 0.5370576070786075,
+                'viewing_dist': 0.753,
+                },
+            'n_blocks': 1,
+        }
+    },
 }
+
+# Expand the file name to a full path.
+
+for case in DATA_FILES:
+    filepath = os.path.join(DATA_PATH, DATA_FILES[case]['in']['file'])
+    DATA_FILES[case]['in']['filepath'] = filepath
+
+# Make a dictionary of keyword arguments for the reader.
+
+for case in DATA_FILES:
+
+    reader_kwargs = {}
+
+    if 'sep' in DATA_FILES[case]['in']:
+        reader_kwargs['sep'] = DATA_FILES[case]['in']['sep']
+
+    DATA_FILES[case]['in']['kwargs'] = reader_kwargs
+
+# Add the default reader if none specified.
+
+for case in DATA_FILES:
+
+    if 'reader' not in DATA_FILES[case]['in']:
+        DATA_FILES[case]['in']['reader'] = Reader
+
+# Add the expected header if any.
+
+for case in DATA_FILES:
+
+    if 'header_rows' in DATA_FILES[case]['out']:
+        file = DATA_FILES[case]['in']['filepath']
+        n = DATA_FILES[case]['out']['header_rows']
+        header = helpers.get_header(file, n)
+        DATA_FILES[case]['out']['header'] = header
+    elif 'header' not in DATA_FILES[case]['out']:
+        DATA_FILES[case]['out']['header'] = ''
 
 
 # %% Data rows
@@ -247,8 +262,10 @@ ROW_FORMATS = {
 # Add in the values.
 
 for case in ROW_FORMATS:
+
     row = ROW_FORMATS[case]['in']['row'].format(**columns)
     ROW_FORMATS[case]['in']['row'] = row
+
     if ROW_FORMATS[case]['out']['valid']:
         ROW_FORMATS[case]['out']['values'] = [float(val) for val in values]
     else:
@@ -258,9 +275,9 @@ for case in ROW_FORMATS:
 # %% Data blocks
 
 # Used to test the process_data() method of readers.
-
-# The test data have only two rows,
-# so a maximum of two NaN values are possible.
+# Add more rows to data if more NaN values are needed,
+# as we can only test as many different NaN values
+# as there are rows in the test data.
 
 data = {'time': ['2', '4'],
         'x': ['1.', '3.'],
@@ -268,34 +285,37 @@ data = {'time': ['2', '4'],
 
 DATA_BLOCKS = {
     'standard': {
-        'in': {'nan_values': None}
+        'in': {},
+        'out': {}
     },
-    'no_nan_values': {
-        'in': {'nan_values': []}
+    'no_na_values': {
+        'in': {'na_values': []},
+        'out': {}
     },
-    'float_zero_nan': {
-        'in': {'nan_values': ['0.0']}
+    'zero_is_na': {
+        'in': {'na_values': ['0.0']},
+        'out': {}
     },
 }
 
 # Add in the dictionaries of string data values,
 # and insert NaN values as necessary.
-# If no nan values are requested,
+# If no NaN values are requested,
 # insert one instance of the default NaN value '.'
 
 for case in DATA_BLOCKS:
 
     data_in = copy.deepcopy(data)
     data_out = pandas.DataFrame(data).astype(float)
-    nan_values = DATA_BLOCKS[case]['in']['nan_values']
 
-    if nan_values is None:
-        data_in['x'][0] = '.'
-        data_out.loc[0, 'x'] = numpy.nan
-    else:
-        for row, val in enumerate(nan_values):
+    if 'na_values' in DATA_BLOCKS[case]['in']:
+        na_values = DATA_BLOCKS[case]['in']['na_values']
+        for row, val in enumerate(na_values):
             data_in['x'][row] = val
             data_out.loc[row, 'x'] = numpy.nan
+    else:
+        data_in['x'][0] = '.'
+        data_out.loc[0, 'x'] = numpy.nan
 
     DATA_BLOCKS[case]['in']['data'] = data_in
-    DATA_BLOCKS[case]['out'] = {'data': data_out}
+    DATA_BLOCKS[case]['out']['data'] = data_out

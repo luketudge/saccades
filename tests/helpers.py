@@ -2,9 +2,19 @@
 """Some helper functions used during testing.
 """
 
-import os
-
 import numpy
+
+
+# %% Functions for setting up test cases.
+
+def prepare_case(case):
+    """Turn a test case into keyword arguments for pytest.fixture().
+
+    The keys of the case dictionary become the ids argument.
+    The values become the params argument.
+    """
+
+    return {'params': case.values(), 'ids': list(case.keys())}
 
 
 # %% Functions for data files

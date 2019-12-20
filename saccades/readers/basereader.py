@@ -16,7 +16,7 @@ from .regexes import POS_INTEGER
 
 # %% Main class
 
-class BaseReader:
+class Reader:
     """Read eye gaze data from a text file.
 
     This base class just finds the coordinate gaze data \

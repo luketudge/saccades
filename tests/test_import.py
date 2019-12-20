@@ -3,19 +3,14 @@
 """
 
 
-MAIN_CONTENTS = [
+main_contents = [
     'GazeData',
     'Saccade',
-    'conversions',
-    'geometry',
-    'detection',
-    'metrics',
     '__version__',
 ]
 
-READERS_CONTENTS = [
+readers_contents = [
     'Reader',
-    'IViewReader',
 ]
 
 
@@ -25,7 +20,7 @@ def test_import():
 
     contents = dir(saccades)
 
-    for name in MAIN_CONTENTS:
+    for name in main_contents:
         assert name in contents
 
 
@@ -35,5 +30,5 @@ def test_import_readers():
 
     contents = dir(readers)
 
-    for name in READERS_CONTENTS:
+    for name in readers_contents:
         assert name in contents
