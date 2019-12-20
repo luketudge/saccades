@@ -41,12 +41,12 @@ def clear_temp_files():
 # %% Data files
 
 @pytest.fixture(**prepare_case(reading.DATA_FILES))
-def file(request):
+def data_file(request):
 
     return request.param
 
 
 @pytest.fixture(**prepare_case(reading.ROW_FORMATS))
-def row(request):
+def row_format(request):
 
     return request.param

@@ -219,10 +219,6 @@ ROW_FORMATS = {
         'in': {'row': '{time} {x}.0 {y}.0 3.0 4.0'},
         'out': {'valid': True}
     },
-    'intervening_cols': {
-        'in': {'row': '{time} SMP 1 {x}.0 {y}.0'},
-        'out': {'valid': True}
-    },
     'trailing_separators': {
         'in': {'row': '{time} {x}.0 {y}.0  '},
         'out': {'valid': True}
