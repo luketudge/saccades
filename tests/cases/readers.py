@@ -289,7 +289,7 @@ for case in ROW_FORMATS:
 
 data = {'time': ['2', '4'],
         'x': ['1.', '3.'],
-        'y': ['3.', '4.']}
+        'y': ['2.', '4.']}
 
 DATA_BLOCKS = {
     'standard': {

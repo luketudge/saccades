@@ -145,6 +145,7 @@ def test_get_blocks(data_file):
     for b in blocks:
         block_count = block_count + 1
         assert isinstance(b, GazeData)
+        assert numpy.array(b).dtype == numpy.float64
 
     if 'n_blocks' in data_file['out']:
         assert block_count == data_file['out']['n_blocks']
