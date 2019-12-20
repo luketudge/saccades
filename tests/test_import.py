@@ -1,23 +1,39 @@
 # -*- coding: utf-8 -*-
+"""Test that the contents of the modules are as expected.
+"""
 
-from . import constants
+
+MAIN_CONTENTS = [
+    'GazeData',
+    'Saccade',
+    'conversions',
+    'geometry',
+    'detection',
+    'metrics',
+    '__version__',
+]
+
+READERS_CONTENTS = [
+    'Reader',
+    'IViewReader',
+]
 
 
 def test_import():
 
     import saccades
 
-    module_contents = dir(saccades)
+    contents = dir(saccades)
 
-    for name in constants.MODULE_CONTENTS:
-        assert name in module_contents
+    for name in MAIN_CONTENTS:
+        assert name in contents
 
 
-def test_import_submodule():
+def test_import_readers():
 
     from saccades import readers
 
-    module_contents = dir(readers)
+    contents = dir(readers)
 
-    for name in constants.READERS_CONTENTS:
-        assert name in module_contents
+    for name in READERS_CONTENTS:
+        assert name in contents

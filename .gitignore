@@ -1,7 +1,6 @@
 #### Project-specific ignores ####
 
-tests/images/test*
-tests/example_plot.png
+tests/files/tmp/*.png
 
 
 #### General Python ignores ####
