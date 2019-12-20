@@ -28,6 +28,8 @@ def init_reader(file, **kwargs):
 # %% __init__()
 
 def test_init(data_file):
+    """Test initializing a reader with a data file.
+    """
 
     r = init_reader(data_file)
 
@@ -37,6 +39,11 @@ def test_init(data_file):
 # %% row_pattern
 
 def test_row_pattern(data_file, row_format):
+    """Test the regular expression for a row of data.
+
+    Adapt the test row to the data file's separator.
+    Check retrieval of named groups from the regular expression.
+    """
 
     r = init_reader(data_file)
     row = row_format['in']['row']
@@ -56,6 +63,8 @@ def test_row_pattern(data_file, row_format):
 # %% header
 
 def test_header(data_file):
+    """Test that a data file header is read correctly.
+    """
 
     r = init_reader(data_file)
 
@@ -65,6 +74,11 @@ def test_header(data_file):
 # %% process_messages()
 
 def test_process_messages(data_file):
+    """Test the 'dummy' method for processing messages.
+
+    (This method does nothing neither in the base Reader class,
+    nor in the subclass defined above.)
+    """
 
     r = init_reader(data_file)
     messages = 'foo'
@@ -75,6 +89,11 @@ def test_process_messages(data_file):
 # %% process_data()
 
 def test_process_data(data_file, data_block):
+    """Test processing a block of data.
+
+    This method should return GazeData with messages attached.
+    And it should replace custom missing values with NaN.
+    """
 
     kwargs = {}
 
@@ -97,6 +116,11 @@ def test_process_data(data_file, data_block):
 
 @pytest.mark.slow
 def test_get_blocks(data_file):
+    """Test getting the blocks of data from a data file.
+
+    Since some of the files are large, this method is slow.
+    It can be skipped with: pytest --quick.
+    """
 
     r = init_reader(data_file)
     blocks = r.get_blocks()
@@ -118,8 +142,19 @@ def test_get_blocks(data_file):
 # %% Context manager
 
 def test_context_manager(data_file):
+    """Test that a reader can be used as a context manager.
 
-    with init_reader(data_file) as r:
-        assert not r.file.closed
+    The file should be closed at the end of the with statement.
+    """
+
+    with pytest.raises(Exception):
+
+        with init_reader(data_file) as r:
+            assert not r.file.closed
+            raise Exception
+
+            # This assertion is here simply to verify that Exception is raised.
+            # If it were not, the test would fail here.
+            assert False
 
     assert r.file.closed
