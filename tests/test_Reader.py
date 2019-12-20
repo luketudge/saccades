@@ -36,6 +36,19 @@ def test_init(data_file):
     assert isinstance(r, Reader)
 
 
+# %% __repr__
+
+def test_repr(data_file):
+    """Test the pretty string representation of a reader.
+    """
+
+    r = init_reader(data_file)
+    output = str(r)
+
+    assert data_file['in']['filepath'] in output
+    assert str(data_file['out']['header']) in output
+
+
 # %% row_pattern
 
 def test_row_pattern(data_file, row_format):
