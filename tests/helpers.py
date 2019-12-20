@@ -1,35 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Some helper functions used during testing.
+"""Some helper functions used in more than one test module.
 """
 
 import numpy
-
-
-# %% Functions for setting up test cases.
-
-def prepare_case(case):
-    """Turn a test case into keyword arguments for pytest.fixture().
-
-    The keys of the case dictionary become the ids argument.
-    The values become the params argument.
-    """
-
-    return {'params': case.values(), 'ids': list(case.keys())}
-
-
-# %% Functions for data files
-
-def get_header(file, n):
-    """Get the header section of a text gaze data file.
-    """
-
-    header = []
-
-    with open(file, encoding='utf-8') as f:
-        for i in range(n):
-            header.append(f.readline())
-
-    return ''.join(header).rstrip('\n')
 
 
 def files_equal(file1, file2):
@@ -41,8 +14,6 @@ def files_equal(file1, file2):
 
     return bytes1 == bytes2
 
-
-# %% Functions for gaze data
 
 def mark_all(x, val=True):
     """A dummy function for event detection.

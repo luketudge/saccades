@@ -10,10 +10,24 @@ import pandas
 import regex
 
 from .. import DATA_PATH
-from .. import helpers
 
 from saccades.readers import Reader
 from saccades.readers import regexes
+
+
+# %% Helper functions
+
+def get_header(file, n):
+    """Get the header section of a text gaze data file.
+    """
+
+    header = []
+
+    with open(file, encoding='utf-8') as f:
+        for i in range(n):
+            header.append(f.readline())
+
+    return ''.join(header).rstrip('\n')
 
 
 # %% A custom reader subclass
@@ -176,7 +190,7 @@ for case in DATA_FILES:
     if 'header_rows' in DATA_FILES[case]['out']:
         file = DATA_FILES[case]['in']['filepath']
         n = DATA_FILES[case]['out']['header_rows']
-        header = helpers.get_header(file, n)
+        header = get_header(file, n)
         DATA_FILES[case]['out']['header'] = header
     elif 'header' not in DATA_FILES[case]['out']:
         DATA_FILES[case]['out']['header'] = ''
