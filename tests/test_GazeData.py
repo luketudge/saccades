@@ -130,3 +130,26 @@ def test_set_attributes(gaze_data, attributes):
     for attr, value in attributes['in']['attrs'].items():
         setattr(gd, attr, value)
         assert getattr(gd, attr) == attributes['out']['attrs'][attr]
+
+
+# For the following less complex tests,
+# the single GazeData fixture should be enough.
+
+# %% _check_screen_info()
+
+def test_check_screen_info(gaze_data_single_case, attributes):
+    """Test checking the screen attributes.
+
+    Incomplete groups of attributes should raise an exception,
+    and the exception should mention which are missing.
+    """
+
+    gd = init_gazedata(gaze_data_single_case, **attributes['in']['attrs'])
+
+    if attributes['out']['valid']:
+        assert gd._check_screen_info() is None
+    else:
+        exception = attributes['out']['exception']
+        error_msg = attributes['out']['error_msg']
+        with pytest.raises(exception, match=error_msg):
+            gd._check_screen_info()

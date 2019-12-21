@@ -36,16 +36,16 @@ data_df_reordered = data_df_extra_col.copy()
 data_df_reordered = data_df_reordered[['foo', 'y', 'time', 'x']]
 
 GAZE_DATA = {
+    'array': {
+        'in': {'data': data},
+        'out': {}
+    },
     'list': {
         'in': {'data': data.tolist()},
         'out': {}
     },
     'dict': {
         'in': {'data': {col: list(data[:, i]) for i, col in enumerate(colnames)}},
-        'out': {}
-    },
-    'array': {
-        'in': {'data': data},
         'out': {}
     },
     'dataframe': {
@@ -118,26 +118,57 @@ for case in INVALID_GAZE_DATA:
 
 # %% Attributes
 
-# Define the default attributes
+gazedata_attributes = ['time_units',
+                       'space_units',
+                       'target',
+                       'messages']
 
-default_attrs = {'time_units': None,
-                 'space_units': None,
-                 'screen_res': None,
-                 'screen_diag': None,
-                 'viewing_dist': None,
-                 'target': None,
-                 'messages': None}
+screen_info = ['screen_res',
+               'screen_diag',
+               'viewing_dist']
+
+empty_attrs = {key: None for key in gazedata_attributes + screen_info}
+
+valid_screen_info = empty_attrs.copy()
+valid_screen_info.update({'screen_res': [1366., 768.],
+                          'screen_diag': 12.,
+                          'viewing_dist': 9000.})
 
 ATTRIBUTES = {
+    'empty': {
+        'in': {'attrs': empty_attrs},
+        'out': {'valid': False}
+    },
     'dummy': {
-        'in': {'attrs': {attr: 'foo' for attr in default_attrs}},
-        'out': {}
+        'in': {'attrs': {attr: 'foo' for attr in empty_attrs}},
+        'out': {'valid': True}
+    },
+    'valid_screen_info': {
+        'in': {'attrs': valid_screen_info},
+        'out': {'valid': True}
     },
 }
 
+# Add some cases that are missing one of the screen attributes.
+
+for attr in screen_info:
+    id = 'missing_' + attr
+    attrs_dict = valid_screen_info.copy()
+    attrs_dict[attr] = None
+    data_in = {'attrs': attrs_dict}
+    data_out = {'valid': False, 'error_msg': attr}
+    ATTRIBUTES[id] = {'in': data_in, 'out': data_out}
+
 # Add the expected output attributes.
-# These are the same as those that went in,
-# but just in case this changes later.
+# These are the same as those that went in.
 
 for case in ATTRIBUTES:
     ATTRIBUTES[case]['out']['attrs'] = ATTRIBUTES[case]['in']['attrs']
+
+# Add the expected exception if needed.
+
+for case in ATTRIBUTES:
+    if not ATTRIBUTES[case]['out']['valid']:
+        ATTRIBUTES[case]['out']['exception'] = AttributeError
+        if 'error_msg' not in ATTRIBUTES[case]['out']:
+            ATTRIBUTES[case]['out']['error_msg'] = 'necessary attributes have not yet been set'
