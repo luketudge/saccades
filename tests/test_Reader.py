@@ -40,6 +40,8 @@ def test_init(data_file):
 
 def test_repr(data_file):
     """Test the pretty string representation of a reader.
+
+    Should contain the filename and header.
     """
 
     r = init_reader(data_file)
@@ -56,6 +58,7 @@ def test_row_pattern(data_file, row_format):
 
     Adapt the test row to the data file's separator.
     Check retrieval of named groups from the regular expression.
+    Check that invalid rows are not a match.
     """
 
     r = init_reader(data_file)
@@ -120,8 +123,8 @@ def test_process_data(data_file, data_block):
     assert isinstance(gd, GazeData)
     assert gd.messages == messages
 
-    # We have to use allclose() here,
-    # as array_equal() returns False if any values are NaN.
+    # We have to use numpy.allclose() here.
+    # numpy.array_equal() returns False if any values are NaN.
     assert numpy.allclose(gd, data_block['out']['data'], equal_nan=True)
 
 

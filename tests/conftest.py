@@ -11,8 +11,8 @@ import shutil
 import pytest
 
 from . import TEMP_PATH
-from .cases import gazedata
-from .cases import readers
+from .cases import cases_gazedata
+from .cases import cases_readers
 
 
 # %% Command line options
@@ -70,19 +70,19 @@ def clear_temp_files():
 
 # %% Data files
 
-@pytest.fixture(**prepare_case(readers.DATA_FILES))
+@pytest.fixture(**prepare_case(cases_readers.DATA_FILES))
 def data_file(request):
 
     return request.param
 
 
-@pytest.fixture(**prepare_case(readers.ROW_FORMATS))
+@pytest.fixture(**prepare_case(cases_readers.ROW_FORMATS))
 def row_format(request):
 
     return request.param
 
 
-@pytest.fixture(**prepare_case(readers.DATA_BLOCKS))
+@pytest.fixture(**prepare_case(cases_readers.DATA_BLOCKS))
 def data_block(request):
 
     return request.param
@@ -90,7 +90,13 @@ def data_block(request):
 
 # %% Gaze data
 
-@pytest.fixture(**prepare_case(gazedata.GAZE_DATA))
+@pytest.fixture(**prepare_case(cases_gazedata.GAZE_DATA))
 def gaze_data(request):
+
+    return request.param
+
+
+@pytest.fixture(**prepare_case(cases_gazedata.INVALID_GAZE_DATA))
+def invalid_gaze_data(request):
 
     return request.param
