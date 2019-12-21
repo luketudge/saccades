@@ -114,3 +114,30 @@ INVALID_GAZE_DATA = {
 
 for case in INVALID_GAZE_DATA:
     INVALID_GAZE_DATA[case]['out']['exception'] = ValueError
+
+
+# %% Attributes
+
+# Define the default attributes
+
+default_attrs = {'time_units': None,
+                 'space_units': None,
+                 'screen_res': None,
+                 'screen_diag': None,
+                 'viewing_dist': None,
+                 'target': None,
+                 'messages': None}
+
+ATTRIBUTES = {
+    'dummy': {
+        'in': {'attrs': {attr: 'foo' for attr in default_attrs}},
+        'out': {}
+    },
+}
+
+# Add the expected output attributes.
+# These are the same as those that went in,
+# but just in case this changes later.
+
+for case in ATTRIBUTES:
+    ATTRIBUTES[case]['out']['attrs'] = ATTRIBUTES[case]['in']['attrs']

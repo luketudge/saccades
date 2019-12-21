@@ -100,3 +100,9 @@ def gaze_data(request):
 def invalid_gaze_data(request):
 
     return request.param
+
+
+@pytest.fixture(**prepare_case(cases_gazedata.ATTRIBUTES))
+def attributes(request):
+
+    return request.param

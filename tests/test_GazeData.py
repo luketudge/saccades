@@ -17,11 +17,12 @@ from saccades import GazeData
 
 # %% Helper functions
 
-def init_gazedata(data):
-    """Initialize a GazeData table from a gaze data test case.
+def init_gazedata(data, **kwargs):
+    """Initialize a GazeData table from a gaze data test case,
+    with additional keyword arguments if necessary.
     """
 
-    return GazeData(data['in']['data'])
+    return GazeData(data['in']['data'], **kwargs)
 
 
 # %% __init__()
@@ -73,3 +74,26 @@ def test_GazeData_is_not_view():
     gd['time'] = 9000.
 
     assert a[0, 0] != 9000.
+
+
+# %% Attributes
+
+# Because pandas treats DataFrame attributes as columns by default,
+# some wrangling is needed in order to store attributes in the normal way.
+# So we should test that attributes can be set.
+
+def test_has_attributes(gaze_data, attributes):
+
+    gd = init_gazedata(gaze_data, **attributes['in']['attrs'])
+
+    for attr, value in attributes['out']['attrs'].items():
+        assert getattr(gd, attr) == value
+
+
+def test_set_attributes(gaze_data, attributes):
+
+    gd = init_gazedata(gaze_data)
+
+    for attr, value in attributes['in']['attrs'].items():
+        setattr(gd, attr, value)
+        assert getattr(gd, attr) == attributes['out']['attrs'][attr]

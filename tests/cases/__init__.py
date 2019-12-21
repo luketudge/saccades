@@ -8,7 +8,7 @@ The values are further dictionaries with keys 'in' and 'out'.
 for example arrays, filenames, function arguments, etc.
 'out' contains expected results,
 for example transformed arrays, expected exceptions, etc.
-The 'out' key may be absent if no particular output is expected,
+The 'out' key may be empty if no particular output is expected,
 for example if we are just testing that no exception is raised,
 or if the output is always the same for all cases.
 
