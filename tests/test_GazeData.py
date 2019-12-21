@@ -51,6 +51,35 @@ def test_invalid_init(invalid_gaze_data):
         init_gazedata(invalid_gaze_data)
 
 
+def test_init_from_instance(gaze_data, attributes):
+    """Test initializing a GazeData table from an existing instance.
+
+    The attributes of the existing instance should be carried over.
+    """
+
+    gd = init_gazedata(gaze_data, **attributes['in']['attrs'])
+    gd2 = GazeData(gd)
+
+    for attr, val in attributes['out']['attrs'].items():
+        assert getattr(gd2, attr) == val
+
+
+def test_init_from_instance_new_attributes(gaze_data, attributes):
+    """Test initializing a GazeData table from an existing instance,
+    but setting new attributes at init.
+
+    The attributes of the existing instance should be ignored.
+    """
+
+    new_value = 'bar'
+
+    gd = init_gazedata(gaze_data, **attributes['in']['attrs'])
+    gd2 = GazeData(gd, **{attr: new_value for attr in attributes['in']['attrs']})
+
+    for attr in attributes['out']['attrs']:
+        assert getattr(gd2, attr) is new_value
+
+
 def test_empty_init():
     """Test initializing a GazeData table without data.
 
@@ -80,9 +109,11 @@ def test_GazeData_is_not_view():
 
 # Because pandas treats DataFrame attributes as columns by default,
 # some wrangling is needed in order to store attributes in the normal way.
-# So we should test that attributes can be set.
+# So we should test that this works.
 
 def test_has_attributes(gaze_data, attributes):
+    """Check that a GazeData table has the attributes set at init.
+    """
 
     gd = init_gazedata(gaze_data, **attributes['in']['attrs'])
 
@@ -91,6 +122,8 @@ def test_has_attributes(gaze_data, attributes):
 
 
 def test_set_attributes(gaze_data, attributes):
+    """Check that attributes can be set anew after init.
+    """
 
     gd = init_gazedata(gaze_data)
 
