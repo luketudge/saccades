@@ -132,9 +132,6 @@ def test_set_attributes(gaze_data, attributes):
         assert getattr(gd, attr) == attributes['out']['attrs'][attr]
 
 
-# For the following less complex tests,
-# the single GazeData fixture should be enough.
-
 # %% _check_screen_info()
 
 def test_check_screen_info(gaze_data_single_case, attributes):
@@ -153,3 +150,75 @@ def test_check_screen_info(gaze_data_single_case, attributes):
         error_msg = attributes['out']['error_msg']
         with pytest.raises(exception, match=error_msg):
             gd._check_screen_info()
+
+
+# %% _save_raw_coords()
+
+def test_save_raw_coords(gaze_data_single_case):
+    """Test saving existing coordinates into new columns.
+
+    The new columns should have the same values,
+    and they should not be views of the existing columns.
+    A second call should have no effect,
+    since the original values have already been saved.
+    """
+
+    gd = init_gazedata(gaze_data_single_case)
+    gd._save_raw_coords()
+
+    assert numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
+
+    gd['x'] = 9000.
+    assert not numpy.array_equal(gd['x_raw'], gd['x'])
+
+    gd._save_raw_coords()
+    assert not numpy.array_equal(gd['x_raw'], gd['x'])
+
+
+def test_save_raw_coords_before_method_call(gaze_data_single_case, method):
+    """Test saving existing coordinates into new columns
+    automatically before some method calls.
+
+    The new columns should have the same values as the original ones,
+    but the saved columns should now have different values.
+    """
+
+    gd = init_gazedata(gaze_data_single_case)
+    method['in']['method'](gd)
+
+    if method['out']['saves_coords']:
+        saved_coords = gd[['time', 'x_raw', 'y_raw']]
+        new_coords = gd[['time', 'x', 'y']]
+        assert numpy.array_equal(saved_coords, gaze_data_single_case['out']['data'])
+        assert not numpy.array_equal(saved_coords, new_coords)
+    else:
+        for col in ['x_raw', 'y_raw']:
+            assert col not in gd
+
+
+# %% viewing_parameters
+
+def test_viewing_parameters(gaze_data_single_case, attributes):
+    """Test getting the dictionary of viewing parameters.
+    """
+
+    gd = init_gazedata(gaze_data_single_case, **attributes['in']['attrs'])
+    params = gd.viewing_parameters
+
+    assert params == attributes['out']['attrs']
+
+
+# %% reset_time()
+
+def test_reset_time(gaze_data):
+    """Test resetting the time column to start at 0.
+    """
+
+    t_0 = gaze_data['out']['data'][0, 0]
+    t_end = gaze_data['out']['data'][-1, 0]
+
+    gd = init_gazedata(gaze_data)
+    gd.reset_time()
+
+    assert gd['time'].iloc[0] == 0.
+    assert gd['time'].iloc[-1] == t_end - t_0

@@ -2,8 +2,12 @@
 """Test cases for gaze data.
 """
 
+import functools
+
 import numpy
 import pandas
+
+from saccades import GazeData
 
 
 # %% Init data
@@ -172,3 +176,24 @@ for case in ATTRIBUTES:
         ATTRIBUTES[case]['out']['exception'] = AttributeError
         if 'error_msg' not in ATTRIBUTES[case]['out']:
             ATTRIBUTES[case]['out']['error_msg'] = 'necessary attributes have not yet been set'
+
+
+# %% Methods
+
+center = functools.partial(GazeData.center, origin=[-9000., -9000.])
+rotate = functools.partial(GazeData.rotate, theta=numpy.pi)
+
+METHODS = {
+    'reset_time': {
+        'in': {'method': GazeData.reset_time},
+        'out': {'saves_coords': False}
+    },
+    'center': {
+        'in': {'method': center},
+        'out': {'saves_coords': True}
+    },
+    'rotate': {
+        'in': {'method': rotate},
+        'out': {'saves_coords': True}
+    },
+}
