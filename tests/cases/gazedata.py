@@ -2,6 +2,8 @@
 """Test cases for gaze data.
 """
 
+import copy
+
 import numpy
 import pandas
 
@@ -15,7 +17,10 @@ colnames = ['time', 'x', 'y']
 
 data = numpy.array([[0., 1., 2.],
                     [2., 3., 4.],
-                    [4., 5., 6.]])
+                    [4., 5., 6.],
+                    [6., 7., 8.]])
+
+data_df = pandas.DataFrame(data, columns=colnames)
 
 GAZE_DATA = {
     'list': {
@@ -32,7 +37,7 @@ GAZE_DATA = {
     },
     'dataframe': {
         'in':
-            {'data': pandas.DataFrame(data, columns=colnames)},
+            {'data': data_df},
     },
     'dataframe_unnamed': {
         'in':

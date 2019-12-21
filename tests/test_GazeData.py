@@ -25,4 +25,4 @@ def test_init(gaze_data):
     gd = init_gazedata(gaze_data)
 
     assert isinstance(gd, GazeData)
-    assert numpy.array_equal(gd, gaze_data['out']['data'])
+    assert numpy.array_equal(gd[['time', 'x', 'y']], gaze_data['out']['data'])
