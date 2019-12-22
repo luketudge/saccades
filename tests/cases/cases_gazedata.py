@@ -10,6 +10,17 @@ import pandas
 from saccades import GazeData
 
 
+# %% Helper functions
+
+def mark_all(x, val=True):
+    """A dummy function for event detection.
+
+    Marks every sample as an event (or non-event if val=False).
+    """
+
+    return numpy.full(len(x), val)
+
+
 # %% Init data
 
 # Use a numpy array as canonical data format.
@@ -195,5 +206,42 @@ METHODS = {
     'rotate': {
         'in': {'method': rotate},
         'out': {'saves_coords': True}
+    },
+}
+
+
+# %% Saccade detection
+
+no_saccades = functools.partial(mark_all, val=False)
+one_saccade = functools.partial(mark_all, val=True)
+
+DETECTION = {
+    'no_hits': {
+        'in': {'func': no_saccades, 'n': None, 'kwargs': {}},
+        'out': {'n': 0, 'column': False}
+    },
+    'no_hits_lots_requested': {
+        'in': {'func': no_saccades, 'n': 9000, 'kwargs': {}},
+        'out': {'n': 0, 'column': False}
+    },
+    'one_hit': {
+        'in': {'func': one_saccade, 'n': None, 'kwargs': {}},
+        'out': {'n': 1, 'column': True}
+    },
+    'one_hit_lots_requested': {
+        'in': {'func': one_saccade, 'n': 9000, 'kwargs': {}},
+        'out': {'n': 1, 'column': True}
+    },
+    'one_hit_zero_requested': {
+        'in': {'func': one_saccade, 'n': 0, 'kwargs': {}},
+        'out': {'n': 0, 'column': True}
+    },
+    'with_kwargs': {
+        'in': {'func': mark_all, 'n': None, 'kwargs': {'val': True}},
+        'out': {'n': 1, 'column': True}
+    },
+    'with_non_default_kwargs': {
+        'in': {'func': mark_all, 'n': None, 'kwargs': {'val': False}},
+        'out': {'n': 0, 'column': False}
     },
 }

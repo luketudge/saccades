@@ -118,3 +118,9 @@ def attributes(request):
 def method(request):
 
     return request.param
+
+
+@pytest.fixture(**prepare_case(cases_gazedata.DETECTION))
+def detection(request):
+
+    return request.param

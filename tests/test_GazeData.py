@@ -13,6 +13,7 @@ import pandas
 import pytest
 
 from saccades import GazeData
+from saccades import Saccade
 
 
 # %% Helper functions
@@ -179,8 +180,8 @@ def test_save_raw_coords_before_method_call(gaze_data_single_case, method):
     """Test saving existing coordinates into new columns
     automatically before some method calls.
 
-    The new columns should have the same values as the original ones,
-    but the saved columns should now have different values.
+    The new columns should have the old values of the original columns,
+    and the original columns should now have different values.
     """
 
     gd = init_gazedata(gaze_data_single_case)
@@ -222,3 +223,43 @@ def test_reset_time(gaze_data):
 
     assert gd['time'].iloc[0] == 0.
     assert gd['time'].iloc[-1] == t_end - t_0
+
+
+# %% detect_saccades()
+
+def test_detect_saccades(gaze_data_single_case, detection):
+    """Test detecting saccades.
+
+    The saccade column should reflect the output of the supplied function.
+    The return value should have length equal to the number of saccades,
+    and each item should be an instance of the Saccade class.
+    """
+
+    gd = init_gazedata(gaze_data_single_case)
+
+    result = gd.detect_saccades(detection['in']['func'],
+                                detection['in']['n'],
+                                **detection['in']['kwargs'])
+    assert all(gd['saccade'] == detection['out']['column'])
+    assert len(result) == detection['out']['n']
+    for item in result:
+        assert isinstance(item, Saccade)
+
+
+def test_detect_saccades_without_function(gaze_data_single_case):
+    """Test detecting saccades when no detection function is supplied.
+
+    If the saccade column exists, it should be used instead.
+    If the saccade column does not exist,
+    an exception should be raised.
+    """
+
+    gd = init_gazedata(gaze_data_single_case)
+
+    with pytest.raises(KeyError, match='function required'):
+        gd.detect_saccades()
+    assert 'saccade' not in gd
+
+    gd['saccade'] = True
+    result = gd.detect_saccades()
+    assert len(result) == 1
