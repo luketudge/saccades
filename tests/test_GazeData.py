@@ -250,8 +250,7 @@ def test_detect_saccades_without_function(gaze_data_single_case):
     """Test detecting saccades when no detection function is supplied.
 
     If the saccade column exists, it should be used instead.
-    If the saccade column does not exist,
-    an exception should be raised.
+    If the saccade column does not exist, an exception should be raised.
     """
 
     gd = init_gazedata(gaze_data_single_case)
@@ -263,3 +262,6 @@ def test_detect_saccades_without_function(gaze_data_single_case):
     gd['saccade'] = True
     result = gd.detect_saccades()
     assert len(result) == 1
+
+
+# %% plot()
