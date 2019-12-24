@@ -15,6 +15,15 @@ from .. import REFS_PATH
 from saccades import GazeData
 
 
+# %% Setup wrapped GazeData methods
+
+# Used in testing some other methods,
+# and in testing plot().
+
+center = functools.partial(GazeData.center, origin=[1., 1.])
+rotate = functools.partial(GazeData.rotate, theta=numpy.pi)
+
+
 # %% Helper functions
 
 def mark_all(x, val=True):
@@ -196,9 +205,6 @@ for case in ATTRIBUTES:
 
 # %% Methods
 
-center = functools.partial(GazeData.center, origin=[-9000., -9000.])
-rotate = functools.partial(GazeData.rotate, theta=numpy.pi)
-
 METHODS = {
     'reset_time': {
         'in': {'method': GazeData.reset_time},
@@ -257,25 +263,73 @@ DETECTION = {
 plot_data = pandas.read_csv(os.path.join(DATA_PATH, 'comma_delimited.csv'),
                             names=('time', 'x', 'y'))
 
+plot_data_saccade = plot_data.copy()
+plot_data_saccade['saccade'] = False
+plot_data_saccade.loc[97:111, 'saccade'] = True
+
 PLOT = {
-    'basic': {
+    'default': {
         'in': {
-            'file': 'default', 'format': 'png',
+            'data': plot_data,
+            'transform': [],
+            'format': 'png',
             'kwargs': {}},
         'out': {}
-    }
+    },
+    'reversed': {
+        'in': {
+            'data': plot_data,
+            'transform': [],
+            'format': 'png',
+            'kwargs': {'reverse_y': True}},
+        'out': {}
+    },
+    'centered': {
+        'in': {
+            'data': plot_data,
+            'transform': [center],
+            'format': 'png',
+            'kwargs': {'show_raw': True}},
+        'out': {}
+    },
+    'rotated': {
+        'in': {
+            'data': plot_data,
+            'transform': [rotate],
+            'format': 'png',
+            'kwargs': {'show_raw': True}},
+        'out': {}
+    },
+    'saccades': {
+        'in': {
+            'data': plot_data_saccade,
+            'transform': [],
+            'format': 'png',
+            'kwargs': {'saccades': True}},
+        'out': {}
+    },
+    'no_saccades': {
+        'in': {
+            'data': plot_data,
+            'transform': [],
+            'format': 'png',
+            'kwargs': {'saccades': True}},
+        'out': {}
+    },
+    'all_options': {
+        'in': {
+            'data': plot_data_saccade,
+            'transform': [center, rotate],
+            'format': 'png',
+            'kwargs': {'reverse_y': True, 'show_raw': True, 'saccades': True}},
+        'out': {}
+    },
 }
-
-# Add the default plot data if none specified.
-
-for case in PLOT:
-    if 'data' not in PLOT[case]['in']:
-        PLOT[case]['in']['data'] = plot_data
 
 # Expand the file name to a full path.
 # Add the path to the reference file.
 
 for case in PLOT:
-    filename = PLOT[case]['in']['file'] + '.' + PLOT[case]['in']['format']
+    filename = case + '.' + PLOT[case]['in']['format']
     PLOT[case]['in']['filepath'] = os.path.join(TEMP_PATH, filename)
     PLOT[case]['out']['filepath'] = os.path.join(REFS_PATH, filename)

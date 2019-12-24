@@ -55,15 +55,18 @@ def prepare_case(case):
 
 # %% Session fixtures
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session', autouse=True)
 def clear_temp_files():
     """Clear the temporary file directory.
     """
 
-    shutil.rmtree(TEMP_PATH)
+    try:
+        shutil.rmtree(TEMP_PATH)
+    except FileNotFoundError:
+        pass
 
     try:
-        os.mkdir(TEMP_PATH)
+        os.makedirs(TEMP_PATH)
     except FileExistsError:
         pass
 

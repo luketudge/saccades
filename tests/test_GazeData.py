@@ -275,6 +275,10 @@ def test_plot(plot):
     """
 
     gd = init_gazedata(plot)
+
+    for func in plot['in']['transform']:
+        func(gd)
+
     fig = gd.plot(filename=plot['in']['filepath'],
                   **plot['in']['kwargs'])
 
