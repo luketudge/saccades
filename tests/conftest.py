@@ -124,3 +124,9 @@ def method(request):
 def detection(request):
 
     return request.param
+
+
+@pytest.fixture(**prepare_case(cases_gazedata.PLOT))
+def plot(request):
+
+    return request.param

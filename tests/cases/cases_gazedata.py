@@ -7,6 +7,10 @@ import functools
 import numpy
 import pandas
 
+from .. import DATA_PATH
+from .. import FILES_PATH
+from .. import REFS_PATH
+
 from saccades import GazeData
 
 
@@ -245,3 +249,32 @@ DETECTION = {
         'out': {'n': 0, 'column': False}
     },
 }
+
+
+# %% Plotting
+
+plot_data = pandas.read_csv(os.path.join(DATA_PATH, 'comma_delimited.csv'),
+                            names=('time', 'x', 'y'))
+
+PLOT = {
+    'basic': {
+        'in': {
+            'file': 'default', 'format': 'png',
+            'kwargs': {}},
+        'out': {}
+    }
+}
+
+# Add the default plot data if none specified.
+
+for case in PLOT:
+    if 'data' not in PLOT[case]['in']:
+        PLOT[case]['in']['data'] = plot_data
+
+# Expand the file name to a full path.
+# Add the path to the reference file.
+
+for case in PLOT:
+    filename = DATA_FILES[case]['in']['file'] + '.' + DATA_FILES[case]['in']['format']
+    DATA_FILES[case]['in']['filepath'] = os.path.join(FILES_PATH, filename)
+    DATA_FILES[case]['out']['filepath'] = os.path.join(REFS_PATH, filename)

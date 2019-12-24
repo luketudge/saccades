@@ -12,6 +12,8 @@ import numpy
 import pandas
 import pytest
 
+from . import helpers
+
 from saccades import GazeData
 from saccades import Saccade
 
@@ -265,3 +267,13 @@ def test_detect_saccades_without_function(gaze_data_single_case):
 
 
 # %% plot()
+
+def test_plot(plot):
+    """Test plotting by comparing to reference plot images.
+    """
+
+    gd = init_gazedata(plot['in']['data'])
+    fig = gd.plot(filename=plot['in']['filepath'],
+                  **plot['in']['kwargs'])
+
+    
