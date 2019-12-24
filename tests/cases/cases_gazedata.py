@@ -3,12 +3,13 @@
 """
 
 import functools
+import os
 
 import numpy
 import pandas
 
 from .. import DATA_PATH
-from .. import FILES_PATH
+from .. import TEMP_PATH
 from .. import REFS_PATH
 
 from saccades import GazeData
@@ -275,6 +276,6 @@ for case in PLOT:
 # Add the path to the reference file.
 
 for case in PLOT:
-    filename = DATA_FILES[case]['in']['file'] + '.' + DATA_FILES[case]['in']['format']
-    DATA_FILES[case]['in']['filepath'] = os.path.join(FILES_PATH, filename)
-    DATA_FILES[case]['out']['filepath'] = os.path.join(REFS_PATH, filename)
+    filename = PLOT[case]['in']['file'] + '.' + PLOT[case]['in']['format']
+    PLOT[case]['in']['filepath'] = os.path.join(TEMP_PATH, filename)
+    PLOT[case]['out']['filepath'] = os.path.join(REFS_PATH, filename)

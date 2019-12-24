@@ -57,7 +57,7 @@ def prepare_case(case):
 
 @pytest.fixture(scope='session')
 def clear_temp_files():
-    """Clear all the temporary files generated during tests.
+    """Clear the temporary file directory.
     """
 
     shutil.rmtree(TEMP_PATH)

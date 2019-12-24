@@ -10,6 +10,7 @@ This test file tests the other features of the GazeData class.
 
 import numpy
 import pandas
+import plotnine
 import pytest
 
 from . import helpers
@@ -268,12 +269,17 @@ def test_detect_saccades_without_function(gaze_data_single_case):
 
 # %% plot()
 
+@pytest.mark.slow
 def test_plot(plot):
     """Test plotting by comparing to reference plot images.
     """
 
-    gd = init_gazedata(plot['in']['data'])
+    gd = init_gazedata(plot)
     fig = gd.plot(filename=plot['in']['filepath'],
                   **plot['in']['kwargs'])
 
-    
+    assert isinstance(fig, plotnine.ggplot)
+
+    fig.draw()
+
+    assert helpers.files_equal(plot['in']['filepath'], plot['out']['filepath'])
