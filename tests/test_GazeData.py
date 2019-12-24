@@ -138,14 +138,14 @@ def test_set_attributes(gaze_data, attributes):
 
 # %% _check_screen_info()
 
-def test_check_screen_info(gaze_data_single_case, attributes):
+def test_check_screen_info(gaze_data_1, attributes):
     """Test checking the screen attributes.
 
     Incomplete groups of attributes should raise an exception,
     and the exception should mention which are missing.
     """
 
-    gd = init_gazedata(gaze_data_single_case, **attributes['in']['attrs'])
+    gd = init_gazedata(gaze_data_1, **attributes['in']['attrs'])
 
     if attributes['out']['valid']:
         assert gd._check_screen_info() is None
@@ -158,7 +158,7 @@ def test_check_screen_info(gaze_data_single_case, attributes):
 
 # %% _save_raw_coords()
 
-def test_save_raw_coords(gaze_data_single_case):
+def test_save_raw_coords(gaze_data_1):
     """Test saving existing coordinates into new columns.
 
     The new columns should have the same values,
@@ -167,7 +167,7 @@ def test_save_raw_coords(gaze_data_single_case):
     since the original values have already been saved.
     """
 
-    gd = init_gazedata(gaze_data_single_case)
+    gd = init_gazedata(gaze_data_1)
     gd._save_raw_coords()
 
     assert numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
@@ -179,7 +179,7 @@ def test_save_raw_coords(gaze_data_single_case):
     assert not numpy.array_equal(gd['x_raw'], gd['x'])
 
 
-def test_save_raw_coords_before_method_call(gaze_data_single_case, method):
+def test_save_raw_coords_before_method_call(gaze_data_1, method):
     """Test saving existing coordinates into new columns
     automatically before some method calls.
 
@@ -187,13 +187,13 @@ def test_save_raw_coords_before_method_call(gaze_data_single_case, method):
     and the original columns should now have different values.
     """
 
-    gd = init_gazedata(gaze_data_single_case)
+    gd = init_gazedata(gaze_data_1)
     method['in']['method'](gd)
 
     if method['out']['saves_coords']:
         saved_coords = gd[['time', 'x_raw', 'y_raw']]
         new_coords = gd[['time', 'x', 'y']]
-        assert numpy.array_equal(saved_coords, gaze_data_single_case['out']['data'])
+        assert numpy.array_equal(saved_coords, gaze_data_1['out']['data'])
         assert not numpy.array_equal(saved_coords, new_coords)
     else:
         for col in ['x_raw', 'y_raw']:
@@ -202,11 +202,11 @@ def test_save_raw_coords_before_method_call(gaze_data_single_case, method):
 
 # %% viewing_parameters
 
-def test_viewing_parameters(gaze_data_single_case, attributes):
+def test_viewing_parameters(gaze_data_1, attributes):
     """Test getting the dictionary of viewing parameters.
     """
 
-    gd = init_gazedata(gaze_data_single_case, **attributes['in']['attrs'])
+    gd = init_gazedata(gaze_data_1, **attributes['in']['attrs'])
     params = gd.viewing_parameters
 
     assert params == attributes['out']['attrs']
@@ -230,7 +230,7 @@ def test_reset_time(gaze_data):
 
 # %% detect_saccades()
 
-def test_detect_saccades(gaze_data_single_case, detection):
+def test_detect_saccades(gaze_data_1, detection):
     """Test detecting saccades.
 
     The saccade column should reflect the output of the supplied function.
@@ -238,7 +238,7 @@ def test_detect_saccades(gaze_data_single_case, detection):
     and each item should be an instance of the Saccade class.
     """
 
-    gd = init_gazedata(gaze_data_single_case)
+    gd = init_gazedata(gaze_data_1)
 
     result = gd.detect_saccades(detection['in']['func'],
                                 detection['in']['n'],
@@ -249,14 +249,14 @@ def test_detect_saccades(gaze_data_single_case, detection):
         assert isinstance(item, Saccade)
 
 
-def test_detect_saccades_without_function(gaze_data_single_case):
+def test_detect_saccades_without_function(gaze_data_1):
     """Test detecting saccades when no detection function is supplied.
 
     If the saccade column exists, it should be used instead.
     If the saccade column does not exist, an exception should be raised.
     """
 
-    gd = init_gazedata(gaze_data_single_case)
+    gd = init_gazedata(gaze_data_1)
 
     with pytest.raises(KeyError, match='function required'):
         gd.detect_saccades()

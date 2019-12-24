@@ -94,7 +94,7 @@ def data_block(request):
 # %% Gaze data
 
 @pytest.fixture
-def gaze_data_single_case():
+def gaze_data_1():
 
     return cases_gazedata.GAZE_DATA['array']
 
