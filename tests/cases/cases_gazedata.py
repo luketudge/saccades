@@ -145,6 +145,30 @@ for case in INVALID_GAZE_DATA:
     INVALID_GAZE_DATA[case]['out']['exception'] = ValueError
 
 
+# %% Indexing
+
+all_cols = ['time', 'x', 'y']
+
+INDEX = {
+    'rows': {
+        'in': {'data': data, 'rows': slice(2), 'cols': all_cols},
+        'out': {'data': data[:2, :], 'type': GazeData},
+    },
+    'rows_boolean': {
+        'in': {'data': data, 'rows': data[:, 0] < 3, 'cols': all_cols},
+        'out': {'data': data[:2, :], 'type': GazeData},
+    },
+    'complete_cols': {
+        'in': {'data': data, 'rows': slice(None), 'cols': all_cols},
+        'out': {'data': data, 'type': GazeData},
+    },
+    'incomplete_cols': {
+        'in': {'data': data, 'rows': slice(None), 'cols': ['x', 'y']},
+        'out': {'data': data[:, 1:3], 'type': pandas.DataFrame},
+    },
+}
+
+
 # %% Attributes
 
 gazedata_attributes = ['time_units',

@@ -109,6 +109,39 @@ def test_GazeData_is_not_view():
     assert a[0, 0] != 9000.
 
 
+# %% Indexing
+
+# Subsetting instances of the GazeData class presents some challenges.
+# We would like different subsetting operations to return different types.
+# A subset of rows is still a valid table of gaze data.
+# So this should return an instance of the GazeData class.
+# A subset containing the 'time', 'x', and 'y' columns is also valid.
+# So this column subset should also return an instance of the GazeData class.
+# But a subset of other columns is an incomplete view of the data.
+# So this should not return an instance of the GazeData class.
+
+def test_indexing(gaze_data, index):
+    """Test various kinds of indexing for getting subsets of data.
+
+    Subsets that get a complete gaze data table
+    should return an instance of GazeDaza.
+    Other subsets should revert to pandas DataFrame.
+
+    GazeData subsets should preserve attributes.
+    """
+
+    dummy_attr = 'foo'
+
+    gd = init_gazedata(gaze_data, time_units=dummy_attr)
+    subset = gd.iloc[index['in']['rows']][index['in']['cols']]
+
+    assert numpy.array_equal(subset, index['out']['data'])
+    assert isinstance(subset, index['out']['type'])
+
+    if index['out']['type'] == GazeData:
+        assert gd.time_units == dummy_attr
+
+
 # %% Attributes
 
 # Because pandas treats DataFrame attributes as columns by default,

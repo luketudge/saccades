@@ -111,6 +111,12 @@ def invalid_gaze_data(request):
     return request.param
 
 
+@pytest.fixture(**prepare_case(cases_gazedata.INDEX))
+def index(request):
+
+    return request.param
+
+
 @pytest.fixture(**prepare_case(cases_gazedata.ATTRIBUTES))
 def attributes(request):
 
