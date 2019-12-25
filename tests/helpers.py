@@ -2,6 +2,16 @@
 """Some helper functions used in more than one test module.
 """
 
+from saccades import GazeData
+
+
+def init_gazedata(data, **kwargs):
+    """Initialize a GazeData table from a gaze data test case,
+    with additional keyword arguments if necessary.
+    """
+
+    return GazeData(data['in']['data'], **kwargs)
+
 
 def files_equal(file1, file2):
     """Determine whether two files have the same content.

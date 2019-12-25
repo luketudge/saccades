@@ -19,16 +19,6 @@ from saccades import GazeData
 from saccades import Saccade
 
 
-# %% Helper functions
-
-def init_gazedata(data, **kwargs):
-    """Initialize a GazeData table from a gaze data test case,
-    with additional keyword arguments if necessary.
-    """
-
-    return GazeData(data['in']['data'], **kwargs)
-
-
 # %% __init__()
 
 def test_init(gaze_data):
@@ -39,7 +29,7 @@ def test_init(gaze_data):
     or replaced with time, x, and y if these are not supplied.
     """
 
-    gd = init_gazedata(gaze_data)
+    gd = helpers.init_gazedata(gaze_data)
 
     assert isinstance(gd, GazeData)
     assert isinstance(gd, pandas.DataFrame)
@@ -52,7 +42,7 @@ def test_invalid_init(invalid_gaze_data):
     """
 
     with pytest.raises(invalid_gaze_data['out']['exception']):
-        init_gazedata(invalid_gaze_data)
+        helpers.init_gazedata(invalid_gaze_data)
 
 
 def test_init_from_instance(gaze_data, attributes):
@@ -61,7 +51,7 @@ def test_init_from_instance(gaze_data, attributes):
     The attributes of the existing instance should be carried over.
     """
 
-    gd = init_gazedata(gaze_data, **attributes['in']['attrs'])
+    gd = helpers.init_gazedata(gaze_data, **attributes['in']['attrs'])
     gd2 = GazeData(gd)
 
     for attr, val in attributes['out']['attrs'].items():
@@ -77,7 +67,7 @@ def test_init_from_instance_new_attributes(gaze_data, attributes):
 
     new_value = 'bar'
 
-    gd = init_gazedata(gaze_data, **attributes['in']['attrs'])
+    gd = helpers.init_gazedata(gaze_data, **attributes['in']['attrs'])
     gd2 = GazeData(gd, **{attr: new_value for attr in attributes['in']['attrs']})
 
     for attr in attributes['out']['attrs']:
@@ -132,7 +122,7 @@ def test_indexing(gaze_data, index):
 
     dummy_attr = 'foo'
 
-    gd = init_gazedata(gaze_data, time_units=dummy_attr)
+    gd = helpers.init_gazedata(gaze_data, time_units=dummy_attr)
     subset = gd.iloc[index['in']['rows']][index['in']['cols']]
 
     assert numpy.array_equal(subset, index['out']['data'])
@@ -152,7 +142,7 @@ def test_has_attributes(gaze_data, attributes):
     """Check that a GazeData table has the attributes set at init.
     """
 
-    gd = init_gazedata(gaze_data, **attributes['in']['attrs'])
+    gd = helpers.init_gazedata(gaze_data, **attributes['in']['attrs'])
 
     for attr, value in attributes['out']['attrs'].items():
         assert getattr(gd, attr) == value
@@ -162,7 +152,7 @@ def test_set_attributes(gaze_data, attributes):
     """Check that attributes can be set anew after init.
     """
 
-    gd = init_gazedata(gaze_data)
+    gd = helpers.init_gazedata(gaze_data)
 
     for attr, value in attributes['in']['attrs'].items():
         setattr(gd, attr, value)
@@ -178,7 +168,7 @@ def test_check_screen_info(gaze_data_1, attributes):
     and the exception should mention which are missing.
     """
 
-    gd = init_gazedata(gaze_data_1, **attributes['in']['attrs'])
+    gd = helpers.init_gazedata(gaze_data_1, **attributes['in']['attrs'])
 
     if attributes['out']['valid']:
         assert gd._check_screen_info() is None
@@ -200,7 +190,7 @@ def test_save_raw_coords(gaze_data_1):
     since the original values have already been saved.
     """
 
-    gd = init_gazedata(gaze_data_1)
+    gd = helpers.init_gazedata(gaze_data_1)
     gd._save_raw_coords()
 
     assert numpy.array_equal(gd[['x_raw', 'y_raw']], gd[['x', 'y']])
@@ -220,7 +210,7 @@ def test_save_raw_coords_before_method_call(gaze_data_1, method):
     and the original columns should now have different values.
     """
 
-    gd = init_gazedata(gaze_data_1)
+    gd = helpers.init_gazedata(gaze_data_1)
     method['in']['method'](gd)
 
     if method['out']['saves_coords']:
@@ -239,7 +229,7 @@ def test_viewing_parameters(gaze_data_1, attributes):
     """Test getting the dictionary of viewing parameters.
     """
 
-    gd = init_gazedata(gaze_data_1, **attributes['in']['attrs'])
+    gd = helpers.init_gazedata(gaze_data_1, **attributes['in']['attrs'])
     params = gd.viewing_parameters
 
     assert params == attributes['out']['attrs']
@@ -254,7 +244,7 @@ def test_reset_time(gaze_data):
     t_0 = gaze_data['out']['data'][0, 0]
     t_end = gaze_data['out']['data'][-1, 0]
 
-    gd = init_gazedata(gaze_data)
+    gd = helpers.init_gazedata(gaze_data)
     gd.reset_time()
 
     assert gd['time'].iloc[0] == 0.
@@ -267,19 +257,24 @@ def test_detect_saccades(gaze_data_1, detection):
     """Test detecting saccades.
 
     The saccade column should reflect the output of the supplied function.
-    The return value should have length equal to the number of saccades,
-    and each item should be an instance of the Saccade class.
+    The return value should have length equal to the number of saccades.
+    Each item should be an instance of the Saccade class.
+    The saccades should preserve the attributes of the GazeData table.
     """
 
-    gd = init_gazedata(gaze_data_1)
+    dummy_attr = 'foo'
 
+    gd = helpers.init_gazedata(gaze_data_1, time_units=dummy_attr)
     result = gd.detect_saccades(detection['in']['func'],
                                 detection['in']['n'],
                                 **detection['in']['kwargs'])
+
     assert all(gd['saccade'] == detection['out']['column'])
     assert len(result) == detection['out']['n']
+
     for item in result:
         assert isinstance(item, Saccade)
+        assert item.time_units == dummy_attr
 
 
 def test_detect_saccades_without_function(gaze_data_1):
@@ -289,7 +284,7 @@ def test_detect_saccades_without_function(gaze_data_1):
     If the saccade column does not exist, an exception should be raised.
     """
 
-    gd = init_gazedata(gaze_data_1)
+    gd = helpers.init_gazedata(gaze_data_1)
 
     with pytest.raises(KeyError, match='function required'):
         gd.detect_saccades()
@@ -307,7 +302,7 @@ def test_plot(plot):
     """Test plotting by comparing to reference plot images.
     """
 
-    gd = init_gazedata(plot)
+    gd = helpers.init_gazedata(plot)
 
     for func in plot['in']['transform']:
         func(gd)
