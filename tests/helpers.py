@@ -3,7 +3,10 @@
 """
 
 from saccades import GazeData
+from saccades import Saccade
 
+
+# %% Init functions
 
 def init_gazedata(data, **kwargs):
     """Initialize a GazeData table from a gaze data test case,
@@ -12,6 +15,16 @@ def init_gazedata(data, **kwargs):
 
     return GazeData(data['in']['data'], **kwargs)
 
+
+def init_saccade(data, **kwargs):
+    """Initialize a Saccade table from a gaze data test case,
+    with additional keyword arguments if necessary.
+    """
+
+    return Saccade(data['in']['data'], **kwargs)
+
+
+# %% Misc
 
 def files_equal(file1, file2):
     """Determine whether two files have the same content.

@@ -129,7 +129,9 @@ def test_indexing(gaze_data, index):
     assert isinstance(subset, index['out']['type'])
 
     if index['out']['type'] == GazeData:
-        assert gd.time_units == dummy_attr
+        assert subset.time_units == dummy_attr
+    else:
+        assert not isinstance(subset, GazeData)
 
 
 # %% Attributes
