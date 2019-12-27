@@ -139,3 +139,9 @@ def detection(request):
 def plot(request):
 
     return request.param
+
+
+@pytest.fixture(**prepare_case(cases_gazedata.NANS))
+def nans(request):
+
+    return request.param

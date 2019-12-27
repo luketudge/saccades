@@ -101,15 +101,6 @@ def test_GazeData_is_not_view():
 
 # %% Indexing
 
-# Subsetting instances of the GazeData class presents some challenges.
-# We would like different subsetting operations to return different types.
-# A subset of rows is still a valid table of gaze data.
-# So this should return an instance of the GazeData class.
-# A subset containing the 'time', 'x', and 'y' columns is also valid.
-# So this column subset should also return an instance of the GazeData class.
-# But a subset of other columns is an incomplete view of the data.
-# So this should not return an instance of the GazeData class.
-
 def test_indexing(gaze_data, index):
     """Test various kinds of indexing for getting subsets of data.
 
@@ -126,9 +117,9 @@ def test_indexing(gaze_data, index):
     subset = gd.iloc[index['in']['rows']][index['in']['cols']]
 
     assert numpy.array_equal(subset, index['out']['data'])
-    assert isinstance(subset, index['out']['type'])
 
-    if index['out']['type'] == GazeData:
+    if index['out']['valid']:
+        assert isinstance(subset, GazeData)
         assert subset.time_units == dummy_attr
     else:
         assert not isinstance(subset, GazeData)

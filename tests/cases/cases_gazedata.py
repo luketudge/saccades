@@ -45,6 +45,8 @@ data = numpy.array([[0., 1., 2.],
                     [4., 5., 6.],
                     [6., 7., 8.]])
 
+colmeans = [3., 4., 5.]
+
 # Make some variations on pandas DataFrames,
 # since this is likely to be a common input type.
 
@@ -115,6 +117,7 @@ for case in GAZE_DATA:
 
 for case in GAZE_DATA:
     GAZE_DATA[case]['out']['data'] = data
+    GAZE_DATA[case]['out']['colmeans'] = colmeans
 
 
 # %% Invalid init data
@@ -152,19 +155,19 @@ all_cols = ['time', 'x', 'y']
 INDEX = {
     'rows': {
         'in': {'data': data, 'rows': slice(2), 'cols': all_cols},
-        'out': {'data': data[:2, :], 'type': GazeData},
+        'out': {'data': data[:2, :], 'valid': True},
     },
     'rows_boolean': {
         'in': {'data': data, 'rows': data[:, 0] < 3, 'cols': all_cols},
-        'out': {'data': data[:2, :], 'type': GazeData},
+        'out': {'data': data[:2, :], 'valid': True},
     },
     'complete_cols': {
         'in': {'data': data, 'rows': slice(None), 'cols': all_cols},
-        'out': {'data': data, 'type': GazeData},
+        'out': {'data': data, 'valid': True},
     },
     'incomplete_cols': {
         'in': {'data': data, 'rows': slice(None), 'cols': ['x', 'y']},
-        'out': {'data': data[:, 1:3], 'type': pandas.DataFrame},
+        'out': {'data': data[:, 1:3], 'valid': False},
     },
 }
 
@@ -225,6 +228,31 @@ for case in ATTRIBUTES:
         ATTRIBUTES[case]['out']['exception'] = AttributeError
         if 'error_msg' not in ATTRIBUTES[case]['out']:
             ATTRIBUTES[case]['out']['error_msg'] = 'necessary attributes have not yet been set'
+
+
+# %% NA values
+
+data_nans = data.copy()
+data_nans[0, 1:3] = numpy.nan
+
+NANS = {
+    'no_nans': {
+        'in': {'data': data, 'subset': None},
+        'out': {'data': data}
+    },
+    'nans': {
+        'in': {'data': data_nans, 'subset': None},
+        'out': {'data': data[1:, :]}
+    },
+    'nans_in_subset': {
+        'in': {'data': data_nans, 'subset': ['x', 'y']},
+        'out': {'data': data[1:, :]}
+    },
+    'nans_not_in_subset': {
+        'in': {'data': data_nans, 'subset': ['time']},
+        'out': {'data': data_nans}
+    },
+}
 
 
 # %% Methods

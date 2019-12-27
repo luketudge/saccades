@@ -59,7 +59,7 @@ def test_indexing(gaze_data, index):
 
     assert numpy.array_equal(subset, index['out']['data'])
 
-    if index['out']['type'] == GazeData:
+    if index['out']['valid']:
         assert isinstance(subset, Saccade)
         assert subset.time_units == dummy_attr
     else:
