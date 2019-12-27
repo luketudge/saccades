@@ -11,6 +11,7 @@ import shutil
 import pytest
 
 from . import TEMP_PATH
+from .cases import cases_conversions
 from .cases import cases_gazedata
 from .cases import cases_readers
 
@@ -141,7 +142,23 @@ def plot(request):
     return request.param
 
 
+# %% Compatibility
+
 @pytest.fixture(**prepare_case(cases_gazedata.NANS))
 def nans(request):
+
+    return request.param
+
+
+# %% Conversions
+
+@pytest.fixture(**prepare_case(cases_conversions.VD2PX))
+def vd2px(request):
+
+    return request.param
+
+
+@pytest.fixture(**prepare_case(cases_conversions.PX2DVA))
+def px2dva(request):
 
     return request.param
